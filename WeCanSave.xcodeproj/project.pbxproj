@@ -6,7 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		1EE9030C2D6C8294007111C0 /* Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EE9030B2D6C8294007111C0 /* Data.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
+		1EE9030B2D6C8294007111C0 /* Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
 		9D5F3ADC2D6C7FA40063318B /* WeCanSave.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeCanSave.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -45,6 +50,7 @@
 		9D5F3AD32D6C7FA40063318B = {
 			isa = PBXGroup;
 			children = (
+				1EE9030B2D6C8294007111C0 /* Data.swift */,
 				9D5F3ADE2D6C7FA40063318B /* WeCanSave */,
 				9D5F3ADD2D6C7FA40063318B /* Products */,
 			);
@@ -132,6 +138,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1EE9030C2D6C8294007111C0 /* Data.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
