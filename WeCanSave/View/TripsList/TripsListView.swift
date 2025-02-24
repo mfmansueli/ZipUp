@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  TripsListView.swift
 //  WeCanSave
 //
 //  Created by Mateus Mansuelli on 24/02/25.
@@ -8,7 +8,7 @@
 import SwiftUI
 import SwiftData
 
-struct ContentView: View {
+struct TripsListView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var items: [Item]
 
@@ -56,6 +56,6 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    TripsListView()
         .modelContainer(for: Item.self, inMemory: true)
 }
