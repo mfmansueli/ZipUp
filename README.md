@@ -10,8 +10,8 @@ By using AI with a gamified experience
 
 ## Contributors
 
-Mateus Mansuelli
-Florence Lehebel
-Manuele Esposito
-Cinzia Ferrara
-Mathew Blanc
+Mateus Mansuelli  
+Florence Lehebel  
+Manuele Esposito  
+Cinzia Ferrara  
+Mathew Blanc  
