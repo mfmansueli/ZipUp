@@ -24,8 +24,16 @@ struct Trip: Identifiable {
     let destinationLong: String
     var startDate: Date
     var endDate: Date
+    var duration: Int {
+        let calendar = Calendar.current
+        let start = calendar.startOfDay(for: startDate)
+        let end = calendar.startOfDay(for: endDate)
+        let components = calendar.dateComponents([.day], from: start, to: end)
+        return (components.day ?? 0) + 1
+    }
     var category: String
     var bag: Bag
+    var isFinished = false
     
     static let exampleTrip = Trip(
         destinationName: "Dublin",
