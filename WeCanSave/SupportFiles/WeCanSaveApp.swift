@@ -25,7 +25,7 @@ struct WeCanSaveApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            TripPlannerView()
         }
         .modelContainer(sharedModelContainer)
     }

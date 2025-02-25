@@ -6,12 +6,7 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		1EE9030C2D6C8294007111C0 /* Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EE9030B2D6C8294007111C0 /* Data.swift */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXFileReference section */
-		1EE9030B2D6C8294007111C0 /* Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
 		9D5F3ADC2D6C7FA40063318B /* WeCanSave.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeCanSave.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -19,7 +14,7 @@
 		9D5F3AEC2D6C7FA50063318B /* Exceptions for "WeCanSave" folder in "WeCanSave" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				SupportFiles/Info.plist,
 			);
 			target = 9D5F3ADB2D6C7FA40063318B /* WeCanSave */;
 		};
@@ -50,7 +45,6 @@
 		9D5F3AD32D6C7FA40063318B = {
 			isa = PBXGroup;
 			children = (
-				1EE9030B2D6C8294007111C0 /* Data.swift */,
 				9D5F3ADE2D6C7FA40063318B /* WeCanSave */,
 				9D5F3ADD2D6C7FA40063318B /* Products */,
 			);
@@ -138,7 +132,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1EE9030C2D6C8294007111C0 /* Data.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -150,15 +143,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = WeCanSave/WeCanSave.entitlements;
+				CODE_SIGN_ENTITLEMENTS = WeCanSave/SupportFiles/WeCanSave.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"WeCanSave/Preview Content\"";
-				DEVELOPMENT_TEAM = A8CM88V36V;
+				DEVELOPMENT_ASSET_PATHS = "\"WeCanSave/SupportFiles/Preview Content\"";
+				DEVELOPMENT_TEAM = 99U6584A9W;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = WeCanSave/Info.plist;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
+				INFOPLIST_FILE = WeCanSave/SupportFiles/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -171,6 +164,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mathewblanc.WeCanSave;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -182,15 +176,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = WeCanSave/WeCanSave.entitlements;
+				CODE_SIGN_ENTITLEMENTS = WeCanSave/SupportFiles/WeCanSave.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"WeCanSave/Preview Content\"";
-				DEVELOPMENT_TEAM = A8CM88V36V;
+				DEVELOPMENT_ASSET_PATHS = "\"WeCanSave/SupportFiles/Preview Content\"";
+				DEVELOPMENT_TEAM = 99U6584A9W;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = WeCanSave/Info.plist;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
+				INFOPLIST_FILE = WeCanSave/SupportFiles/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -203,6 +197,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mathewblanc.WeCanSave;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
