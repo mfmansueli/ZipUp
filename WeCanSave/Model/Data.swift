@@ -10,16 +10,20 @@ import SwiftUI
 import SwiftData
 import MapKit
 
-struct User: Identifiable {
+struct User: Identifiable, Codable {
     var id = UUID()
     var trips: [Trip]
+    
+    enum CodingKeys: String, CodingKey {
+            case id, trips
+        }
+    
 }
 
-struct Trip: Identifiable {
+struct Trip: Identifiable, Codable {
     var id = UUID()
-//    let destinationID: UUID
+    //    let destinationID: UUID
     let destinationName: String
-    let destinationLatLong: CLLocationCoordinate2D
     let destinationLat: String
     let destinationLong: String
     var startDate: Date
@@ -35,9 +39,13 @@ struct Trip: Identifiable {
     var bag: Bag
     var isFinished = false
     
+    enum CodingKeys: String, CodingKey {
+        case id, destinationName, destinationLat, destinationLong, startDate, endDate, category, bag, isFinished
+    }
+    
     static let exampleTrip = Trip(
         destinationName: "Dublin",
-        destinationLatLong: CLLocationCoordinate2D(latitude: 53.34570, longitude: -6.268386),
+//        destinationLatLong: CLLocationCoordinate2D(latitude: 53.34570, longitude: -6.268386),
         destinationLat: "53.34570",
         destinationLong: "-6.268386",
         startDate: Calendar.current.date(from: DateComponents(year: 2025, month: 5, day: 12))!,
@@ -47,9 +55,13 @@ struct Trip: Identifiable {
     )
 }
 
-struct Bag: Identifiable {
+struct Bag: Identifiable, Codable {
     var id = UUID()
     var itemList = [BagItem]()
+    
+    enum CodingKeys: String, CodingKey {
+            case id, itemList
+        }
     
     static let exampleBag = Bag(itemList: [
         BagItem.socks,
@@ -59,7 +71,7 @@ struct Bag: Identifiable {
     ])
 }
 
-struct BagItem: Identifiable {
+struct BagItem: Identifiable, Codable {
     var id = UUID()
     let name: String
     let category: String
@@ -68,10 +80,16 @@ struct BagItem: Identifiable {
     var imageName: String?
     var isPair = false
     
+    enum CodingKeys: String, CodingKey {
+        case id, name, category, userQuantity, AIQuantity, imageName, isPair
+    }
+    
     static let socks = BagItem(name: "Socks", category: "Clothes", userQuantity: 4, AIQuantity: 4, isPair: true)
     static let tops = BagItem(name: "Tops", category: "Clothes", userQuantity: 6, AIQuantity: 6)
     static let shoes = BagItem(name: "Shoes", category: "Shoes", userQuantity: 2, AIQuantity: 2, isPair: true)
     static let charger = BagItem(name: "Charger", category: "Electronics", userQuantity: 1, AIQuantity: 1)
+    
+    
 }
 
 
