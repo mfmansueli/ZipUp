@@ -40,7 +40,7 @@ struct ItemView: View {
             HStack(spacing: 40) {
                 
                 Button {
-                    item.decrementItemQuantity()
+                    item.decrementUserQuantity()
                 } label: {
                     ZStack {
                         Circle()
@@ -55,12 +55,12 @@ struct ItemView: View {
                 }
 
                 
-                Text("\(item.quantity)")
+                Text("\(item.userQuantity)")
                     .font(.system(size: 60, weight: .bold))
                 
                 
                 Button {
-                    item.incrementItemQuantity()
+                    item.incrementUserQuantity()
                 } label: {
                     ZStack {
                         Circle()
