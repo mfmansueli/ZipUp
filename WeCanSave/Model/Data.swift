@@ -57,21 +57,21 @@ struct Trip: Identifiable, Codable {
 
 struct Bag: Identifiable, Codable {
     var id = UUID()
-    var itemList = [BagItem]()
+    var itemList = [Item]()
     
     enum CodingKeys: String, CodingKey {
             case id, itemList
         }
     
     static let exampleBag = Bag(itemList: [
-        BagItem.socks,
-        BagItem.tops,
-        BagItem.shoes,
-        BagItem.charger,
+        Item.socks,
+        Item.tops,
+        Item.shoes,
+        Item.charger,
     ])
 }
 
-struct BagItem: Identifiable, Codable {
+struct Item: Identifiable, Codable {
     var id = UUID()
     let name: String
     let category: String
@@ -84,10 +84,10 @@ struct BagItem: Identifiable, Codable {
         case id, name, category, userQuantity, AIQuantity, imageName, isPair
     }
     
-    static let socks = BagItem(name: "Socks", category: "Clothes", userQuantity: 4, AIQuantity: 4, isPair: true)
-    static let tops = BagItem(name: "Tops", category: "Clothes", userQuantity: 6, AIQuantity: 6)
-    static let shoes = BagItem(name: "Shoes", category: "Shoes", userQuantity: 2, AIQuantity: 2, isPair: true)
-    static let charger = BagItem(name: "Charger", category: "Electronics", userQuantity: 1, AIQuantity: 1)
+    static let socks = Item(name: "Socks", category: "Clothes", userQuantity: 4, AIQuantity: 4, isPair: true)
+    static let tops = Item(name: "Tops", category: "Clothes", userQuantity: 6, AIQuantity: 6)
+    static let shoes = Item(name: "Shoes", category: "Shoes", userQuantity: 2, AIQuantity: 2, isPair: true)
+    static let charger = Item(name: "Charger", category: "Electronics", userQuantity: 1, AIQuantity: 1)
     
     
 }
