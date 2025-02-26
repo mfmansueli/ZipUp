@@ -10,16 +10,20 @@ import SwiftUI
 import SwiftData
 import MapKit
 
-struct User: Identifiable {
+struct User: Identifiable, Codable {
     var id = UUID()
     var trips: [Trip]
+    
+    enum CodingKeys: String, CodingKey {
+            case id, trips
+        }
+    
 }
 
-struct Trip: Identifiable {
+struct Trip: Identifiable, Codable {
     var id = UUID()
-//    let destinationID: UUID
+    //    let destinationID: UUID
     let destinationName: String
-    let destinationLatLong: CLLocationCoordinate2D
     let destinationLat: String
     let destinationLong: String
     var startDate: Date
@@ -35,9 +39,13 @@ struct Trip: Identifiable {
     var bag: Bag
     var isFinished = false
     
+    enum CodingKeys: String, CodingKey {
+        case id, destinationName, destinationLat, destinationLong, startDate, endDate, category, bag, isFinished
+    }
+    
     static let exampleTrip = Trip(
         destinationName: "Dublin",
-        destinationLatLong: CLLocationCoordinate2D(latitude: 53.34570, longitude: -6.268386),
+//        destinationLatLong: CLLocationCoordinate2D(latitude: 53.34570, longitude: -6.268386),
         destinationLat: "53.34570",
         destinationLong: "-6.268386",
         startDate: Calendar.current.date(from: DateComponents(year: 2025, month: 5, day: 12))!,
@@ -47,9 +55,13 @@ struct Trip: Identifiable {
     )
 }
 
-struct Bag: Identifiable {
+struct Bag: Identifiable, Codable {
     var id = UUID()
     var itemList = [Item]()
+    
+    enum CodingKeys: String, CodingKey {
+            case id, itemList
+        }
     
     static let exampleBag = Bag(itemList: [
         Item.socks,
@@ -59,28 +71,25 @@ struct Bag: Identifiable {
     ])
 }
 
-struct Item: Identifiable {
+struct BagItem: Identifiable, Codable {
     var id = UUID()
     let name: String
     let category: String
-    var quantity: Int
+    var userQuantity: Int
+    let AIQuantity: Int
     var imageName: String?
     var isPair = false
     
-    static let socks = Item(name: "Socks", category: "Clothes", quantity: 4, isPair: true)
-    static let tops = Item(name: "Tops", category: "Clothes", quantity: 6, imageName: "tshirt")
-    static let shoes = Item(name: "Shoes", category: "Shoes", quantity: 2, isPair: true)
-    static let charger = Item(name: "Charger", category: "Electronics", quantity: 1, imageName: "powerplug.portrait")
-    
-    mutating func incrementItemQuantity() {
-        self.quantity += 1
+    enum CodingKeys: String, CodingKey {
+        case id, name, category, userQuantity, AIQuantity, imageName, isPair
     }
     
-    mutating func decrementItemQuantity() {
-        if self.quantity > 0 {
-            self.quantity -= 1
-        }
-    }
+    static let socks = BagItem(name: "Socks", category: "Clothes", userQuantity: 4, AIQuantity: 4, isPair: true)
+    static let tops = BagItem(name: "Tops", category: "Clothes", userQuantity: 6, AIQuantity: 6)
+    static let shoes = BagItem(name: "Shoes", category: "Shoes", userQuantity: 2, AIQuantity: 2, isPair: true)
+    static let charger = BagItem(name: "Charger", category: "Electronics", userQuantity: 1, AIQuantity: 1)
+    
+    
 }
 
 
