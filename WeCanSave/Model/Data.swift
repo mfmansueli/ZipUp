@@ -63,14 +63,15 @@ struct BagItem: Identifiable {
     var id = UUID()
     let name: String
     let category: String
-    var quantity: Int
+    var userQuantity: Int
+    let AIQuantity: Int
     var imageName: String?
     var isPair = false
     
-    static let socks = BagItem(name: "Socks", category: "Clothes", quantity: 4, isPair: true)
-    static let tops = BagItem(name: "Tops", category: "Clothes", quantity: 6)
-    static let shoes = BagItem(name: "Shoes", category: "Shoes", quantity: 2, isPair: true)
-    static let charger = BagItem(name: "Charger", category: "Electronics", quantity: 1)
+    static let socks = BagItem(name: "Socks", category: "Clothes", userQuantity: 4, AIQuantity: 4, isPair: true)
+    static let tops = BagItem(name: "Tops", category: "Clothes", userQuantity: 6, AIQuantity: 6)
+    static let shoes = BagItem(name: "Shoes", category: "Shoes", userQuantity: 2, AIQuantity: 2, isPair: true)
+    static let charger = BagItem(name: "Charger", category: "Electronics", userQuantity: 1, AIQuantity: 1)
 }
 
 
