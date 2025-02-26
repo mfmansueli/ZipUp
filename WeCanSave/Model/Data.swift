@@ -49,17 +49,17 @@ struct Trip: Identifiable {
 
 struct Bag: Identifiable {
     var id = UUID()
-    var itemList = [BagItem]()
+    var itemList = [Item]()
     
     static let exampleBag = Bag(itemList: [
-        BagItem.socks,
-        BagItem.tops,
-        BagItem.shoes,
-        BagItem.charger,
+        Item.socks,
+        Item.tops,
+        Item.shoes,
+        Item.charger,
     ])
 }
 
-struct BagItem: Identifiable {
+struct Item: Identifiable {
     var id = UUID()
     let name: String
     let category: String
@@ -67,10 +67,20 @@ struct BagItem: Identifiable {
     var imageName: String?
     var isPair = false
     
-    static let socks = BagItem(name: "Socks", category: "Clothes", quantity: 4, isPair: true)
-    static let tops = BagItem(name: "Tops", category: "Clothes", quantity: 6)
-    static let shoes = BagItem(name: "Shoes", category: "Shoes", quantity: 2, isPair: true)
-    static let charger = BagItem(name: "Charger", category: "Electronics", quantity: 1)
+    static let socks = Item(name: "Socks", category: "Clothes", quantity: 4, isPair: true)
+    static let tops = Item(name: "Tops", category: "Clothes", quantity: 6, imageName: "tshirt")
+    static let shoes = Item(name: "Shoes", category: "Shoes", quantity: 2, isPair: true)
+    static let charger = Item(name: "Charger", category: "Electronics", quantity: 1, imageName: "powerplug.portrait")
+    
+    mutating func incrementItemQuantity() {
+        self.quantity += 1
+    }
+    
+    mutating func decrementItemQuantity() {
+        if self.quantity > 0 {
+            self.quantity -= 1
+        }
+    }
 }
 
 
