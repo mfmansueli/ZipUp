@@ -81,7 +81,7 @@ struct Item: Identifiable, Codable {
     var isPair = false
     
     enum CodingKeys: String, CodingKey {
-        case id, name, category, quantity, AIQuantity, imageName, isPair
+        case name, category, quantity, AIQuantity, imageName, isPair
     }
     
     static let socks = Item(name: "Socks", category: "Clothes", quantity: 4, AIQuantity: 4, isPair: true)
@@ -97,5 +97,19 @@ struct Item: Identifiable, Codable {
         if self.quantity > 0 {
             self.quantity -= 1
         }
+    }
+    
+    func toJSONString() -> String? {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .prettyPrinted
+        if let jsonData = try? encoder.encode(self) {
+            return String(data: jsonData, encoding: .utf8)
+        }
+        return nil
+    }
+    
+    
+    static func jsonTemplate() -> String {
+        return Item(name: "Item", category: "Category", quantity: 0, AIQuantity: 0).toJSONString() ?? ""
     }
 }

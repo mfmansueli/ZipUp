@@ -23,11 +23,17 @@ struct TripPlannerView: View {
                     .textFieldStyle(.roundedBorder)
                 
                 List(viewModel.searchResults, id: \.self) { item in
-                    NavigationLink(destination: {
-                        SwipeView(itemList: Bag.exampleBag.itemList)
-                    }, label: {
-                        Text(item.placemark.title ?? "")
-                    })
+                    
+                    Text(item.placemark.title ?? "")
+                        .onTapGesture {
+                            viewModel.selectedItem = item
+                            viewModel.loadBag(aiEnabled: true)
+                    }
+//                    NavigationLink(destination: {
+//                        SwipeView(itemList: Bag.exampleBag.itemList)
+//                    }, label: {
+//                        Text(item.placemark.title ?? "")
+//                    })
                     //                Button(action: {
                     //                    viewModel.selectedItem = item
                     //                    viewModel.fetchWeather(for: item.placemark.coordinate)
@@ -43,6 +49,9 @@ struct TripPlannerView: View {
             }
             
         }
+        .navigationDestination(isPresented: $viewModel.isBagGenerated, destination: {
+            SwipeView(itemList: viewModel.items)
+        })
     }
 }
 

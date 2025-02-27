@@ -17,6 +17,7 @@ struct ItemView: View {
         VStack(spacing: 30) {
             
             ZStack {
+                
                 if let image = item.imageName {
                     Image(systemName: image)
                         .resizable()
