@@ -12,9 +12,14 @@ struct TripPlannerView: View {
 
     var body: some View {
         VStack {
+            Divider()
             TextField("Search for an address", text: $viewModel.searchText)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding()
+                .textFieldStyle(.plain)
+                .padding(.all, 8)
+                .background(Color.primary)
+                .cornerRadius(8)
+                .foregroundStyle(Color(uiColor: .systemBackground))
+                .textFieldStyle(.roundedBorder)
 
             List(viewModel.searchResults, id: \.self) { item in
                 Button(action: {
