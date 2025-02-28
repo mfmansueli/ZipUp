@@ -15,8 +15,8 @@ struct User: Identifiable, Codable {
     var trips: [Trip]
     
     enum CodingKeys: String, CodingKey {
-            case id, trips
-        }
+        case id, trips
+    }
     
 }
 
@@ -45,7 +45,7 @@ struct Trip: Identifiable, Codable {
     
     static let exampleTrip = Trip(
         destinationName: "Dublin",
-//        destinationLatLong: CLLocationCoordinate2D(latitude: 53.34570, longitude: -6.268386),
+        //        destinationLatLong: CLLocationCoordinate2D(latitude: 53.34570, longitude: -6.268386),
         destinationLat: "53.34570",
         destinationLong: "-6.268386",
         startDate: Calendar.current.date(from: DateComponents(year: 2025, month: 5, day: 12))!,
@@ -60,8 +60,8 @@ struct Bag: Identifiable, Codable {
     var itemList = [Item]()
     
     enum CodingKeys: String, CodingKey {
-            case id, itemList
-        }
+        case id, itemList
+    }
     
     static let exampleBag = Bag(itemList: [
         Item.socks,
@@ -75,7 +75,7 @@ struct Item: Identifiable, Codable {
     var id = UUID()
     let name: String
     let category: String
-    var userQuantity: Int
+    var quantity: Int
     let AIQuantity: Int
     var imageName: String?
     var isPair = false
@@ -100,8 +100,3 @@ struct Item: Identifiable, Codable {
     }
     
 }
-
-
-
-
-
