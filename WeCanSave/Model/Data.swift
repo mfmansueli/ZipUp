@@ -75,7 +75,7 @@ struct Item: Identifiable, Codable {
     var id = UUID()
     let name: String
     let category: String
-    var quantity: Int
+    var userQuantity: Int
     let AIQuantity: Int
     var imageName: String?
     var isPair = false
