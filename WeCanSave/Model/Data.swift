@@ -75,27 +75,28 @@ struct Item: Identifiable, Codable {
     var id = UUID()
     let name: String
     let category: String
-    var quantity: Int
+    var userQuantity: Int
     let AIQuantity: Int
     var imageName: String?
     var isPair = false
     
     enum CodingKeys: String, CodingKey {
-        case id, name, category, quantity, AIQuantity, imageName, isPair
+        case id, name, category, userQuantity, AIQuantity, imageName, isPair
     }
     
-    static let socks = Item(name: "Socks", category: "Clothes", quantity: 4, AIQuantity: 4, isPair: true)
-    static let tops = Item(name: "Tops", category: "Clothes", quantity: 6, AIQuantity: 6)
-    static let shoes = Item(name: "Shoes", category: "Shoes", quantity: 2, AIQuantity: 2, isPair: true)
-    static let charger = Item(name: "Charger", category: "Electronics", quantity: 1, AIQuantity: 1)
+    static let socks = Item(name: "Socks", category: "Clothes", userQuantity: 4, AIQuantity: 4, isPair: true)
+    static let tops = Item(name: "Tops", category: "Clothes", userQuantity: 6, AIQuantity: 6)
+    static let shoes = Item(name: "Shoes", category: "Shoes", userQuantity: 2, AIQuantity: 2, isPair: true)
+    static let charger = Item(name: "Charger", category: "Electronics", userQuantity: 1, AIQuantity: 1)
     
-    mutating func incrementItemQuantity() {
-        self.quantity += 1
+    mutating func incrementUserQuantity() {
+        self.userQuantity += 1
     }
     
-    mutating func decrementItemQuantity() {
-        if self.quantity > 0 {
-            self.quantity -= 1
+    mutating func decrementUserQuantity() {
+        if self.userQuantity > 1 {
+            self.userQuantity -= 1
         }
     }
+    
 }
