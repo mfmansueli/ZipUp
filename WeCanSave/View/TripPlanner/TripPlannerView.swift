@@ -16,20 +16,20 @@ struct TripPlannerView: View {
         Item.socks,
         Item.tops
     ])
-    
+
     @State private var isDestinationActive: Bool = false
     @FocusState private var isDestinationFocused: Bool
-    
+
     let destinationPlaceholderText = "Naples, New York, Bangkok..."
-    
+
     @State private var destinationText: String?
-    
+
     var body: some View {
         NavigationView {
             VStack(alignment: .leading) {
                 Text("Where are you going?")
                     .font(.title)
-                
+
                 if isDestinationActive {
                     TextField(destinationPlaceholderText, text: $viewModel.searchText)
                         .padding(.all, 8)
@@ -37,18 +37,18 @@ struct TripPlannerView: View {
                         .textFieldStyle(.roundedBorder)
                         .autocorrectionDisabled(true)
                         .focused($isDestinationFocused)
-                    
+
                     List(viewModel.searchResults, id: \.self) { location in
                         Button("\(location.placemark.title ?? "")") {
-                            
+
                             destinationText = location.placemark.title ?? ""
-                            
+
                             withAnimation {
                                 isDestinationActive.toggle()
                             }
 
                         }
-                        
+
     //                    NavigationLink(destination: {
     ////                        SwipeView(itemList: $exampleBag.itemList)
     ////                        BagBuilderView(itemList: exampleBag.itemList)
@@ -61,11 +61,11 @@ struct TripPlannerView: View {
                         //                }) {
                         //                    Text(item.placemark.title ?? "")
                         //                }
-                        
+
                     }
                     .listStyle(.plain)
-                    
-                    
+
+
                 } else {
                     ZStack(alignment: .leading) {
                         RoundedRectangle(cornerRadius: 10)
@@ -80,37 +80,40 @@ struct TripPlannerView: View {
                             .foregroundStyle(.foreground.opacity(destinationText == nil ? 0.4 : 1))
                             .padding()
                     }
-                    
-   
+
+
                 }
-                
-                
+
+
                 if let weatherInfo = viewModel.weatherInfo {
                     Text(weatherInfo)
                         .padding()
                 }
-                
+
                 Spacer()
-                
+
                 HStack {
                     Spacer()
 
-                    
+
 //                    Button("Zip up my bag!") {
 //
 //                    }
 //                    .buttonStyle(.borderedProminent)
-                    
+
                     NavigationLink("Zip up my bag!", destination: PackingListView(trip: Trip.exampleTrip))
                         .buttonStyle(.borderedProminent)
-                    
+
                     Spacer()
 
                 }
             }
             .padding()
         }
-        
+        .navigationDestination(isPresented: $viewModel.isBagGenerated, destination: {
+            SwipeView(itemList: $viewModel.items)
+        })
+
     }
 }
 

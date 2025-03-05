@@ -28,15 +28,15 @@ class Trip {
         return (components.day ?? 0) + 1
     }
     var category: String = ""
-    
+
 //    @Relationship(deleteRule: .cascade, inverse: \Bag.trip)
     var bag: Bag!
     var isFinished = false
-//    
+//
 //    enum CodingKeys: String, CodingKey {
 //        case id, destinationName, destinationLat, destinationLong, startDate, endDate, category, bag, isFinished
 //    }
-    
+
     init(destinationName: String, destinationLat: String, destinationLong: String, startDate: Date, endDate: Date, category: String, bag: Bag? = Bag.exampleBag, isFinished: Bool = false) {
         self.destinationName = destinationName
         self.destinationLat = destinationLat
@@ -70,9 +70,9 @@ class Bag {
 //    enum CodingKeys: String, CodingKey {
 //        case id, itemList
 //    }
-    
+
     var isDecided: Bool = false
-    
+
     init(id: UUID = UUID(), itemList: [Item] = [Item]()) {
         self.id = id
         self.itemList = itemList
@@ -97,7 +97,7 @@ struct Item: Identifiable, Codable {
     var isPair = false
     
     enum CodingKeys: String, CodingKey {
-        case id, name, category, userQuantity, AIQuantity, isDecided, imageName, isPair
+        case name, category, userQuantity, AIQuantity, isDecided, imageName, isPair
     }
     
     static let socks = Item(name: "Socks", category: "Clothes", userQuantity: 4, AIQuantity: 4, isPair: true)
@@ -115,4 +115,16 @@ struct Item: Identifiable, Codable {
         }
     }
     
+    func toJSONString() -> String? {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .prettyPrinted
+        if let jsonData = try? encoder.encode(self) {
+            return String(data: jsonData, encoding: .utf8)
+        }
+        return nil
+    }
+
+    static func jsonTemplate() -> String {
+        return Item(name: "Item", category: "Category", userQuantity: 0, AIQuantity: 0).toJSONString() ?? ""
+    }
 }
