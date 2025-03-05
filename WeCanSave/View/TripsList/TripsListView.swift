@@ -9,44 +9,87 @@ import SwiftUI
 import SwiftData
 
 struct TripsListView: View {
-//    @Environment(\.modelContext) private var modelContext
-//    @Query private var items: [Item]
+    @Environment(\.modelContext) private var modelContext
+    @Query private var trips: [Trip]
     
     @State private var items = Bag.exampleBag.itemList
     
+    @State private var tripPlannerShowing: Bool = false
+    
     var body: some View {
         NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-//                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
+            VStack {
+                Spacer()
+
+                if trips.isEmpty {
+
+                    Text("Where are you going next?")
+                        .font(.system(size: 60, weight: .bold))
+                        .padding(50)
+                        .multilineTextAlignment(.center)
+                        .listRowSeparator(.hidden)
+                        
+                } else {
+                    List {
+                        
+                        ForEach(trips) { trip in
+                            NavigationLink {
+                                PackingListView(trip: trip)
+                            } label: {
+                                Text("\(trip.destinationName)")
+                            }
+                        }
+        //                .onDelete(perform: deleteItems)
+                    }
+                    .listStyle(.plain)
+                }
+                
+                Spacer()
+
+                
+            }
+            
+            .toolbar {
+
+                ToolbarItem(placement: .bottomBar) {
+                    Button {
+                        tripPlannerShowing.toggle()
                     } label: {
-//                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
+                        Label("Add Item", systemImage: "plus")
                     }
                 }
-//                .onDelete(perform: deleteItems)
+                
+                ToolbarItem(placement: .bottomBar) {
+                    Button {
+                        modelContext.insert(
+                            Trip(
+                                destinationName: "London",
+                                destinationLat: "39.14",
+                                destinationLong: "-120.25",
+                                startDate: Calendar.current.date(from: DateComponents(year: 2025, month: 5, day: 12))!,
+                                endDate: Calendar.current.date(from: DateComponents(year: 2025, month: 5, day: 24))!,
+                                category: "Culture"
+                            )
+                        )
+                    } label: {
+                        Text("Add fake trip")
+                    }
+                }
             }
-//            .toolbar {
-//                ToolbarItem(placement: .navigationBarTrailing) {
-//                    EditButton()
-//                }
-//                ToolbarItem {
-//                    Button(action: addItem) {
-//                        Label("Add Item", systemImage: "plus")
-//                    }
-//                }
-//            }
         } detail: {
-            Text("Select an item")
+            //
+        }
+        .sheet(isPresented: $tripPlannerShowing) {
+            TripPlannerView()
         }
     }
 
-//    private func addItem() {
-//        withAnimation {
-////            let newItem = Item(timestamp: Date())
-////            modelContext.insert(newItem)
-//        }
-//    }
+    private func addItem() {
+        withAnimation {
+//            let newItem = Item(timestamp: Date())
+//            modelContext.insert(newItem)
+        }
+    }
 //
 //    private func deleteItems(offsets: IndexSet) {
 //        withAnimation {
@@ -59,5 +102,5 @@ struct TripsListView: View {
 
 #Preview {
     TripsListView()
-//        .modelContainer(for: Item.self, inMemory: true)
+        .modelContainer(for: Trip.self, inMemory: true)
 }

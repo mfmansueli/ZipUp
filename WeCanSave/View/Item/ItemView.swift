@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ItemView: View {
     
-    @State var item: Item
+    @Binding var item: Item
     @State private var offset = CGSize.zero
     var removal: (() -> Void)? = nil
     
@@ -19,7 +19,7 @@ struct ItemView: View {
             ZStack {
                 
                 if let image = item.imageName {
-                    Image(systemName: image)
+                    Image(image)
                         .resizable()
                         .scaledToFit()
                         .padding(.horizontal, 60)
@@ -34,7 +34,7 @@ struct ItemView: View {
             
             
             Text("\(item.name)")
-                .font(.largeTitle)
+                .font(.title)
                 .bold()
             
             
@@ -45,19 +45,19 @@ struct ItemView: View {
                 } label: {
                     ZStack {
                         Circle()
-                            .fill(.white)
-                            .stroke(.black, lineWidth: 6)
+                            .fill(.clear)
+                            .stroke(.brandOrange, lineWidth: 4)
                             .frame(maxWidth: 60)
                         
                         Image(systemName: "minus")
-                            .font(.system(size: 40, weight: .bold))
-                            .foregroundStyle(.black)
+                            .font(.system(size: 30, weight: .bold))
+                            .foregroundStyle(.brandOrange)
                     }
                 }
 
                 
                 Text("\(item.userQuantity)")
-                    .font(.system(size: 60, weight: .bold))
+                    .font(.system(size: 50, weight: .bold))
                 
                 
                 Button {
@@ -65,28 +65,29 @@ struct ItemView: View {
                 } label: {
                     ZStack {
                         Circle()
-                            .fill(.white)
-                            .stroke(.black, lineWidth: 6)
+                            .fill(.clear)
+                            .stroke(.brandOrange, lineWidth: 4)
                             .frame(maxWidth: 60)
                         
                         Image(systemName: "plus")
-                            .font(.system(size: 40, weight: .bold))
-                            .foregroundStyle(.black)
+                            .font(.system(size: 30, weight: .bold))
+                            .foregroundStyle(.brandOrange)
                     }
                 }
             }
             
             Text("Here is maybe where we could put our AI-based reasoning for why we picked this number for this item")
+                .fontWeight(.thin).italic()
                 .multilineTextAlignment(.center)
         }
-        .padding()
+        .padding(30)
         .background(
             RoundedRectangle(cornerRadius: 20)
-                .fill(.white)
-                .shadow(radius: 10)
+                .stroke(.brandOrange, lineWidth: 15)
+                .fill(.brandTan)
+                .shadow(radius: 5)
         )
-        .frame(width: 350, height: 500)
-        .padding(40)
+        .frame(width: 320, height: 500)
         .rotationEffect(.degrees(offset.width / 5.0))
         .offset(x: offset.width * 5)
         .opacity(2 - Double(abs(offset.width / 30)))
@@ -99,9 +100,20 @@ struct ItemView: View {
                 }
                 .onEnded { _ in
                     if abs(offset.width) > 60 {
+                        
+                        if offset.width > 0 {
+                            //added to list
+                            
+                        } else {
+                            item.userQuantity = 0
+//                            print(item)
+                        }
+                        item.isDecided = true
                         removal?()
+                        
                     } else {
                         offset = .zero
+                        
                     }
                 }
         )
@@ -109,5 +121,5 @@ struct ItemView: View {
 }
 
 #Preview {
-    ItemView(item: Item.charger)
+    ItemView(item: .constant(Item.shoes))
 }

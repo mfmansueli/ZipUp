@@ -10,24 +10,16 @@ import SwiftUI
 import SwiftData
 import MapKit
 
-struct User: Identifiable, Codable {
-    var id = UUID()
-    var trips: [Trip]
-    
-    enum CodingKeys: String, CodingKey {
-        case id, trips
-    }
-    
-}
 
-struct Trip: Identifiable, Codable {
+@Model
+class Trip {
     var id = UUID()
     //    let destinationID: UUID
-    let destinationName: String
-    let destinationLat: String
-    let destinationLong: String
-    var startDate: Date
-    var endDate: Date
+    var destinationName: String = ""
+    var destinationLat: String = ""
+    var destinationLong: String = ""
+    var startDate: Date = Date()
+    var endDate: Date = Date()
     var duration: Int {
         let calendar = Calendar.current
         let start = calendar.startOfDay(for: startDate)
@@ -35,12 +27,25 @@ struct Trip: Identifiable, Codable {
         let components = calendar.dateComponents([.day], from: start, to: end)
         return (components.day ?? 0) + 1
     }
-    var category: String
-    var bag: Bag
+    var category: String = ""
+
+//    @Relationship(deleteRule: .cascade, inverse: \Bag.trip)
+    var bag: Bag!
     var isFinished = false
-    
-    enum CodingKeys: String, CodingKey {
-        case id, destinationName, destinationLat, destinationLong, startDate, endDate, category, bag, isFinished
+//
+//    enum CodingKeys: String, CodingKey {
+//        case id, destinationName, destinationLat, destinationLong, startDate, endDate, category, bag, isFinished
+//    }
+
+    init(destinationName: String, destinationLat: String, destinationLong: String, startDate: Date, endDate: Date, category: String, bag: Bag? = Bag.exampleBag, isFinished: Bool = false) {
+        self.destinationName = destinationName
+        self.destinationLat = destinationLat
+        self.destinationLong = destinationLong
+        self.startDate = startDate
+        self.endDate = endDate
+        self.category = category
+        self.bag = bag
+        self.isFinished = isFinished
     }
     
     static let exampleTrip = Trip(
@@ -55,12 +60,22 @@ struct Trip: Identifiable, Codable {
     )
 }
 
-struct Bag: Identifiable, Codable {
+@Model
+class Bag {
     var id = UUID()
     var itemList = [Item]()
     
-    enum CodingKeys: String, CodingKey {
-        case id, itemList
+//    @Relationship(inverse: \Trip.bag)
+    var trip: Trip?
+//    enum CodingKeys: String, CodingKey {
+//        case id, itemList
+//    }
+
+    var isDecided: Bool = false
+
+    init(id: UUID = UUID(), itemList: [Item] = [Item]()) {
+        self.id = id
+        self.itemList = itemList
     }
     
     static let exampleBag = Bag(itemList: [
@@ -77,17 +92,18 @@ struct Item: Identifiable, Codable {
     let category: String
     var userQuantity: Int
     let AIQuantity: Int
+    var isDecided: Bool = false
     var imageName: String?
     var isPair = false
     
     enum CodingKeys: String, CodingKey {
-        case name, category, userQuantity, AIQuantity, imageName, isPair
+        case name, category, userQuantity, AIQuantity, isDecided, imageName, isPair
     }
     
     static let socks = Item(name: "Socks", category: "Clothes", userQuantity: 4, AIQuantity: 4, isPair: true)
     static let tops = Item(name: "Tops", category: "Clothes", userQuantity: 6, AIQuantity: 6)
     static let shoes = Item(name: "Shoes", category: "Shoes", userQuantity: 2, AIQuantity: 2, isPair: true)
-    static let charger = Item(name: "Charger", category: "Electronics", userQuantity: 1, AIQuantity: 1)
+    static let charger = Item(name: "Charger", category: "Electronics", userQuantity: 1, AIQuantity: 1, imageName: "Charger.png")
     
     mutating func incrementUserQuantity() {
         self.userQuantity += 1
@@ -107,7 +123,7 @@ struct Item: Identifiable, Codable {
         }
         return nil
     }
-    
+
     static func jsonTemplate() -> String {
         return Item(name: "Item", category: "Category", userQuantity: 0, AIQuantity: 0).toJSONString() ?? ""
     }
