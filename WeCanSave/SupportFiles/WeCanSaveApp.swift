@@ -22,11 +22,30 @@ struct WeCanSaveApp: App {
 //            fatalError("Could not create ModelContainer: \(error)")
 //        }
 //    }()
+    
+//    var sharedModelContainer: ModelContainer
+//
+//        init() {
+//            let schema = Schema([User.self])
+//            sharedModelContainer = try! ModelContainer(for: schema)
+//        }
+    
+    let modelContainer: ModelContainer
+        
+        init() {
+            do {
+                modelContainer = try ModelContainer(for: Trip.self)
+            } catch {
+                fatalError("Could not initialize ModelContainer")
+            }
+        }
 
     var body: some Scene {
         WindowGroup {
-            TripPlannerView()
+            TripsListView()
+//                .environment(\.modelContext, sharedModelContainer.mainContext)
+//                .environmentObject(UserManager(modelContext: sharedModelContainer.mainContext))
         }
-//        .modelContainer(sharedModelContainer)
+        .modelContainer(modelContainer)
     }
 }

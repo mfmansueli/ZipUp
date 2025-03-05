@@ -8,11 +8,32 @@
 import SwiftUI
 
 struct PackingListView: View {
+    
+    @State var trip: Trip
+    
+    @State private var bagBuilderShowing: Bool
+    
+    init(trip: Trip) {
+        self.trip = trip
+        self.bagBuilderShowing = !trip.bag!.isDecided
+    }
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            Text("Test")
+            
+            List {
+                ForEach(trip.bag?.itemList ?? [], id: \.id) { item in
+                    Text("\(item.name)")
+                }
+            }
+        }
+        .fullScreenCover(isPresented: $bagBuilderShowing) {
+            BagBuilderView(trip: trip)
+        }
     }
 }
 
 #Preview {
-    PackingListView()
+    PackingListView(trip: Trip.exampleTrip)
 }

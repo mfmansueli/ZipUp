@@ -9,12 +9,16 @@ import SwiftUI
 
 struct SwipeView: View {
     
-    @State var itemList: [Item]
+    // user.trip id = trip id
+    
+    // trip.bag
+    
+    @Binding var itemList: [Item]
     
     var body: some View {
         ZStack {
             ForEach(0..<itemList.count, id: \.self) { index in
-                ItemView(item: itemList[index]) {
+                ItemView(item: $itemList[index]) {
                     withAnimation {
                         removeItem(at: index)
                     }
@@ -26,6 +30,7 @@ struct SwipeView: View {
     
     func removeItem(at index: Int) {
         itemList.remove(at: index)
+        
     }
 }
 
@@ -37,5 +42,5 @@ extension View {
 }
 
 #Preview {
-    SwipeView(itemList: Bag.exampleBag.itemList)
+    SwipeView(itemList: .constant(Bag.exampleBag.itemList))
 }
