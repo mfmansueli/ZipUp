@@ -45,6 +45,8 @@ struct BagProgressView: View {
             }
 //            .frame(maxWidth: geometry.size.width * 0.9)
 //            .padding(geometry.size.width * 0.1)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Bag builder progress: Suggestions remaining; 4")
         }
         
     }

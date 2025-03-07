@@ -80,6 +80,7 @@ struct TripPlannerView: View {
                             .foregroundStyle(.foreground.opacity(destinationText == nil ? 0.4 : 1))
                             .padding()
                     }
+                    .accessibilityAddTraits(.isSearchField)
 
 
                 }

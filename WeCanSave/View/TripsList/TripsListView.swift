@@ -42,6 +42,7 @@ struct TripsListView: View {
         //                .onDelete(perform: deleteItems)
                     }
                     .listStyle(.plain)
+                    .accessibilityLabel("Your upcoming trips")
                 }
                 
                 Spacer()
