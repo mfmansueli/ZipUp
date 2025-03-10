@@ -1,0 +1,90 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%@" : {
+
+    },
+    "%lld" : {
+
+    },
+    "Add new trip" : {
+
+    },
+    "Add or remove our suggestions for your bag" : {
+
+    },
+    "All good, take me to the bag!" : {
+
+    },
+    "Here is maybe where we could put our AI-based reasoning for why we picked this number for this item" : {
+
+    },
+    "How long for?" : {
+
+    },
+    "MAKE ME A BAG!" : {
+
+    },
+    "Paris (5 days)" : {
+
+    },
+    "Search for a location" : {
+      "extractionState" : "manual"
+    },
+    "Select dates" : {
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selecione as datas da sua viagem"
+          }
+        }
+      }
+    },
+    "Test" : {
+
+    },
+    "What are you doing?" : {
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quais atividades voce planejou?"
+          }
+        }
+      }
+    },
+    "When?" : {
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quando?"
+          }
+        }
+      }
+    },
+    "Where are you going next?" : {
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qual o seu próximo destino?"
+          }
+        }
+      }
+    },
+    "Where are you going?" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Qual é o seu destino?"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
