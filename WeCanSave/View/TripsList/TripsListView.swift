@@ -30,19 +30,18 @@ struct TripsListView: View {
                         .listRowSeparator(.hidden)
                         
                 } else {
-                    List {
-                        
-                        ForEach(trips) { trip in
-                            NavigationLink {
-                                PackingListView(trip: trip)
-                            } label: {
-                                Text("\(trip.destinationName)")
-                            }
-                        }
-        //                .onDelete(perform: deleteItems)
-                    }
-                    .listStyle(.plain)
-                    .accessibilityLabel("Your upcoming trips")
+//                    List {
+//                        
+//                        ForEach(trips) { trip in
+//                            NavigationLink {
+//                                PackingListView(trip: trip)
+//                            } label: {
+//                                Text("\(trip.destinationName)")
+//                            }
+//                        }
+//        //                .onDelete(perform: deleteItems)
+//                    }
+//                    .listStyle(.plain)
                 }
                 
                 Spacer()
@@ -52,28 +51,30 @@ struct TripsListView: View {
             
             .toolbar {
 
-                ToolbarItem(placement: .bottomBar) {
-                    Button {
-                        tripPlannerShowing.toggle()
-                    } label: {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
+//                ToolbarItem(placement: .bottomBar) {
+//                    Button {
+//                        tripPlannerShowing.toggle()
+//                    } label: {
+//                        Label("Add Item", systemImage: "plus")
+//                    }
+//                }
                 
                 ToolbarItem(placement: .bottomBar) {
                     Button {
-                        modelContext.insert(
-                            Trip(
-                                destinationName: "London",
-                                destinationLat: "39.14",
-                                destinationLong: "-120.25",
-                                startDate: Calendar.current.date(from: DateComponents(year: 2025, month: 5, day: 12))!,
-                                endDate: Calendar.current.date(from: DateComponents(year: 2025, month: 5, day: 24))!,
-                                category: "Culture"
-                            )
-                        )
+                        tripPlannerShowing.toggle()
+//                        modelContext.insert(
+//                            Trip(
+//                                destinationName: "London",
+//                                destinationLat: "39.14",
+//                                destinationLong: "-120.25",
+//                                startDate: Calendar.current.date(from: DateComponents(year: 2025, month: 5, day: 12))!,
+//                                endDate: Calendar.current.date(from: DateComponents(year: 2025, month: 5, day: 24))!,
+//                                category: "Culture"
+//                            )
+//                        )
                     } label: {
-                        Text("Add fake trip")
+                        
+                        Label("Add new trip", systemImage: "plus")
                     }
                 }
             }

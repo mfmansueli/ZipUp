@@ -90,6 +90,9 @@ class TripPlannerViewModel: ObservableObject {
             print("No API key found.")
             return
         }
+        
+        let currentLanguage = Locale.current.language.languageCode?.identifier ?? "en"
+        
         var request = URLRequest(url: URL(string: "https://api.openai.com/v1/chat/completions")!)
         request.httpMethod = "POST"
         request.setValue("Bearer \(openAIKey)", forHTTPHeaderField: "Authorization")
@@ -103,17 +106,17 @@ class TripPlannerViewModel: ObservableObject {
             "messages": [
                 [
                     "role": "system",
-                    "content": "You are a helpful assistant that generates fresh and unique insights about your packing list for a trip. Always response in json format. Return the items in the format inside a list: {\"name\": \"item name\", \"category\": \"category name\", \"quantity\": 1, \"AIQuantity\": 1, \"imageName\": \"image name\", \"isPair\": false}"
+                    "content": "You are a helpful assistant that generates fresh and unique insights about your packing list for a trip. Always respond in json format. Return the items in the format inside a list: {\"name\": \"item name\", \"category\": \"category name\", \"quantity\": 1, \"AIQuantity\": 1, \"imageName\": \"image name\", \"isPair\": false}"
                 ],
                 [
                     "role": "user",
-                    "content": "Venice for 3 days in summer could you give me a list of things to bring to my trip?"
+                    "content": "Venice for 3 days in summer could you give me a list of things to bring to my trip? Please respond in \(currentLanguage)."
                 ]
             ],
             "temperature": temperature,
             "top_p": top_p,
             "n": 1,
-            "max_tokens": 1500
+            "max_tokens": 3000
         ] as [String : Any]
         
         do {
