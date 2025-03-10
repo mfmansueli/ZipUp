@@ -43,6 +43,10 @@ struct TripPlannerView: View {
                                 RoundedRectangle(cornerRadius: 8)
                                     .strokeBorder(.gray, lineWidth: 1)
                             }
+                    }
+                    .accessibilityAddTraits(.isSearchField)
+
+
                 }
                 .popover(isPresented: $isDateActivated) {
                     MultiDatePickerView()
