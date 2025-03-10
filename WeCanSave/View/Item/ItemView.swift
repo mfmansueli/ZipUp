@@ -117,30 +117,8 @@ struct ItemView: View {
                     }
                 }
         )
-//        .accessibilitySortPriority(2)
         .accessibilityRepresentation {
             Text("Suggestion: \(item.name). Number to bring: \(item.userQuantity)")
-//                .accessibilitySortPriority(2)
-////            Text("\(item.userQuantity) \(item.isPair ? item.userQuantity > 1 ? "pairs" : "pair" : "")")
-//            Text("AI Description placeholder")
-//            Stepper("Number of \(item.name) in bag: \(item.userQuantity)") {
-//                item.incrementUserQuantity()
-//            } onDecrement: {
-//                item.decrementUserQuantity()
-//            } onEditingChanged: { _ in
-//                let editedAnnouncement = AttributedString("\(item.userQuantity) \(item.name)s")
-//                AccessibilityNotification.Announcement(editedAnnouncement).post()
-//            }
-//            Button("Add to your bag") {
-//                item.isDecided = true
-//                removal?()
-//            }
-//            Button("Discard from your bag") {
-//                item.isDecided = true
-//                removal?()
-//            }
-            
-
             
         }
         .accessibilityAction(named: "Add to bag", {
