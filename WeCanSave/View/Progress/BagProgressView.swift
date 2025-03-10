@@ -11,22 +11,25 @@ struct BagProgressView: View {
     
     @State var bagProgress: Double
     @State var isOpen: Bool
+    @State var showProgress: Bool
     @State var itemCount: Int = 0
     
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                Circle()
-                    .trim(from: 0, to: bagProgress)
-                    .rotation(.degrees(-90))
-                    .stroke(.brandGreen, style: StrokeStyle(lineWidth: geometry.size.width * 0.04, lineCap: .round))
+                if showProgress {
+                    Circle()
+                        .trim(from: 0, to: bagProgress)
+                        .rotation(.degrees(-90))
+                        .stroke(.brandGreen, style: StrokeStyle(lineWidth: geometry.size.width * 0.04, lineCap: .round))
+                }
                 
                 ZStack(alignment: .bottomLeading) {
                     Image(isOpen ? "Bag_open-symbol"  : "Bag_closed-symbol")
                         .resizable()
-                        .scaledToFit()
+                        .scaledToFill()
                         .foregroundStyle(.brandOrange)
-                    //                    .padding(80)
+//                                        .padding(80)
                     
                     Text("\(itemCount)")
                     //                    .font(.title)
@@ -37,8 +40,9 @@ struct BagProgressView: View {
                                 .fill(.background)
                                 .stroke(.foreground, lineWidth: 2)
                         )
+                        .offset(x: -geometry.size.width * 0.1)
                 }
-                .padding(geometry.size.width * 0.15)
+                .padding(showProgress ? geometry.size.width * 0.15 : 0)
                 .padding(.leading)
                 
                 
@@ -53,5 +57,5 @@ struct BagProgressView: View {
 }
 
 #Preview {
-    BagProgressView(bagProgress: 0.4, isOpen: false, itemCount: 10)
+    BagProgressView(bagProgress: 0.4, isOpen: false, showProgress: true, itemCount: 10)
 }

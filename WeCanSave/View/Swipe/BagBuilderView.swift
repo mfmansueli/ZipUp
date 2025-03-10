@@ -27,7 +27,7 @@ struct BagBuilderView: View {
                 count += item.userQuantity
             }
         }
-        print(count)
+//        print(count)
         return count
     }
     
@@ -38,35 +38,41 @@ struct BagBuilderView: View {
     }
     
     var body: some View {
-        VStack(spacing: 20) {
-            HStack {
-                Text("Paris (5 days)")
-                    .padding(.horizontal)
+        GeometryReader { geometry in
+            VStack(spacing: 20) {
+                HStack {
+                    Text("Paris (5 days)")
+                        .padding(.horizontal)
+                        .frame(width: geometry.size.width * 0.6 - 20)
+                    
+                    Divider()
+                        .frame(width: 1, height: 80)
+                        .padding()
+                    
+                    BagProgressView(bagProgress: progress, isOpen: false, showProgress: true, itemCount: itemCount)
+//                        .frame(height: 180) // Ensures it has a defined size
+                }
+                .frame(height: 100)
+                .padding(.bottom, 40)
                 
-                Divider()
-                    .frame(width: 1, height: 80)
                 
-                BagProgressView(bagProgress: progress, isOpen: false, itemCount: itemCount)
-                    .frame(height: 180) // Ensures it has a defined size
-//                    .zIndex(1)
+                
+                Text("Add or remove our suggestions for your bag")
+                //                .font(.callout)
+                    .foregroundStyle(.foreground.opacity(0.5))
+                //                .accessibilitySortPriority(1)
+                
+                SwipeView(itemList: $itemList)
+                //                .accessibilitySortPriority(2)
+                
+                Button("All good, take me to the bag!") {
+                    print(itemList.count)
+                }
+                .buttonStyle(.bordered)
             }
-            
-//            Spacer()
-            Text("Add or remove our suggestions for your bag")
-//                .font(.callout)
-                .foregroundStyle(.foreground.opacity(0.5))
-//                .accessibilitySortPriority(1)
-            
-            SwipeView(itemList: $itemList)
-//                .accessibilitySortPriority(2)
-            
-            Button("All good, take me to the bag!") {
-                print(itemList.count)
+            .onAppear {
+                totalCards = itemList.count
             }
-            .buttonStyle(.bordered)
-        }
-        .onAppear {
-            totalCards = itemList.count
         }
     }
 }
