@@ -118,7 +118,8 @@ class TripPlannerViewModel: BaseViewModel {
                     destinationLong: "\(selectedPlacemark.coordinate.longitude)",
                     startDate: firstDate,
                     endDate: lastDate,
-                    category: selectedTripType?.rawValue ?? "General"
+                    category: selectedTripType?.rawValue ?? "General",
+                    bag: Bag(itemList: items)
                 )
                 modelContext.insert(trip)
                 
@@ -142,8 +143,6 @@ class TripPlannerViewModel: BaseViewModel {
         request.setValue("Bearer \(openAIKey)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        let temperature = 0.7
-        let top_p = 0.9
         var content = "\(selectedPlacemark.title ?? "") for \(dates.count) days"
         
         if let weatherInfo = weatherInfo, !weatherInfo.isEmpty {
@@ -160,18 +159,15 @@ class TripPlannerViewModel: BaseViewModel {
             "messages": [
                 [
                     "role": "system",
-                    "content": "You are a helpful assistant that generates fresh and unique insights about my packing list for a trip. Always respond in json format. Return the items in the format inside a list: {\"name\": \"item name\", \"category\": \"category name\", \"quantity\": 1, \"AIQuantity\": 1, \"imageName\": \"image name\", \"isPair\": false}"
+                    "content": "You are a helpful assistant that generates fresh and unique insights about my packing list for a trip. Always respond in json format. Return the at least 20 or more items in the format inside a list: {\"name\": \"item name\", \"category\": \"category name\", \"userQuantity\": 1, \"AIQuantity\": 1, \"imageName\": \"image name\", \"isPair\": false}"
                 ],
                 [
                     "role": "user",
                     "content": content
                 ]
             ],
-            "temperature": temperature,
-            "top_p": top_p,
             "n": 1,
-            "max_tokens": 4000,
-            "response_format": "json"
+            "max_tokens": 4000
         ] as [String : Any]
         
         request.httpBody = try JSONSerialization.data(withJSONObject: parameters)

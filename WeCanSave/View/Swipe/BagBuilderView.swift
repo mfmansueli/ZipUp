@@ -9,6 +9,7 @@ import SwiftUI
 
 struct BagBuilderView: View {
     
+    @Environment(\.presentationMode) var presentation
     @State private var trip: Trip
     
     @State var itemList: [Item]
@@ -35,6 +36,7 @@ struct BagBuilderView: View {
         self.trip = trip
         self.itemList = trip.bag!.itemList
         
+            print(trip.bag!.itemList)
     }
     
     var body: some View {
@@ -46,9 +48,13 @@ struct BagBuilderView: View {
                 Divider()
                     .frame(width: 1, height: 80)
                 
-                BagProgressView(bagProgress: progress, isOpen: false, itemCount: itemCount)
-                    .frame(height: 180) // Ensures it has a defined size
-//                    .zIndex(1)
+                Button {
+                    presentation.wrappedValue.dismiss()
+                } label: {
+                    BagProgressView(bagProgress: progress, isOpen: false, itemCount: itemCount)
+                        .frame(height: 180) // Ensures it has a defined size
+                    //                    .zIndex(1)
+                }
             }
             
 //            Spacer()

@@ -108,7 +108,7 @@ struct Item: Identifiable, Codable {
     var isPair = false
     
     enum CodingKeys: String, CodingKey {
-        case name, category, userQuantity, AIQuantity, isDecided, imageName, isPair
+        case name, category, userQuantity, AIQuantity, imageName, isPair
     }
     
     static let socks = Item(name: "Socks", category: "Clothes", userQuantity: 4, AIQuantity: 4, isPair: true)

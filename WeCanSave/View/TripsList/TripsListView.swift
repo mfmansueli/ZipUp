@@ -31,11 +31,16 @@ struct TripsListView: View {
                 } else {
                     List {
                         ForEach(trips) { trip in
-                            NavigationLink {
-                                PackingListView(trip: trip)
+                            Button {
+                                viewModel.selectedTrip = trip
                             } label: {
                                 Text("\(trip.destinationName)")
                             }
+//                            NavigationLink {
+//                                PackingListView(trip: trip)
+//                            } label: {
+//                                Text("\(trip.destinationName)")
+//                            }
                         }
         //                .onDelete(perform: deleteItems)
                     }
