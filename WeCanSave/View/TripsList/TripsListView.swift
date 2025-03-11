@@ -30,18 +30,18 @@ struct TripsListView: View {
                         .listRowSeparator(.hidden)
                         
                 } else {
-//                    List {
-//                        
-//                        ForEach(trips) { trip in
-//                            NavigationLink {
-//                                PackingListView(trip: trip)
-//                            } label: {
-//                                Text("\(trip.destinationName)")
-//                            }
-//                        }
-//        //                .onDelete(perform: deleteItems)
-//                    }
-//                    .listStyle(.plain)
+                    List {
+                        
+                        ForEach(trips) { trip in
+                            NavigationLink {
+                                PackingListView(trip: trip)
+                            } label: {
+                                Text("\(trip.destinationName)")
+                            }
+                        }
+        //                .onDelete(perform: deleteItems)
+                    }
+                    .listStyle(.plain)
                 }
                 
                 Spacer()

@@ -1,10 +1,16 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "" : {
+
+    },
     "%@" : {
 
     },
     "%lld" : {
+
+    },
+    "%lld days" : {
 
     },
     "Add new trip" : {
@@ -14,6 +20,9 @@
 
     },
     "All good, take me to the bag!" : {
+
+    },
+    "Cancel" : {
 
     },
     "Here is maybe where we could put our AI-based reasoning for why we picked this number for this item" : {
