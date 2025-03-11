@@ -55,8 +55,10 @@ struct BagBuilderView: View {
             Text("Add or remove our suggestions for your bag")
 //                .font(.callout)
                 .foregroundStyle(.foreground.opacity(0.5))
+//                .accessibilitySortPriority(1)
             
             SwipeView(itemList: $itemList)
+//                .accessibilitySortPriority(2)
             
             Button("All good, take me to the bag!") {
                 print(itemList.count)

@@ -100,6 +100,7 @@ struct TripPlannerView: View {
                                 .padding()
                             
                         }
+                        .accessibilityAddTraits(.isSearchField)
                         .background {
                             RoundedRectangle(cornerRadius: 32)
                                 .strokeBorder(Color.accentColor, lineWidth: 1)
@@ -141,7 +142,7 @@ struct TripPlannerView: View {
                     
                     Spacer()
                     
-                        Spacer()
+                    Spacer()
                     HStack {
                         Spacer()
                         
@@ -166,7 +167,7 @@ struct TripPlannerView: View {
                     Button {
                         presentation.wrappedValue.dismiss()
                     } label: {
-                        Label("Cancel", systemImage: "")
+                        Text("Cancel")
                     }
                 }
             }
