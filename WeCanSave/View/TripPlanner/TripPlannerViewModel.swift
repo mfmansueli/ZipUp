@@ -7,7 +7,7 @@
 import Foundation
 import MapKit
 import SwiftUI
-@preconcurrency import WeatherKit
+import WeatherKit
 import CloudKit
 import Security
 import SwiftData
@@ -15,10 +15,14 @@ import SwiftData
 class TripPlannerViewModel: BaseViewModel {
     var modelContext: ModelContext!
     var searchTimer: Timer?
+    @Published var selectedTrip: Trip?
     @Published var searchText = "" {
         didSet {
-            searchTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { [weak self] _ in
-                self?.searchDestinations()
+            searchTimer?.invalidate()
+            if !searchText.isEmpty {
+                searchTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { [weak self] _ in
+                    self?.searchDestinations()
+                }
             }
         }
     }
@@ -84,6 +88,7 @@ class TripPlannerViewModel: BaseViewModel {
         return "Temperature: \(weather.currentWeather.temperature), Condition: \(weather.currentWeather.condition.description)"
     }
     
+
     @MainActor
     func loadBag(aiEnabled: Bool = true) {
         guard let selectedPlacemark = selectedPlacemark else {
@@ -117,8 +122,11 @@ class TripPlannerViewModel: BaseViewModel {
                 )
                 modelContext.insert(trip)
                 
+                let database = CKContainer.default().publicCloudDatabase
+                try await database.save(trip.toCKRecord())
                 
                 isLoading = false
+                selectedTrip = trip
             } catch {
                 isLoading = false
                 showAlert(title: "Error while generating the bag", message: "Unable to proceed, please contact support. \nError: \(error)")
@@ -141,14 +149,18 @@ class TripPlannerViewModel: BaseViewModel {
         if let weatherInfo = weatherInfo, !weatherInfo.isEmpty {
             content += " with the weather \(weatherInfo)"
         }
-        content += " could you give me a list of things to bring to my trip? Please respond in \(currentLanguage)."
+        content += " could you give me a list of things to bring to my trip?"
+        if let selectedTripType = selectedTripType {
+            content += "I'm going on a \(selectedTripType.rawValue) trip."
+        }
+        content += "Please respond in \(currentLanguage)."
         
         let parameters = [
             "model": "gpt-3.5-turbo",
             "messages": [
                 [
                     "role": "system",
-                    "content": "You are a helpful assistant that generates fresh and unique insights about your packing list for a trip. Always respond in json format. Return the items in the format inside a list: {\"name\": \"item name\", \"category\": \"category name\", \"quantity\": 1, \"AIQuantity\": 1, \"imageName\": \"image name\", \"isPair\": false}"
+                    "content": "You are a helpful assistant that generates fresh and unique insights about my packing list for a trip. Always respond in json format. Return the items in the format inside a list: {\"name\": \"item name\", \"category\": \"category name\", \"quantity\": 1, \"AIQuantity\": 1, \"imageName\": \"image name\", \"isPair\": false}"
                 ],
                 [
                     "role": "user",
@@ -158,7 +170,8 @@ class TripPlannerViewModel: BaseViewModel {
             "temperature": temperature,
             "top_p": top_p,
             "n": 1,
-            "max_tokens": 4000
+            "max_tokens": 4000,
+            "response_format": "json"
         ] as [String : Any]
         
         request.httpBody = try JSONSerialization.data(withJSONObject: parameters)

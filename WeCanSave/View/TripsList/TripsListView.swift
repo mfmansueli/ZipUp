@@ -9,12 +9,11 @@ import SwiftUI
 import SwiftData
 
 struct TripsListView: View {
+    @ObservedObject var viewModel = TripsListViewModel()
     @Environment(\.modelContext) private var modelContext
     @Query private var trips: [Trip]
     
     @State private var items = Bag.exampleBag.itemList
-    
-    @State private var tripPlannerShowing: Bool = false
     
     var body: some View {
         NavigationSplitView {
@@ -31,7 +30,6 @@ struct TripsListView: View {
                         
                 } else {
                     List {
-                        
                         ForEach(trips) { trip in
                             NavigationLink {
                                 PackingListView(trip: trip)
@@ -43,46 +41,33 @@ struct TripsListView: View {
                     }
                     .listStyle(.plain)
                 }
-                
                 Spacer()
-
-                
             }
-            
+            .navigationDestination(item: $viewModel.selectedTrip,
+                                   destination: { item in
+                PackingListView(trip: item)
+            })
             .toolbar {
-
-//                ToolbarItem(placement: .bottomBar) {
-//                    Button {
-//                        tripPlannerShowing.toggle()
-//                    } label: {
-//                        Label("Add Item", systemImage: "plus")
-//                    }
-//                }
+                ToolbarItem(placement: .bottomBar) {
+                    
+                    Button {
+                        
+                        viewModel.showTripPlanner.toggle()
+                    } label: {
+                        Label("Add new trip", systemImage: "plus")
+                            .labelStyle(.titleAndIcon)
+                    }.buttonStyle(.borderless)
+                }
                 
                 ToolbarItem(placement: .bottomBar) {
-                    Button {
-                        tripPlannerShowing.toggle()
-//                        modelContext.insert(
-//                            Trip(
-//                                destinationName: "London",
-//                                destinationLat: "39.14",
-//                                destinationLong: "-120.25",
-//                                startDate: Calendar.current.date(from: DateComponents(year: 2025, month: 5, day: 12))!,
-//                                endDate: Calendar.current.date(from: DateComponents(year: 2025, month: 5, day: 24))!,
-//                                category: "Culture"
-//                            )
-//                        )
-                    } label: {
-                        
-                        Label("Add new trip", systemImage: "plus")
-                    }
+                    Spacer()
                 }
             }
         } detail: {
             //
         }
-        .sheet(isPresented: $tripPlannerShowing) {
-            TripPlannerView()
+        .sheet(isPresented: $viewModel.showTripPlanner) {
+            TripPlannerView(selectedTrip: $viewModel.selectedTrip)
         }
     }
 

@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import SwiftData
 import MapKit
-
+import CloudKit
 
 @Model
 class Trip {
@@ -58,6 +58,17 @@ class Trip {
         category: "Adventure",
         bag: Bag.exampleBag
     )
+    
+    func toCKRecord() -> CKRecord {
+        let tripRecord = CKRecord(recordType: "Trip")
+        tripRecord["destinationName"] = destinationName as CKRecordValue
+        tripRecord["destinationLat"] = destinationLat as CKRecordValue
+        tripRecord["destinationLong"] = destinationLong as CKRecordValue
+        tripRecord["startDate"] = startDate as CKRecordValue
+        tripRecord["endDate"] = endDate as CKRecordValue
+        tripRecord["category"] = category as CKRecordValue
+        return tripRecord
+    }
 }
 
 @Model

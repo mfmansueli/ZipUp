@@ -22,23 +22,6 @@ struct WeCanSaveApp: App {
             fatalError("Could not create ModelContainer: \(error)")
         }
     }()
-    
-//    var sharedModelContainer: ModelContainer
-//
-//        init() {
-//            let schema = Schema([Trip.self])
-//            sharedModelContainer = try! ModelContainer(for: schema)
-//        }
-//    
-//    let modelContainer: ModelContainer
-//        
-//        init() {
-//            do {
-//                sharedModelContainer = try ModelContainer(for: Trip.self)
-//            } catch {
-//                fatalError("Could not initialize ModelContainer")
-//            }
-//        }
 
     var body: some Scene {
         WindowGroup {
