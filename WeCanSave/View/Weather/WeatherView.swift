@@ -78,7 +78,8 @@ struct WeatherView: View {
                                     }
                                 }
                                 .foregroundColor(.black)
-
+                                
+                                    .presentationCompactAdaptation(.popover)
                                 .padding(.vertical)
                             }
                         }
