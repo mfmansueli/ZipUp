@@ -11,7 +11,7 @@ struct MultiDatePickerView: View {
     
     @Environment(\.calendar) var calendar
     @Environment(\.timeZone) var timeZone
-    @State private var dates: Set<DateComponents> = []
+    @Binding var dates: Set<DateComponents>
     let datePickerComponents: Set<Calendar.Component> = [.calendar, .era, .year, .month, .day]
     
     var today: Date {
@@ -78,5 +78,5 @@ struct MultiDatePickerView: View {
 }
 
 #Preview {
-    MultiDatePickerView()
+    MultiDatePickerView(dates: .constant([]))
 }

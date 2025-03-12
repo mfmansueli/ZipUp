@@ -127,7 +127,7 @@ struct ListItemView: View {
                 Text("x\(item.userQuantity)")
                     .font(.title)
             }
-
+            
         }
     }
 }

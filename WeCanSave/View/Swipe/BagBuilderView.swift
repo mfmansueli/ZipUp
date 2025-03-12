@@ -9,10 +9,11 @@ import SwiftUI
 
 struct BagBuilderView: View {
     
+    @Environment(\.presentationMode) var presentation
     @State private var trip: Trip
     
     @State var itemList: [Item]
-
+    
     @State var totalCards: Int = 0
     
     var progress: Double {
@@ -27,7 +28,7 @@ struct BagBuilderView: View {
                 count += item.userQuantity
             }
         }
-//        print(count)
+        //        print(count)
         return count
     }
     
@@ -35,6 +36,7 @@ struct BagBuilderView: View {
         self.trip = trip
         self.itemList = trip.bag!.itemList
         
+        print(trip.bag!.itemList)
     }
     
     var body: some View {
@@ -48,9 +50,13 @@ struct BagBuilderView: View {
                     Divider()
                         .frame(width: 1, height: 80)
                         .padding()
+                    Button {
+                        presentation.wrappedValue.dismiss()
+                    } label: {
+                        BagProgressView(bagProgress: progress, isOpen: false, showProgress: true, itemCount: itemCount)
+                        //                        .frame(height: 180) // Ensures it has a defined size
+                    }
                     
-                    BagProgressView(bagProgress: progress, isOpen: false, showProgress: true, itemCount: itemCount)
-//                        .frame(height: 180) // Ensures it has a defined size
                 }
                 .frame(height: 100)
                 .padding(.bottom, 40)
