@@ -19,15 +19,15 @@ struct TripsListView: View {
         NavigationSplitView {
             VStack {
                 Spacer()
-
+                
                 if trips.isEmpty {
-
+                    
                     Text("Where are you going next?")
                         .font(.system(size: 60, weight: .bold))
                         .padding(50)
                         .multilineTextAlignment(.center)
                         .listRowSeparator(.hidden)
-                        
+                    
                 } else {
                     List {
                         ForEach(trips) { trip in
@@ -36,13 +36,13 @@ struct TripsListView: View {
                             } label: {
                                 Text("\(trip.destinationName)")
                             }
-//                            NavigationLink {
-//                                PackingListView(trip: trip)
-//                            } label: {
-//                                Text("\(trip.destinationName)")
-//                            }
+                            //                            NavigationLink {
+                            //                                PackingListView(trip: trip)
+                            //                            } label: {
+                            //                                Text("\(trip.destinationName)")
+                            //                            }
                         }
-        //                .onDelete(perform: deleteItems)
+                        //                .onDelete(perform: deleteItems)
                     }
                     .listStyle(.plain)
                 }
@@ -75,21 +75,21 @@ struct TripsListView: View {
             TripPlannerView(selectedTrip: $viewModel.selectedTrip)
         }
     }
-
+    
     private func addItem() {
         withAnimation {
-//            let newItem = Item(timestamp: Date())
-//            modelContext.insert(newItem)
+            //            let newItem = Item(timestamp: Date())
+            //            modelContext.insert(newItem)
         }
     }
-//
-//    private func deleteItems(offsets: IndexSet) {
-//        withAnimation {
-//            for index in offsets {
-//                modelContext.delete(items[index])
-//            }
-//        }
-//    }
+    //
+    //    private func deleteItems(offsets: IndexSet) {
+    //        withAnimation {
+    //            for index in offsets {
+    //                modelContext.delete(items[index])
+    //            }
+    //        }
+    //    }
 }
 
 #Preview {

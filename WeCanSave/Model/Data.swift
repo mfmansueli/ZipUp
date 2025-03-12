@@ -104,6 +104,8 @@ struct Item: Identifiable, Codable {
     var userQuantity: Int
     let AIQuantity: Int
     var isDecided: Bool = false
+    var isWearing: Bool = false
+    var isPacked: Bool = false
     var imageName: String?
     var isPair = false
     

@@ -88,7 +88,7 @@ class TripPlannerViewModel: BaseViewModel {
         return "Temperature: \(weather.currentWeather.temperature), Condition: \(weather.currentWeather.condition.description)"
     }
     
-
+    
     @MainActor
     func loadBag(aiEnabled: Bool = true) {
         guard let selectedPlacemark = selectedPlacemark else {
