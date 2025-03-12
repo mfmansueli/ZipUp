@@ -32,9 +32,9 @@ struct BagProgressView: View {
 //                                        .padding(80)
                     
                     Text("\(itemCount)")
-                    //                    .font(.title)
+                        .font(.caption)
                         .foregroundStyle(.primary)
-                        .padding(10)
+                        .padding(5)
                         .background(
                             Circle()
                                 .fill(.background)
@@ -47,7 +47,7 @@ struct BagProgressView: View {
                 
                 
             }
-//            .frame(maxWidth: geometry.size.width * 0.9)
+            .frame(maxWidth: geometry.size.width * 0.9)
 //            .padding(geometry.size.width * 0.1)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("Bag builder progress: Suggestions remaining; 4")

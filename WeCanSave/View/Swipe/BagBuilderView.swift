@@ -21,15 +21,9 @@ struct BagBuilderView: View {
     }
     
     var itemCount: Int {
-        var count: Int = 0
+//        print(trip.bag!.getItemCount())
+        return trip.bag!.getItemCount()
         
-        for item in itemList {
-            if item.isDecided {
-                count += item.userQuantity
-            }
-        }
-        //        print(count)
-        return count
     }
     
     init(trip: Trip) {
@@ -48,12 +42,14 @@ struct BagBuilderView: View {
                     
                     Divider()
                         .frame(width: 1, height: 100)
+                        .padding(.trailing, 20)
                     Button {
                         presentation.wrappedValue.dismiss()
                     } label: {
-                        BagProgressView(bagProgress: 0.2, isOpen: false, showProgress: true, itemCount: itemCount)
+                        BagProgressView(bagProgress: 0.4, isOpen: false, showProgress: true, itemCount: itemCount)
                             .frame(width: geometry.size.width * 0.4 - 40)
                     }
+                    .foregroundStyle(.primary)
                     
                 }
                 .frame(height: 100)

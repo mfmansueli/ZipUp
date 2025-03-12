@@ -13,7 +13,9 @@ struct PackingListView: View {
     
     @State private var bagBuilderShowing: Bool
     
-
+    var itemCount: Int {
+        trip.bag.getItemCount()
+    }
 
     init(trip: Trip) {
         self.trip = trip
@@ -25,18 +27,19 @@ struct PackingListView: View {
             GeometryReader { geometry in
                 VStack(alignment: .leading) {
                     HStack {
-                        Text("Paris (5 days)")
-                        //                        .padding(.horizontal)
+                        WeatherView2(trip: trip)
                             .frame(width: geometry.size.width * 0.6 - 20)
 
                         Divider()
-                            .frame(width: 1, height: 80)
-                            .padding()
+                            .frame(width: 1, height: 100)
+                            .padding(.trailing, 20)
 
-                        BagProgressView(bagProgress: 1, isOpen: true, showProgress: false, itemCount: trip.bag!.itemList.count)
+                        BagProgressView(bagProgress: 1, isOpen: true, showProgress: true, itemCount: itemCount)
+                            .frame(width: geometry.size.width * 0.4 - 40)
 
                     }
                     .frame(height: 100)
+                    .padding(.bottom, 20)
 
                     Text("Your bag")
                         .font(.title).bold()
@@ -91,7 +94,7 @@ struct PackingListView: View {
 }
 
 #Preview {
-    PackingListView(trip: Trip.exampleTrip)
+    PackingListView(trip: Trip.exampleTripDecided)
 }
 
 
