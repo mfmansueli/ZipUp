@@ -21,7 +21,6 @@ class TripPlannerViewModel: ObservableObject {
         }
     }
     @Published var searchResults: [MKMapItem] = []
-    @Published var weatherInfo: String?
     @Published var selectedItem: MKMapItem?
     @Published var isLoading: Bool = false
     @Published var isBagGenerated: Bool = false
@@ -68,22 +67,6 @@ class TripPlannerViewModel: ObservableObject {
         }
     }
 
-    func fetchWeather(for coordinate: CLLocationCoordinate2D) {
-        let weatherService = WeatherService()
-        let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
-
-        Task {
-            do {
-                let weather = try await weatherService.weather(for: location)
-                DispatchQueue.main.async { [weak self] in
-                    self?.weatherInfo = "Temperature: \(weather.currentWeather.temperature)°C, Condition: \(weather.currentWeather.condition.description)"
-                    print(self?.weatherInfo ?? "")
-                }
-            } catch {
-                print("Failed to fetch weather: \(error.localizedDescription)")
-            }
-        }
-    }
     
     func loadBag(aiEnabled: Bool = true) {
         guard let openAIKey = getAPIKeyFromKeychain() else {

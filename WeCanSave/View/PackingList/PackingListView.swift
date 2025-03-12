@@ -20,6 +20,7 @@ struct PackingListView: View {
     
     var body: some View {
         VStack {
+            
             Text("Test")
             
             List {
