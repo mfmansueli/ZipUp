@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import SwiftData
 import MapKit
-
+import CloudKit
 
 @Model
 class Trip {
@@ -59,6 +59,17 @@ class Trip {
         category: "Adventure",
         bag: Bag.exampleBag
     )
+    
+    func toCKRecord() -> CKRecord {
+        let tripRecord = CKRecord(recordType: "Trip")
+        tripRecord["destinationName"] = destinationName as CKRecordValue
+        tripRecord["destinationLat"] = destinationLat as CKRecordValue
+        tripRecord["destinationLong"] = destinationLong as CKRecordValue
+        tripRecord["startDate"] = startDate as CKRecordValue
+        tripRecord["endDate"] = endDate as CKRecordValue
+        tripRecord["category"] = category as CKRecordValue
+        return tripRecord
+    }
 }
 
 @Model
@@ -94,11 +105,13 @@ struct Item: Identifiable, Codable {
     var userQuantity: Int
     let AIQuantity: Int
     var isDecided: Bool = false
+    var isWearing: Bool = false
+    var isPacked: Bool = false
     var imageName: String?
     var isPair = false
     
     enum CodingKeys: String, CodingKey {
-        case name, category, userQuantity, AIQuantity, isDecided, imageName, isPair
+        case name, category, userQuantity, AIQuantity, imageName, isPair
     }
     
     static let socks = Item(name: "Socks", category: "Clothes", userQuantity: 4, AIQuantity: 4, isPair: true)

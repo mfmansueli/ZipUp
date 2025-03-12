@@ -1,10 +1,25 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "" : {
+
+    },
+    "\nCreate your first trip to get started." : {
+
+    },
+    " are you going next?" : {
+
+    },
     "%@" : {
 
     },
     "%lld" : {
+
+    },
+    "%lld days" : {
+
+    },
+    "%lld Days" : {
 
     },
     "Add new trip" : {
@@ -13,7 +28,28 @@
     "Add or remove our suggestions for your bag" : {
 
     },
+    "Add to bag" : {
+
+    },
     "All good, take me to the bag!" : {
+
+    },
+    "avg. max." : {
+
+    },
+    "avg. min." : {
+
+    },
+    "Bag builder progress: Suggestions remaining; 4" : {
+
+    },
+    "Cancel" : {
+
+    },
+    "Decrease number of %@" : {
+
+    },
+    "Discard from bag" : {
 
     },
     "Here is maybe where we could put our AI-based reasoning for why we picked this number for this item" : {
@@ -22,7 +58,19 @@
     "How long for?" : {
 
     },
+    "Increase number of %@" : {
+
+    },
     "MAKE ME A BAG!" : {
+
+    },
+    "n.items" : {
+
+    },
+    "Naples, New York, Bangkok..." : {
+
+    },
+    "packed" : {
 
     },
     "Paris (5 days)" : {
@@ -41,7 +89,17 @@
         }
       }
     },
-    "Test" : {
+    "Suggestion: %@. Number to bring: %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Suggestion: %1$@. Number to bring: %2$lld"
+          }
+        }
+      }
+    },
+    "wearing" : {
 
     },
     "What are you doing?" : {
@@ -64,7 +122,11 @@
         }
       }
     },
+    "Where" : {
+
+    },
     "Where are you going next?" : {
+      "extractionState" : "stale",
       "localizations" : {
         "pt-BR" : {
           "stringUnit" : {
@@ -84,6 +146,15 @@
           }
         }
       }
+    },
+    "x%lld" : {
+
+    },
+    "Your bag" : {
+
+    },
+    "ZipUp" : {
+
     }
   },
   "version" : "1.0"
