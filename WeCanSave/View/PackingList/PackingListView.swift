@@ -117,14 +117,14 @@ struct ListItemView: View {
             
             
             
-
+            
             Spacer()
             HStack(spacing: 45) {
                 ListItemPackedButton(item: $item)
                 ListItemWearingButton(item: $item)
                 Text("x\(item.userQuantity)")
             }
-
+            
         }
     }
 }

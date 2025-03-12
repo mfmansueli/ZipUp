@@ -10,35 +10,18 @@ import SwiftData
 
 @main
 struct WeCanSaveApp: App {
-//    var sharedModelContainer: ModelContainer = {
-//        let schema = Schema([
-//            Item.self,
-//        ])
-//        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-//
-//        do {
-//            return try ModelContainer(for: schema, configurations: [modelConfiguration])
-//        } catch {
-//            fatalError("Could not create ModelContainer: \(error)")
-//        }
-//    }()
-    
-//    var sharedModelContainer: ModelContainer
-//
-//        init() {
-//            let schema = Schema([User.self])
-//            sharedModelContainer = try! ModelContainer(for: schema)
-//        }
-    
-    let modelContainer: ModelContainer
-        
-        init() {
-            do {
-                modelContainer = try ModelContainer(for: Trip.self)
-            } catch {
-                fatalError("Could not initialize ModelContainer")
-            }
+    var sharedModelContainer: ModelContainer = {
+        let schema = Schema([
+            Trip.self,
+        ])
+        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+
+        do {
+            return try ModelContainer(for: schema, configurations: [modelConfiguration])
+        } catch {
+            fatalError("Could not create ModelContainer: \(error)")
         }
+    }()
 
     var body: some Scene {
         WindowGroup {
@@ -46,6 +29,6 @@ struct WeCanSaveApp: App {
 //                .environment(\.modelContext, sharedModelContainer.mainContext)
 //                .environmentObject(UserManager(modelContext: sharedModelContainer.mainContext))
         }
-        .modelContainer(modelContainer)
+        .modelContainer(sharedModelContainer)
     }
 }
