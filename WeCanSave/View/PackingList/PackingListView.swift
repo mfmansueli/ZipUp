@@ -142,9 +142,7 @@ struct ListItemWearingButton: View {
 
     var body: some View {
         HStack(alignment: .center) {
-
-
-            Image(isSingular ? "jacket" : item.isWearing ? "jacket_1" : "jacket")
+            Image(isSingular ? "jacket_button" : item.isWearing ? "jacket_1" : "jacket_button")
                 .resizable()
                 .scaledToFill()
                 .frame(width: 35, height: 35)

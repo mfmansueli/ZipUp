@@ -17,14 +17,12 @@ struct ItemView: View {
         VStack(spacing: 30) {
             
             ZStack {
-                
-                if let image = item.imageName {
-                    Image(image)
+
+                Image(item.imageName)
                         .resizable()
                         .scaledToFit()
-                        .padding(.horizontal, 60)
-                        .padding(.vertical, 20)
-                }
+
+
                 Image(systemName: offset.width < 0 ? "xmark.circle" : "checkmark.circle")
                     .resizable()
                     .foregroundStyle(offset.width < 0 ? .red : .green)
@@ -147,5 +145,5 @@ struct ItemView: View {
 }
 
 #Preview {
-    ItemView(item: .constant(Item.shoes))
+    ItemView(item: .constant(Item.socks))
 }

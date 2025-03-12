@@ -107,17 +107,24 @@ struct Item: Identifiable, Codable {
     var isDecided: Bool = false
     var isWearing: Bool = false
     var isPacked: Bool = false
-    var imageName: String?
+    var imageName: String {
+        let proposedImageName = name.lowercased()
+        if Bundle.main.path(forResource: proposedImageName, ofType: "svg") != nil {
+            return proposedImageName
+        } else {
+            return "default"
+        }
+    }
     var isPair = false
     
     enum CodingKeys: String, CodingKey {
-        case name, category, userQuantity, AIQuantity, imageName, isPair
+        case name, category, userQuantity, AIQuantity, isPair
     }
     
     static let socks = Item(name: "Socks", category: "Clothes", userQuantity: 4, AIQuantity: 4, isPair: true)
     static let tops = Item(name: "Tops", category: "Clothes", userQuantity: 6, AIQuantity: 6)
     static let shoes = Item(name: "Shoes", category: "Shoes", userQuantity: 2, AIQuantity: 2, isPair: true)
-    static let charger = Item(name: "Charger", category: "Electronics", userQuantity: 1, AIQuantity: 1, imageName: "Charger.png")
+    static let charger = Item(name: "Charger", category: "Electronics", userQuantity: 1, AIQuantity: 1)
     
     mutating func incrementUserQuantity() {
         self.userQuantity += 1
