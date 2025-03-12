@@ -11,36 +11,69 @@ import SwiftData
 struct TripsListView: View {
     @ObservedObject var viewModel = TripsListViewModel()
     @Environment(\.modelContext) private var modelContext
-    @Query private var trips: [Trip]
-    
+    @Query(filter: #Predicate<Trip> { !$0.isFinished }) private var tripsCurrent: [Trip]
+    @Query(filter: #Predicate<Trip> { $0.isFinished }) private var tripsPast: [Trip]
+//    @State private var tripsCurrent: [Trip] = [Trip.exampleTrip, Trip.exampleTrip, Trip.exampleTrip]
+//    @State private var tripsPast: [Trip] = [Trip.exampleTrip, Trip.exampleTrip]
+
     @State private var items = Bag.exampleBag.itemList
 
     var body: some View {
         NavigationSplitView {
             VStack {
-                Spacer()
+//                Spacer()
 
-                if trips.isEmpty {
+                if tripsCurrent.isEmpty && tripsPast.isEmpty {
                     TripsListEmptyView()
                 } else {
-                    List {
-                        ForEach(trips) { trip in
-                            Button {
-                                viewModel.selectedTrip = trip
-                            } label: {
-                                Text("\(trip.destinationName)")
+                    VStack(alignment: .leading, spacing: 40) {
+                        Section(header:
+                            Text("Upcoming").font(.title)
+                        ) {
+                            List {
+                                ForEach(tripsCurrent) { trip in
+                                    Button {
+                                        viewModel.selectedTrip = trip
+                                    } label: {
+                                        TripListCardView(trip: trip)
+                                    }
+                                    .padding(.vertical, 10)
+                                    .padding(.horizontal, 2)
+                                }
+                                .listRowSeparator(.hidden)
+                                .listRowInsets(EdgeInsets())
                             }
-                            //                            NavigationLink {
-                            //                                PackingListView(trip: trip)
-                            //                            } label: {
-                            //                                Text("\(trip.destinationName)")
-                            //                            }
+                            .listStyle(.plain)
+//                         
                         }
-                        //                .onDelete(perform: deleteItems)
+
+                        Section(header:
+                            Text("Past").font(.title)
+                        ) {
+                            List {
+                                ForEach(tripsCurrent) { trip in
+                                    Button {
+                                        viewModel.selectedTrip = trip
+                                    } label: {
+                                        TripListCardView(trip: trip, isPast: true)
+                                    }
+                                    .padding(.vertical, 10)
+                                    .padding(.horizontal, 2)
+                                }
+                                .listRowSeparator(.hidden)
+                                .listRowInsets(EdgeInsets())
+                            }
+                            .listStyle(.plain)
+                        }
+                        
+                       
+                        
+//                        Spacer()
+
                     }
-                    .listStyle(.plain)
+                    .padding()
                 }
-                Spacer()
+//                Spacer()
             }
             .navigationDestination(item: $viewModel.selectedTrip,
                                    destination: { item in
@@ -53,8 +86,9 @@ struct TripsListView: View {
 
                         viewModel.showTripPlanner.toggle()
                     } label: {
-                        Label("Add new trip", systemImage: "plus")
+                        Label("Add trip", systemImage: "plus.circle.fill")
                             .labelStyle(.titleAndIcon)
+                            .padding()
                     }.buttonStyle(.borderless)
                 }
 
@@ -85,6 +119,7 @@ struct TripsListView: View {
     //            }
     //        }
     //    }
+    
 }
 
 #Preview {

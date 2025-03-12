@@ -28,6 +28,7 @@ class Trip {
         return (components.day ?? 0) + 1
     }
     
+    
     var category: String = ""
 
 //    @Relationship(deleteRule: .cascade, inverse: \Bag.trip)
@@ -70,6 +71,7 @@ class Trip {
         tripRecord["category"] = category as CKRecordValue
         return tripRecord
     }
+    
 }
 
 @Model
