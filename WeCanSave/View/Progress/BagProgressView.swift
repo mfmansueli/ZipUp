@@ -33,7 +33,7 @@ struct BagProgressView: View {
                     
                     Text("\(itemCount)")
                     //                    .font(.title)
-                        .foregroundStyle(.foreground)
+                        .foregroundStyle(.primary)
                         .padding(10)
                         .background(
                             Circle()

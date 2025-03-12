@@ -36,36 +36,36 @@ struct BagBuilderView: View {
         self.trip = trip
         self.itemList = trip.bag!.itemList
         
-        print(trip.bag!.itemList)
+//        print(trip.bag!.itemList)
     }
     
     var body: some View {
         GeometryReader { geometry in
             VStack(spacing: 20) {
                 HStack {
-                    Text("Paris (5 days)")
-                        .padding(.horizontal)
+                    WeatherView2(trip: trip)
                         .frame(width: geometry.size.width * 0.6 - 20)
                     
                     Divider()
-                        .frame(width: 1, height: 80)
-                        .padding()
+                        .frame(width: 1, height: 100)
                     Button {
                         presentation.wrappedValue.dismiss()
                     } label: {
-                        BagProgressView(bagProgress: progress, isOpen: false, showProgress: true, itemCount: itemCount)
-                        //                        .frame(height: 180) // Ensures it has a defined size
+                        BagProgressView(bagProgress: 0.2, isOpen: false, showProgress: true, itemCount: itemCount)
+                            .frame(width: geometry.size.width * 0.4 - 40)
                     }
                     
                 }
                 .frame(height: 100)
-                .padding(.bottom, 40)
+//                .padding(.bottom, 10)
+//                .padding(.trailing, 20)
                 
                 
                 
                 Text("Add or remove our suggestions for your bag")
                 //                .font(.callout)
                     .foregroundStyle(.foreground.opacity(0.5))
+                    .padding(.vertical, 15)
                 //                .accessibilitySortPriority(1)
                 
                 SwipeView(itemList: $itemList)
@@ -75,10 +75,12 @@ struct BagBuilderView: View {
                     print(itemList.count)
                 }
                 .buttonStyle(.bordered)
+                .padding(.top, 20)
             }
             .onAppear {
                 totalCards = itemList.count
             }
+            .padding()
         }
     }
 }
