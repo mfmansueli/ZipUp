@@ -13,13 +13,28 @@
     "Add or remove our suggestions for your bag" : {
 
     },
+    "Add to bag" : {
+
+    },
     "All good, take me to the bag!" : {
+
+    },
+    "Bag builder progress: Suggestions remaining; 4" : {
+
+    },
+    "Decrease number of %@" : {
+
+    },
+    "Discard from bag" : {
 
     },
     "Here is maybe where we could put our AI-based reasoning for why we picked this number for this item" : {
 
     },
     "How long for?" : {
+
+    },
+    "Increase number of %@" : {
 
     },
     "MAKE ME A BAG!" : {
@@ -37,6 +52,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Selecione as datas da sua viagem"
+          }
+        }
+      }
+    },
+    "Suggestion: %@. Number to bring: %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Suggestion: %1$@. Number to bring: %2$lld"
           }
         }
       }
