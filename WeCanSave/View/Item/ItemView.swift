@@ -117,6 +117,32 @@ struct ItemView: View {
                     }
                 }
         )
+        .accessibilityRepresentation {
+            Text("Suggestion: \(item.name). Number to bring: \(item.userQuantity)")
+            
+        }
+        .accessibilityAction(named: "Add to bag", {
+            
+            item.isDecided = true
+            removal?()
+        })
+        .accessibilityAction(named: "Discard from bag", {
+            
+            item.userQuantity = 0
+            item.isDecided = true
+            removal?()
+        })
+        .accessibilityAction(named: "Increase number of \(item.name)") {
+            item.incrementUserQuantity()
+            let editedAnnouncement = AttributedString("\(item.userQuantity) \(item.name)s")
+            AccessibilityNotification.Announcement(editedAnnouncement).post()
+        }
+        .accessibilityAction(named: "Decrease number of \(item.name)") {
+            item.decrementUserQuantity()
+            let editedAnnouncement = AttributedString("\(item.userQuantity) \(item.name)s")
+            AccessibilityNotification.Announcement(editedAnnouncement).post()
+        }
+        
     }
 }
 
