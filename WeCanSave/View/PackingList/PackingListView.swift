@@ -70,6 +70,7 @@ struct PackingListView: View {
                                     
                                     ListItemView(item: item)
                                         .padding(.horizontal, 10)
+                                        .padding(.vertical, 20)
                                     
                                 }
                             }
@@ -112,17 +113,19 @@ struct ListItemView: View {
             } label: {
                 Text(item.name)
                     .foregroundStyle(.accent)
+                    .font(.title2)
             }
             .buttonStyle(PlainButtonStyle())
             
             
             
 
-            Spacer()
-            HStack(spacing: 45) {
+//            Spacer()
+            HStack(spacing: 35) {
                 ListItemPackedButton(item: $item)
                 ListItemWearingButton(item: $item)
                 Text("x\(item.userQuantity)")
+                    .font(.title)
             }
 
         }
@@ -144,7 +147,7 @@ struct ListItemWearingButton: View {
             Image(isSingular ? "jacket" : item.isWearing ? "jacket_1" : "jacket")
                 .resizable()
                 .scaledToFill()
-                .frame(width: 30, height: 20)
+                .frame(width: 35, height: 35)
                 .foregroundStyle(item.isWearing ? Color.accent : Color.primary.opacity(0.4))
                 .padding(.top, 5)
                 .onTapGesture {
@@ -166,8 +169,13 @@ struct ListItemPackedButton: View {
     }
     
     var body: some View {
-        Image(systemName: "checkmark.square")
+        Image("Check")
+            .resizable()
+            .scaledToFill()
+            .frame(width: 30, height: 30)
             .foregroundStyle(item.isPacked ? Color.accent : Color.primary.opacity(0.4))
+//            .font(.system(size: 20))
+            .padding(.top, 5)
             .onTapGesture {
                 if isSingular && item.isWearing && item.isPacked == false {
                     item.isWearing = false
