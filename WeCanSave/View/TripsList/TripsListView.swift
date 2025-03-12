@@ -22,13 +22,7 @@ struct TripsListView: View {
                 Spacer()
 
                 if trips.isEmpty {
-
-                    Text("Where are you going next?")
-                        .font(.system(size: 60, weight: .bold))
-                        .padding(50)
-                        .multilineTextAlignment(.center)
-                        .listRowSeparator(.hidden)
-                        
+                    TripsListEmptyView()
                 } else {
 //                    List {
 //                        
@@ -77,13 +71,14 @@ struct TripsListView: View {
                         Label("Add new trip", systemImage: "plus")
                     }
                 }
-            }
+            }.navigationTitle("ZipUp")
         } detail: {
             //
         }
         .sheet(isPresented: $tripPlannerShowing) {
             TripPlannerView()
         }
+        
     }
 
     private func addItem() {

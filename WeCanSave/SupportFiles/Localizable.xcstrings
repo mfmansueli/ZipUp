@@ -1,6 +1,12 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "\nCreate your first trip to get started." : {
+
+    },
+    " are you going next?" : {
+
+    },
     "%@" : {
 
     },
@@ -64,7 +70,11 @@
         }
       }
     },
+    "Where" : {
+
+    },
     "Where are you going next?" : {
+      "extractionState" : "stale",
       "localizations" : {
         "pt-BR" : {
           "stringUnit" : {
@@ -84,6 +94,9 @@
           }
         }
       }
+    },
+    "ZipUp" : {
+
     }
   },
   "version" : "1.0"
