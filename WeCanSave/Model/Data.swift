@@ -27,6 +27,7 @@ class Trip {
         let components = calendar.dateComponents([.day], from: start, to: end)
         return (components.day ?? 0) + 1
     }
+    
     var category: String = ""
 
 //    @Relationship(deleteRule: .cascade, inverse: \Bag.trip)

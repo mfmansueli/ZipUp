@@ -28,14 +28,14 @@ class TripPlannerViewModel: BaseViewModel {
     }
     @Published var dates: Set<DateComponents> = []
     @Published var searchResults: [MKMapItem] = []
-    @Published var weatherInfo: String?
     @Published var selectedItem: MKMapItem?
     @Published var isBagGenerated: Bool = false
     @Published var items = [Item]()
     @Published var showAddressPopover = false
     @Published var selectedPlacemark: MKPlacemark?
     @Published var selectedTripType: TripType?
-    
+    var weatherInfo: String?
+
     override init() {
         super.init()
         if getAPIKeyFromKeychain() == nil {
@@ -52,56 +52,56 @@ class TripPlannerViewModel: BaseViewModel {
             center: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194),
             span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
         )
-        
+
         let search = MKLocalSearch(request: request)
         search.start { [weak self] response, error in
             guard let response = response else {
                 print("Error: \(error?.localizedDescription ?? "Unknown error")")
                 return
             }
-            
+
             self?.searchResults = response.mapItems
             self?.showAddressPopover = true
             self?.printSearchResults()
         }
     }
-    
+
     func printSearchResults() {
         for item in searchResults {
             print("Name: \(item.name ?? "No name")")
             print("Phone: \(item.phoneNumber ?? "No phone number")")
             print("URL: \(item.url?.absoluteString ?? "No URL")")
-            
+
             print("Address: \(item.placemark.thoroughfare ?? "No address"), \(item.placemark.locality ?? "No city"), \(item.placemark.administrativeArea ?? "No state"), \(item.placemark.postalCode ?? "No postal code"), \(item.placemark.country ?? "No country")")
             print("Latitude: \(item.placemark.coordinate.latitude)")
             print("Longitude: \(item.placemark.coordinate.longitude)")
             print("-----")
         }
     }
-    
+
     func fetchWeather() async throws -> String {
         guard let coordinate = selectedPlacemark?.coordinate else { return "" }
         let weatherService = WeatherService()
         let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
-        
+
         let weather = try await weatherService.weather(for: location)
         return "Temperature: \(weather.currentWeather.temperature), Condition: \(weather.currentWeather.condition.description)"
     }
     
-    
+
     @MainActor
     func loadBag(aiEnabled: Bool = true) {
         guard let selectedPlacemark = selectedPlacemark else {
             showAlert(title: "Destination Required", message: "Please select a destination before proceeding.")
             return
         }
-        
+
         guard let firstDate = dates.first?.date,
               let lastDate = dates.sorted(by: { $0.date ?? Date.distantPast < $1.date ?? Date.distantPast }).last?.date else {
             showAlert(title: "Dates Required", message: "Please select the dates for your trip before proceeding.")
             return
         }
-        
+
         guard let openAIKey = getAPIKeyFromKeychain() else {
             showAlert(title: "Error while generating the bag", message: "Unable to proceed, please contact support.")
             return
@@ -122,10 +122,10 @@ class TripPlannerViewModel: BaseViewModel {
                     bag: Bag(itemList: items)
                 )
                 modelContext.insert(trip)
-                
+
                 let database = CKContainer.default().publicCloudDatabase
                 try await database.save(trip.toCKRecord())
-                
+
                 isLoading = false
                 selectedTrip = trip
             } catch {
@@ -134,7 +134,7 @@ class TripPlannerViewModel: BaseViewModel {
             }
         }
     }
-    
+
     func fetchPackingList(openAIKey: String, selectedPlacemark: MKPlacemark, dates: Set<DateComponents>, weatherInfo: String?) async throws -> [Item] {
         let currentLanguage = Locale.current.language.languageCode?.identifier ?? "en"
         
@@ -144,7 +144,7 @@ class TripPlannerViewModel: BaseViewModel {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
         var content = "\(selectedPlacemark.title ?? "") for \(dates.count) days"
-        
+
         if let weatherInfo = weatherInfo, !weatherInfo.isEmpty {
             content += " with the weather \(weatherInfo)"
         }
@@ -171,24 +171,24 @@ class TripPlannerViewModel: BaseViewModel {
         ] as [String : Any]
         
         request.httpBody = try JSONSerialization.data(withJSONObject: parameters)
-        
+
         let (data, _) = try await URLSession.shared.data(for: request)
-        
+
         if let json = try? JSONSerialization.jsonObject(with: data, options: .mutableContainers),
            let jsonData = try? JSONSerialization.data(withJSONObject: json, options: .prettyPrinted) {
             print("\nRESULT: \n\(String(decoding: jsonData, as: UTF8.self))\n")
         }
-        
+
         let response = try JSONDecoder().decode(ChatGPTResponse.self, from: data)
         return response.items
     }
-    
-    
+
+
     func fetchAPIKey() {
         let database = CKContainer.default().publicCloudDatabase
         let predicate = NSPredicate(value: true)
         let query = CKQuery(recordType: "APIKey", predicate: predicate)
-        
+
         database.fetch(withQuery: query, resultsLimit: 1) { [weak self] result in
             switch result {
             case .success(let (records, _)):
@@ -213,10 +213,10 @@ class TripPlannerViewModel: BaseViewModel {
             kSecAttrAccount as String: "OpenAIAPIKey",
             kSecValueData as String: key.data(using: .utf8)!
         ]
-        
+
         SecItemDelete(keychainQuery as CFDictionary)
         let status = SecItemAdd(keychainQuery as CFDictionary, nil)
-        
+
         if status == errSecSuccess {
             print("API key saved to Keychain successfully.")
         } else {
@@ -231,10 +231,10 @@ class TripPlannerViewModel: BaseViewModel {
             kSecReturnData as String: kCFBooleanTrue!,
             kSecMatchLimit as String: kSecMatchLimitOne
         ]
-        
+
         var dataTypeRef: AnyObject? = nil
         let status = SecItemCopyMatching(keychainQuery as CFDictionary, &dataTypeRef)
-        
+
         if status == errSecSuccess {
             if let data = dataTypeRef as? Data {
                 return String(data: data, encoding: .utf8)

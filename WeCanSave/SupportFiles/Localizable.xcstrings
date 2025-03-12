@@ -19,6 +19,9 @@
     "%lld days" : {
 
     },
+    "%lld Days" : {
+
+    },
     "Add new trip" : {
 
     },
@@ -29,6 +32,12 @@
 
     },
     "All good, take me to the bag!" : {
+
+    },
+    "avg. max." : {
+
+    },
+    "avg. min." : {
 
     },
     "Bag builder progress: Suggestions remaining; 4" : {
