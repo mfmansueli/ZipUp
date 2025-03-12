@@ -14,20 +14,14 @@ struct TripsListView: View {
     @Query private var trips: [Trip]
     
     @State private var items = Bag.exampleBag.itemList
-    
+
     var body: some View {
         NavigationSplitView {
             VStack {
                 Spacer()
-                
+
                 if trips.isEmpty {
-                    
-                    Text("Where are you going next?")
-                        .font(.system(size: 60, weight: .bold))
-                        .padding(50)
-                        .multilineTextAlignment(.center)
-                        .listRowSeparator(.hidden)
-                    
+                    TripsListEmptyView()
                 } else {
                     List {
                         ForEach(trips) { trip in
@@ -54,28 +48,29 @@ struct TripsListView: View {
             })
             .toolbar {
                 ToolbarItem(placement: .bottomBar) {
-                    
+
                     Button {
-                        
+
                         viewModel.showTripPlanner.toggle()
                     } label: {
                         Label("Add new trip", systemImage: "plus")
                             .labelStyle(.titleAndIcon)
                     }.buttonStyle(.borderless)
                 }
-                
+
                 ToolbarItem(placement: .bottomBar) {
                     Spacer()
                 }
-            }
+            }.navigationTitle("ZipUp")
         } detail: {
             //
         }
         .sheet(isPresented: $viewModel.showTripPlanner) {
             TripPlannerView(selectedTrip: $viewModel.selectedTrip)
         }
+
     }
-    
+
     private func addItem() {
         withAnimation {
             //            let newItem = Item(timestamp: Date())

@@ -4,6 +4,12 @@
     "" : {
 
     },
+    "\nCreate your first trip to get started." : {
+
+    },
+    " are you going next?" : {
+
+    },
     "%@" : {
 
     },
@@ -11,6 +17,9 @@
 
     },
     "%lld days" : {
+
+    },
+    "%lld Days" : {
 
     },
     "Add new trip" : {
@@ -23,6 +32,12 @@
 
     },
     "All good, take me to the bag!" : {
+
+    },
+    "avg. max." : {
+
+    },
+    "avg. min." : {
 
     },
     "Bag builder progress: Suggestions remaining; 4" : {
@@ -49,7 +64,13 @@
     "MAKE ME A BAG!" : {
 
     },
+    "n.items" : {
+
+    },
     "Naples, New York, Bangkok..." : {
+
+    },
+    "packed" : {
 
     },
     "Paris (5 days)" : {
@@ -78,7 +99,7 @@
         }
       }
     },
-    "Test" : {
+    "wearing" : {
 
     },
     "What are you doing?" : {
@@ -101,7 +122,11 @@
         }
       }
     },
+    "Where" : {
+
+    },
     "Where are you going next?" : {
+      "extractionState" : "stale",
       "localizations" : {
         "pt-BR" : {
           "stringUnit" : {
@@ -121,6 +146,15 @@
           }
         }
       }
+    },
+    "x%lld" : {
+
+    },
+    "Your bag" : {
+
+    },
+    "ZipUp" : {
+
     }
   },
   "version" : "1.0"
