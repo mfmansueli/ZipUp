@@ -19,11 +19,13 @@ struct TripListCardView: View {
             VStack {
                 Text("\(shortDateString(trip.startDate))")
                     .fontWeight(.thin)
+                    .font(.caption)
                 RoundedRectangle(cornerRadius: 10)
                     .fill(.primary.opacity(0.5))
                     .frame(width: 1, height: 25)
                 Text("\(shortDateString(trip.endDate))")
                     .fontWeight(.thin)
+                    .font(.caption)
             }
             .padding()
             

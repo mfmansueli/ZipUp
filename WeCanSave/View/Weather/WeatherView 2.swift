@@ -93,7 +93,7 @@ struct WeatherView2: View {
                     
 //                    Spacer()
                     
-                    HStack {
+                    HStack(alignment: .bottom) {
                         VStack {
                             //averageMaxTemp
                             HStack(spacing: 5) {
@@ -131,7 +131,7 @@ struct WeatherView2: View {
                             Image(systemName: weatherManager.averageWeatherCondition.icon)
     //                            .font(.system(size: 80))
                                 .resizable()
-                                .scaledToFit()
+                                .scaledToFill()
                                 .foregroundColor(.black)
                                 .frame(maxWidth: 50)
 

@@ -28,14 +28,14 @@ struct PackingListView: View {
                 VStack(alignment: .leading) {
                     HStack {
                         WeatherView2(trip: trip)
-                            .frame(width: geometry.size.width * 0.6 - 20)
+                            .frame(width: geometry.size.width * 0.65 - 20)
 
                         Divider()
                             .frame(width: 1, height: 100)
                             .padding(.trailing, 20)
 
                         BagProgressView(bagProgress: 1, isOpen: true, showProgress: true, itemCount: itemCount)
-                            .frame(width: geometry.size.width * 0.4 - 40)
+                            .frame(width: geometry.size.width * 0.35 - 40)
 
                     }
                     .frame(height: 100)
@@ -50,7 +50,7 @@ struct PackingListView: View {
                         ForEach(groupedItems.keys.sorted(), id: \.self) { category in
                             Section(
                                 header: HStack {
-                                    Text(category).font(.title2).bold()
+                                    Text(category).font(.title3).bold()
                                     Spacer()
 
                                     HStack(spacing: 18) {
@@ -60,6 +60,7 @@ struct PackingListView: View {
                                     }
                                     .foregroundStyle(.foreground.opacity(0.4))
                                     .fontWeight(.light)
+                                    .font(.caption2)
                                     .multilineTextAlignment(.center)
                                 }
                             ) {
@@ -81,6 +82,7 @@ struct PackingListView: View {
                         .listRowInsets(EdgeInsets())
                     }
                     .listStyle(.plain)
+                    .padding(0)
 
 
                 }
@@ -104,21 +106,31 @@ struct ListItemView: View {
 
     var body: some View {
         HStack {
-            NavigationLink {
-                SwipeView(itemList: Binding(
-                    get: { [item] },
-                    set: { newItems in
-                        if let first = newItems.first {
-                            item = first
+            ZStack(alignment: .topLeading) {
+                NavigationLink {
+                    SwipeView(itemList: Binding(
+                        get: { [item] },
+                        set: { newItems in
+                            if let first = newItems.first {
+                                item = first
+                            }
                         }
-                    }
-                ))
-            } label: {
+                    ))
+                } label: {
+//                    Text(item.name)
+//                        .foregroundStyle(.accent)
+//                    //                    .font(.title3)
+//                        .padding(0)
+                    EmptyView()
+                }
+//                .buttonStyle(PlainButtonStyle())
+                .opacity(0)
+                
                 Text(item.name)
                     .foregroundStyle(.accent)
-                    .font(.title2)
+                //                    .font(.title3)
+                    .padding(0)
             }
-            .buttonStyle(PlainButtonStyle())
 
 
 
@@ -128,7 +140,7 @@ struct ListItemView: View {
                 ListItemPackedButton(item: $item)
                 ListItemWearingButton(item: $item)
                 Text("x\(item.userQuantity)")
-                    .font(.title)
+                    .font(.title2)
             }
 
         }
