@@ -34,9 +34,9 @@ struct BagBuilderView: View {
     
     init(trip: Trip) {
         self.trip = trip
-        self.itemList = trip.bag!.itemList
+        self.itemList = trip.itemList
         
-        print(trip.bag!.itemList)
+        print(trip.itemList)
     }
     
     var body: some View {

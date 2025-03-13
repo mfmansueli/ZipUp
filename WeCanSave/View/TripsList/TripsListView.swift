@@ -9,11 +9,17 @@ import SwiftUI
 import SwiftData
 
 struct TripsListView: View {
-    @ObservedObject var viewModel = TripsListViewModel()
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.presentationMode) var presentation
+    @ObservedObject var viewModel = TripsListViewModel()
     @Query private var trips: [Trip]
     
-    @State private var items = Bag.exampleBag.itemList
+    @State private var items = [
+        Item.socks,
+        Item.tops,
+        Item.shoes,
+        Item.charger,
+    ]
 
     var body: some View {
         NavigationSplitView {
@@ -66,7 +72,7 @@ struct TripsListView: View {
             //
         }
         .sheet(isPresented: $viewModel.showTripPlanner) {
-            TripPlannerView(selectedTrip: $viewModel.selectedTrip)
+            TripPlannerView(modelContext: modelContext)
         }
 
     }

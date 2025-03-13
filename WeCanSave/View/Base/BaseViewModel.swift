@@ -8,12 +8,12 @@
 import Foundation
 import SwiftUI
 
-class BaseViewModel: NSObject, ObservableObject {
+class BaseViewModel: ObservableObject {
     var alertMessage = ""
     var alertTitle = ""
     var buttons: [Button<Text>] = [Button("Cancel", role: .cancel) { }]
     @Published var showAlert = false
-    @Published var isLoading = false
+    @Published var isLoading: Bool = false
     
     func showAlert(title: String? = nil,
                    message: String?,

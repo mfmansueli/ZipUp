@@ -6,20 +6,12 @@
 //
 import SwiftUI
 import MapKit
+import SwiftData
 
 struct TripPlannerView: View {
     
     @Environment(\.presentationMode) var presentation
-    @Environment(\.modelContext) private var modelContext
-    @ObservedObject var viewModel = TripPlannerViewModel()
-    @Binding var selectedTrip: Trip?
-    @State var exampleBag: Bag = Bag(itemList: [
-        Item.charger,
-        Item.shoes,
-        Item.socks,
-        Item.tops
-    ])
-    
+    @ObservedObject var viewModel: TripPlannerViewModel
     let columns = [
         GridItem(.flexible()),
         GridItem(.flexible())
@@ -27,6 +19,10 @@ struct TripPlannerView: View {
     
     @State private var isDateActivated: Bool = false
     @FocusState private var isDestinationFocused: Bool
+    
+    init(modelContext: ModelContext) {
+        viewModel = TripPlannerViewModel(modelContext: modelContext)
+    }
     
     var body: some View {
         NavigationView {
@@ -60,6 +56,7 @@ struct TripPlannerView: View {
                             VStack {
                                 ForEach(viewModel.searchResults, id: \.self) { item in
                                     Button {
+                                        viewModel.searchTimer?.invalidate()
                                         viewModel.selectedPlacemark = item.placemark
                                         viewModel.searchText = item.placemark.title ?? ""
                                         isDestinationFocused = false
@@ -117,26 +114,7 @@ struct TripPlannerView: View {
                     
                     LazyVGrid(columns: columns, alignment: .center, spacing: 16) {
                         ForEach(TripType.allCases, id: \.self) { item in
-                            Button {
-                                viewModel.selectedTripType = item
-                            } label: {
-                                Label {
-                                    Text(item.rawValue)
-                                        .font(.subheadline)
-                                } icon: {
-                                    Image(item.image)
-                                        .resizable()
-                                        .renderingMode(.template)
-                                        .frame(width: 35, height: 24)
-                                }
-                                .fixedSize()
-                                .padding()
-                                .background {
-                                    RoundedRectangle(cornerRadius: 32)
-                                        .strokeBorder(viewModel.selectedTripType == item ? Color.accentColor : Color.gray, lineWidth: viewModel.selectedTripType == item ? 2 : 1)
-                                }
-                            }
-                            .tint(viewModel.selectedTripType == item ? Color.accentColor : Color.gray)
+                            tripTypeButton(for: item)
                         }
                     }
                     
@@ -174,14 +152,39 @@ struct TripPlannerView: View {
             .scrollDismissesKeyboard(.immediately)
             .applyAlert(viewModel: viewModel)
             .applyLoading(viewModel: viewModel)
-            .onAppear {
-                viewModel.modelContext = modelContext
-                viewModel.selectedTrip = selectedTrip
+            .onChange(of: viewModel.tripCreatedSuccessfully) { newValue, arg in
+                if newValue {
+                    presentation.wrappedValue.dismiss()
+                }
             }
         }
+    }
+    
+    func tripTypeButton(for item: TripType) -> some View {
+        Button {
+            viewModel.selectedTripType = item
+        } label: {
+            Label {
+                Text(item.rawValue)
+                    .font(.subheadline)
+            } icon: {
+                Image(item.image)
+                    .resizable()
+                    .renderingMode(.template)
+                    .frame(width: 35, height: 24)
+            }
+            .fixedSize()
+            .padding()
+            .background {
+                RoundedRectangle(cornerRadius: 32)
+                    .strokeBorder(viewModel.selectedTripType == item ? Color.accentColor : Color.gray, lineWidth: viewModel.selectedTripType == item ? 2 : 1)
+            }
+        }
+        .tint(viewModel.selectedTripType == item ? Color.accentColor : Color.gray)
     }
 }
 
 #Preview {
-    TripPlannerView(selectedTrip: .constant(nil))
+    @Previewable @Environment(\.modelContext) var modelContext
+    TripPlannerView(modelContext: modelContext)
 }

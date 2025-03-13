@@ -17,12 +17,12 @@ struct ItemView: View {
         VStack(spacing: 30) {
             
             ZStack {
-
-                Image(item.imageName)
-                        .resizable()
-                        .scaledToFit()
-
-
+                
+                Image(uiImage: item.image)
+                    .resizable()
+                    .scaledToFit()
+                
+                
                 Image(systemName: offset.width < 0 ? "xmark.circle" : "checkmark.circle")
                     .resizable()
                     .foregroundStyle(offset.width < 0 ? .red : .green)
@@ -52,7 +52,7 @@ struct ItemView: View {
                             .foregroundStyle(.brandOrange)
                     }
                 }
-
+                
                 
                 Text("\(item.userQuantity)")
                     .font(.system(size: 50, weight: .bold))
@@ -104,7 +104,7 @@ struct ItemView: View {
                             
                         } else {
                             item.userQuantity = 0
-//                            print(item)
+                            //                            print(item)
                         }
                         item.isDecided = true
                         removal?()

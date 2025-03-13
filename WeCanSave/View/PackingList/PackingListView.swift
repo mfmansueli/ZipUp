@@ -33,7 +33,7 @@ struct PackingListView: View {
                             .frame(width: 1, height: 80)
                             .padding()
 
-                        BagProgressView(bagProgress: 1, isOpen: true, showProgress: false, itemCount: trip.bag!.itemList.count)
+                        BagProgressView(bagProgress: 1, isOpen: true, showProgress: false, itemCount: trip.itemList.count)
 
                     }
                     .frame(height: 100)
@@ -41,7 +41,7 @@ struct PackingListView: View {
                     Text("Your bag")
                         .font(.title).bold()
 
-                    let groupedItems = Dictionary(grouping: trip.bag?.itemList ?? [], by: { $0.category })
+                    let groupedItems = Dictionary(grouping: trip.itemList, by: { $0.category })
 
                     List {
                         ForEach(groupedItems.keys.sorted(), id: \.self) { category in
@@ -61,11 +61,11 @@ struct PackingListView: View {
                                 }
                             ) {
 
-                                let filteredItems = trip.bag.itemList.filter { $0.category == category }
+                                let filteredItems = trip.itemList.filter { $0.category == category }
 
                                 ForEach(filteredItems.indices, id: \.self) { index in
 
-                                    let item = $trip.bag.itemList.first(where: { $0.id == filteredItems[index].id })!
+                                    let item = $trip.itemList.first(where: { $0.id == filteredItems[index].id })!
 
 
                                     ListItemView(item: item)
