@@ -46,14 +46,15 @@ struct BagBuilderView: View {
                     Button {
                         presentation.wrappedValue.dismiss()
                     } label: {
-                        BagProgressView(bagProgress: 0.4, isOpen: false, showProgress: true, itemCount: itemCount)
+                        BagProgressView(bagProgress: progress, isOpen: false, showProgress: true, itemCount: itemCount)
                             .frame(width: geometry.size.width * 0.4 - 40)
                     }
                     .foregroundStyle(.primary)
+                    .padding(0)
                     
                 }
                 .frame(height: 100)
-//                .padding(.bottom, 10)
+                .padding(.bottom, 20)
 //                .padding(.trailing, 20)
                 
                 
@@ -84,3 +85,4 @@ struct BagBuilderView: View {
 #Preview {
     BagBuilderView(trip: Trip.exampleTrip)
 }
+

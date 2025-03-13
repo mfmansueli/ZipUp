@@ -21,15 +21,15 @@ struct BagProgressView: View {
                     Circle()
                         .trim(from: 0, to: bagProgress)
                         .rotation(.degrees(-90))
-                        .stroke(.brandGreen, style: StrokeStyle(lineWidth: geometry.size.width * 0.04, lineCap: .round))
+                        .stroke(.brandGreen, style: StrokeStyle(lineWidth: geometry.size.width * 0.06, lineCap: .round))
                 }
                 
                 ZStack(alignment: .bottomLeading) {
                     Image(isOpen ? "Bag_open-symbol"  : "Bag_closed-symbol")
                         .resizable()
-                        .scaledToFill()
+                        .scaledToFit()
                         .foregroundStyle(.brandOrange)
-//                                        .padding(80)
+//                        .padding(10)
                     
                     Text("\(itemCount)")
                         .font(.caption)
@@ -58,4 +58,8 @@ struct BagProgressView: View {
 
 #Preview {
     BagProgressView(bagProgress: 0.4, isOpen: false, showProgress: true, itemCount: 10)
+}
+
+#Preview {
+    PackingListView(trip: Trip.exampleTripDecided)
 }
