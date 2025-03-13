@@ -44,5 +44,10 @@ extension View {
 }
 
 #Preview {
-    SwipeView(itemList: .constant(Bag.exampleBag.itemList))
+    SwipeView(itemList: .constant([
+        Item.socks,
+        Item.tops,
+        Item.shoes,
+        Item.charger,
+    ]))
 }

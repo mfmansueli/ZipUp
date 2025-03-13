@@ -9,14 +9,13 @@ import SwiftUI
 import SwiftData
 
 struct TripsListView: View {
-    @ObservedObject var viewModel = TripsListViewModel()
+    @StateObject private var viewModel = TripsListViewModel()
     @Environment(\.modelContext) private var modelContext
+     @Environment(\.presentationMode) var presentation
     @Query(filter: #Predicate<Trip> { !$0.isFinished }) private var tripsCurrent: [Trip]
     @Query(filter: #Predicate<Trip> { $0.isFinished }) private var tripsPast: [Trip]
 //    @State private var tripsCurrent: [Trip] = [Trip.exampleTrip, Trip.exampleTrip, Trip.exampleTrip]
 //    @State private var tripsPast: [Trip] = [Trip.exampleTrip, Trip.exampleTrip]
-
-    @State private var items = Bag.exampleBag.itemList
 
     var body: some View {
         NavigationSplitView {
@@ -88,7 +87,7 @@ struct TripsListView: View {
             //
         }
         .sheet(isPresented: $viewModel.showTripPlanner) {
-            TripPlannerView(selectedTrip: $viewModel.selectedTrip)
+            TripPlannerView(modelContext: modelContext)
         }
 
     }
@@ -107,7 +106,7 @@ struct TripsListView: View {
     //            }
     //        }
     //    }
-    
+
 }
 
 #Preview {

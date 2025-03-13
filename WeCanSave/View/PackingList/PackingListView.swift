@@ -14,9 +14,9 @@ struct PackingListView: View {
     @State private var bagBuilderShowing: Bool
     
 //    @State private var addItemSheetShowing: Bool = false
-    
+
     var itemCount: Int {
-        trip.bag.getItemCount()
+        trip.getItemCount()
     }
 
     init(trip: Trip) {
@@ -46,7 +46,7 @@ struct PackingListView: View {
                     Text("Your bag")
                         .font(.title).bold()
 
-                    let groupedItems = Dictionary(grouping: trip.bag?.itemList ?? [], by: { $0.category })
+                    let groupedItems = Dictionary(grouping: trip.itemList ?? [], by: { $0.category })
 
                     List {
                         ForEach(groupedItems.keys.sorted(), id: \.self) { category in
@@ -67,11 +67,11 @@ struct PackingListView: View {
                                 }
                             ) {
 
-                                let filteredItems = trip.bag.itemList.filter { $0.category == category }
+                                let filteredItems = trip.itemList.filter { $0.category == category }
 
                                 ForEach(filteredItems.indices, id: \.self) { index in
 
-                                    let item = $trip.bag.itemList.first(where: { $0.id == filteredItems[index].id })!
+                                    let item = $trip.itemList.first(where: { $0.id == filteredItems[index].id })!
 
 
                                     ListItemView(item: item)
@@ -84,7 +84,7 @@ struct PackingListView: View {
                                         //
                                     }
                                     Spacer()
-                                    
+
                                     Image(systemName: "plus.square")
                                         .font(.title3)
                                 }
@@ -134,13 +134,13 @@ struct ListItemView: View {
                         }
                     ))
                 } label: {
-//                    Text(item.name)
-//                        .foregroundStyle(.accent)
-//                    //                    .font(.title3)
-//                        .padding(0)
+                    //                    Text(item.name)
+                    //                        .foregroundStyle(.accent)
+                    //                    //                    .font(.title3)
+                    //                        .padding(0)
                     EmptyView()
                 }
-//                .buttonStyle(PlainButtonStyle())
+                //                .buttonStyle(PlainButtonStyle())
                 .opacity(0)
                 
                 Text(item.name)
@@ -152,7 +152,7 @@ struct ListItemView: View {
 
 
 
-//            Spacer()
+            //            Spacer()
             HStack(spacing: 35) {
                 ListItemPackedButton(item: $item)
                 ListItemWearingButton(item: $item)
@@ -204,7 +204,7 @@ struct ListItemPackedButton: View {
             .scaledToFill()
             .frame(width: 30, height: 30)
             .foregroundStyle(item.isPacked ? Color.accent : Color.primary.opacity(0.4))
-//            .font(.system(size: 20))
+        //            .font(.system(size: 20))
             .padding(.top, 5)
             .onTapGesture {
                 if isSingular && item.isWearing && item.isPacked == false {

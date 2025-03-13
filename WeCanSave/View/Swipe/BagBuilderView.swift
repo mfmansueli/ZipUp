@@ -22,15 +22,15 @@ struct BagBuilderView: View {
     
     var itemCount: Int {
 //        print(trip.bag!.getItemCount())
-        return trip.bag!.getItemCount()
-        
+        return trip.getItemCount()
+
     }
     
     init(trip: Trip) {
         self.trip = trip
-        self.itemList = trip.bag!.itemList
+        self.itemList = trip.itemList
         
-//        print(trip.bag!.itemList)
+        print(trip.itemList)
     }
     
     var body: some View {
@@ -51,7 +51,7 @@ struct BagBuilderView: View {
                     }
                     .foregroundStyle(.primary)
                     .padding(0)
-                    
+
                 }
                 .frame(height: 100)
                 .padding(.bottom, 20)
