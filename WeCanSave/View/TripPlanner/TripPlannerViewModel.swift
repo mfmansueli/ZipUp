@@ -88,7 +88,7 @@ class TripPlannerViewModel: BaseViewModel {
         }
     }
 
-    func fetchWeather(startDate: Date, endDate: Date) async throws -> String {
+    func fetchWeather(startDate: Date, endDate: Date) async -> String? {
         guard let coordinate = selectedPlacemark?.coordinate else { return "" }
         let weatherService = WeatherService()
         let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
@@ -101,8 +101,13 @@ class TripPlannerViewModel: BaseViewModel {
             let currentEndDate = calendar.date(byAdding: .day, value: 9, to: currentStartDate) ?? endDate
             let endDate = min(currentEndDate, endDate)
             
-            let weather = try await weatherService.weather(for: location, including: .daily(startDate: currentStartDate, endDate: endDate))
-            allForecasts.append(contentsOf: weather.forecast)
+            do {
+                let weather = try await weatherService.weather(for: location, including: .daily(startDate: currentStartDate, endDate: endDate))
+                allForecasts.append(contentsOf: weather.forecast)
+            } catch {
+                print("Error fetching weather: \(error)")
+                return nil
+            }
             
             currentStartDate = calendar.date(byAdding: .day, value: 10, to: currentStartDate) ?? endDate
         }
@@ -159,7 +164,7 @@ class TripPlannerViewModel: BaseViewModel {
         isLoading = true
         Task {
             do {
-                weatherInfo = try await fetchWeather(startDate: startDate, endDate: endDate)
+                weatherInfo = await fetchWeather(startDate: startDate, endDate: endDate)
                 print("Weather Info: \(weatherInfo ?? "No weather info")")
                 let items = try await fetchPackingList(openAIKey: openAIKey, selectedPlacemark: selectedPlacemark, dates: dates, weatherInfo: weatherInfo)
                 let trip = Trip(
@@ -255,10 +260,10 @@ class TripPlannerViewModel: BaseViewModel {
         if var jsonString = String(data: data, encoding: .utf8) {
             jsonString = jsonString.trimmingCharacters(in: .whitespacesAndNewlines)
             
-            if jsonString.hasPrefix("```json") {
+            if jsonString.contains("```json") {
                 jsonString = jsonString.replacingOccurrences(of: "```json", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
             }
-            if jsonString.hasSuffix("```") {
+            if jsonString.contains("```") {
                 jsonString = jsonString.replacingOccurrences(of: "```", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
             }
 
