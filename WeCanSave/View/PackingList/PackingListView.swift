@@ -46,7 +46,7 @@ struct PackingListView: View {
                     Text("Your bag")
                         .font(.title).bold()
 
-                    let groupedItems = Dictionary(grouping: trip.itemList ?? [], by: { $0.category })
+                    let groupedItems = Dictionary(grouping: trip.itemList, by: { $0.category })
 
                     List {
                         ForEach(groupedItems.keys.sorted(), id: \.self) { category in

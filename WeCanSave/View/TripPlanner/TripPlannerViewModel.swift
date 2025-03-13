@@ -47,9 +47,6 @@ class TripPlannerViewModel: BaseViewModel {
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
         super.init()
-        if getAPIKeyFromKeychain() == nil {
-            fetchAPIKey()
-        }
     }
     
     func searchDestinations() {
@@ -156,14 +153,10 @@ class TripPlannerViewModel: BaseViewModel {
             return
         }
         
-        guard let openAIKey = getAPIKeyFromKeychain() else {
-            showAlert(title: "Error while generating the bag", message: "Unable to contact chatGPT, please contact support.")
-            return
-        }
-        
         isLoading = true
         Task {
             do {
+                let openAIKey = try await fetchAPIKey()
                 weatherInfo = await fetchWeather(startDate: startDate, endDate: endDate)
                 print("Weather Info: \(weatherInfo ?? "No weather info")")
                 let items = try await fetchPackingList(openAIKey: openAIKey, selectedPlacemark: selectedPlacemark, dates: dates, weatherInfo: weatherInfo)
@@ -277,27 +270,20 @@ class TripPlannerViewModel: BaseViewModel {
         return response.items
     }
 
-    func fetchAPIKey() {
+    func fetchAPIKey() async throws -> String {
         let database = CKContainer.default().publicCloudDatabase
         let predicate = NSPredicate(value: true)
         let query = CKQuery(recordType: "APIKey", predicate: predicate)
 
-        database.fetch(withQuery: query, resultsLimit: 1) { [weak self] result in
-            switch result {
-            case .success(let (records, _)):
-                do {
-                    let key = try records.compactMap { (id, record) -> APIKey? in
-                        APIKey.ckRecord(from: try record.get())
-                    }.first?.key ?? ""
-                    
-                    self?.saveAPIKeyToKeychain(key)
-                } catch {
-                    print("Failed to fetch API key: \(error)")
-                }
-            case .failure(let error):
-                print("Failed to fetch API key: \(error)")
-            }
+        let (records, _) = try await database.records(matching: query, resultsLimit: 1)
+        let key = try records.compactMap { (id, record) -> APIKey? in
+            APIKey.ckRecord(from: try record.get())
+        }.first?.key ?? ""
+        
+        if key.isEmpty {
+            throw NSError(domain: "com.wecansave", code: 1, userInfo: [NSLocalizedDescriptionKey: "API key not found"])
         }
+        return key
     }
     
     func saveAPIKeyToKeychain(_ key: String) {
@@ -317,7 +303,7 @@ class TripPlannerViewModel: BaseViewModel {
         }
     }
     
-    func getAPIKeyFromKeychain() -> String? {
+    func getAPIKeyFromKeychain() -> String {
         let keychainQuery: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: "OpenAIAPIKey",
@@ -330,11 +316,11 @@ class TripPlannerViewModel: BaseViewModel {
 
         if status == errSecSuccess {
             if let data = dataTypeRef as? Data {
-                return String(data: data, encoding: .utf8)
+                return String(data: data, encoding: .utf8) ?? ""
             }
         } else {
             print("Failed to retrieve API key from Keychain: \(status)")
         }
-        return nil
+        return ""
     }
 }
