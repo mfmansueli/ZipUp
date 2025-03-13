@@ -39,7 +39,7 @@ struct SwipeView: View {
 extension View {
     func stacked(at position: Int, in total: Int) -> some View {
         let offset = Double(total - position)
-        return self.offset(x: offset * Double.random(in: -5...5), y: offset * Double.random(in: -5...5))
+        return self.offset(x: offset * Double.random(in: -3...3), y: offset * Double.random(in: -3...3))
     }
 }
 

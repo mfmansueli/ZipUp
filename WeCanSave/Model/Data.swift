@@ -70,6 +70,17 @@ class Trip {
         ]
     )
     
+    static let exampleTripDecided = Trip(
+        destinationName: "Dublin",
+        //        destinationLatLong: CLLocationCoordinate2D(latitude: 53.34570, longitude: -6.268386),
+        destinationLat: "53.34570",
+        destinationLong: "-6.268386",
+        startDate: Calendar.current.date(from: DateComponents(year: 2025, month: 5, day: 12))!,
+        endDate: Calendar.current.date(from: DateComponents(year: 2025, month: 5, day: 18))!,
+        category: "Adventure",
+        itemList: Trip.exampleBagDecided
+    )
+
     func toCKRecord() -> CKRecord {
         let tripRecord = CKRecord(recordType: "Trip")
         tripRecord["destinationName"] = destinationName as CKRecordValue
@@ -88,13 +99,32 @@ class Trip {
 
         return tripRecord
     }
+
+    static let exampleBagDecided = [
+        Item.socksDecided,
+        Item.topsDecided,
+        Item.shoesDecided,
+        Item.chargerDecided,
+    ]
+
+    func getItemCount() -> Int {
+        var count: Int = 0
+
+        for item in itemList {
+            if item.isDecided {
+                count += item.userQuantity
+            }
+        }
+
+        return count
+    }
 }
 
 //@Model
 //class Bag {
 //    var id: String = UUID().uuidString
 //    var itemList = [Item]()
-//    
+//
 ////    @Relationship(inverse: \Trip.bag)
 //    var trip: Trip?
 ////    enum CodingKeys: String, CodingKey {
@@ -107,14 +137,14 @@ class Trip {
 //        self.id = id
 //        self.itemList = itemList
 //    }
-//    
+//
 //    static let exampleBag = Bag(itemList: [
 //        Item.socks,
 //        Item.tops,
 //        Item.shoes,
 //        Item.charger,
 //    ])
-//    
+//
 //    func toCKRecord() -> CKRecord {
 //        let bagRecord = CKRecord(recordType: "Bag")
 //        bagRecord["id"] = id as CKRecordValue
@@ -144,6 +174,11 @@ struct Item: Identifiable, Codable {
     static let shoes = Item(name: "Shoes", category: "Shoes", userQuantity: 2, AIQuantity: 2, isPair: true)
     static let charger = Item(name: "Charger", category: "Electronics", userQuantity: 1, AIQuantity: 1)
     
+    static let socksDecided = Item(name: "Socks", category: "Clothes", userQuantity: 4, AIQuantity: 4, isDecided: true, isPair: true)
+    static let topsDecided = Item(name: "Tops", category: "Clothes", userQuantity: 6, AIQuantity: 6, isDecided: true)
+    static let shoesDecided = Item(name: "Shoes", category: "Shoes", userQuantity: 2, AIQuantity: 2, isDecided: true, isPair: true)
+    static let chargerDecided = Item(name: "Charger", category: "Electronics", userQuantity: 1, AIQuantity: 1, isDecided: true)
+
     mutating func incrementUserQuantity() {
         self.userQuantity += 1
     }
@@ -166,12 +201,12 @@ struct Item: Identifiable, Codable {
     static func jsonTemplate() -> String {
         return Item(name: "Item", category: "Category", userQuantity: 0, AIQuantity: 0).toJSONString() ?? ""
     }
-    
+
     var image: UIImage {
         let myImage = UIImage(named: imageName) ?? UIImage(systemName: imageName) ?? UIImage(named: "default")!
         return myImage
     }
-    
+
     func toCKRecord() -> CKRecord {
         let itemRecord = CKRecord(recordType: "Item")
         itemRecord["id"] = id.uuidString as CKRecordValue

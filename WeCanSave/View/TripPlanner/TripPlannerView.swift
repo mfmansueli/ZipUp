@@ -56,11 +56,8 @@ struct TripPlannerView: View {
                             VStack {
                                 ForEach(viewModel.searchResults, id: \.self) { item in
                                     Button {
-                                        viewModel.searchTimer?.invalidate()
                                         viewModel.selectedPlacemark = item.placemark
-                                        viewModel.searchText = item.placemark.title ?? ""
                                         isDestinationFocused = false
-                                        viewModel.showAddressPopover = false
                                     } label: {
                                         Text("\(item.placemark.title ?? "")")
                                             .lineLimit(2)
@@ -104,8 +101,12 @@ struct TripPlannerView: View {
                         }
                     }
                     .popover(isPresented: $isDateActivated) {
-                        MultiDatePickerView(dates: $viewModel.dates)
-                            .presentationCompactAdaptation(.popover)
+                        MultiDatePickerView(dates: Binding(get: {
+                            viewModel.dates
+                        }, set: { newDates in
+                            viewModel.dates = newDates
+                        }))
+                        .presentationCompactAdaptation(.popover)
                     }
                     .padding(.bottom, 16)
                     

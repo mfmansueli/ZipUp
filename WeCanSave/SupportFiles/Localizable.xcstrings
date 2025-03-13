@@ -10,6 +10,9 @@
     " are you going next?" : {
 
     },
+    "(%lld days)" : {
+
+    },
     "%@" : {
 
     },
@@ -22,13 +25,13 @@
     "%lld Days" : {
 
     },
-    "Add new trip" : {
-
-    },
     "Add or remove our suggestions for your bag" : {
 
     },
     "Add to bag" : {
+
+    },
+    "Add trip" : {
 
     },
     "All good, take me to the bag!" : {
@@ -73,7 +76,7 @@
     "packed" : {
 
     },
-    "Paris (5 days)" : {
+    "Past" : {
 
     },
     "Search for a location" : {
@@ -98,6 +101,9 @@
           }
         }
       }
+    },
+    "Upcoming" : {
+
     },
     "wearing" : {
 

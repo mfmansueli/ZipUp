@@ -15,26 +15,34 @@ import SwiftData
 class TripPlannerViewModel: BaseViewModel {
     var modelContext: ModelContext!
     var searchTimer: Timer?
+    var weatherInfo: String?
     @Published var selectedTrip: Trip?
+    @Published var dates: Set<DateComponents> = []
+    @Published var searchResults: [MKMapItem] = []
+    @Published var selectedItem: MKMapItem?
+    @Published var isBagGenerated: Bool = false
+    @Published var showAddressPopover = false
+    @Published var selectedTripType: TripType?
+    @Published var tripCreatedSuccessfully: Bool = false
     @Published var searchText = "" {
         didSet {
             searchTimer?.invalidate()
-            if !searchText.isEmpty {
+            if !searchText.isEmpty && searchText != selectedPlacemark?.title {
                 searchTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { [weak self] _ in
                     self?.searchDestinations()
                 }
             }
         }
     }
-    @Published var dates: Set<DateComponents> = []
-    @Published var searchResults: [MKMapItem] = []
-    @Published var selectedItem: MKMapItem?
-    @Published var isBagGenerated: Bool = false
-    @Published var showAddressPopover = false
-    @Published var selectedPlacemark: MKPlacemark? { didSet { showAddressPopover = false } }
-    @Published var selectedTripType: TripType?
-    @Published var tripCreatedSuccessfully: Bool = false
-    var weatherInfo: String?
+
+    @Published var selectedPlacemark: MKPlacemark? {
+        didSet {
+            if let title = selectedPlacemark?.title, !title.isEmpty {
+                searchText = title
+            }
+            showAddressPopover = false
+        }
+    }
 
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
@@ -144,7 +152,7 @@ class TripPlannerViewModel: BaseViewModel {
         }
         
         guard let openAIKey = getAPIKeyFromKeychain() else {
-            showAlert(title: "Error while generating the bag", message: "Unable to proceed, please contact support.")
+            showAlert(title: "Error while generating the bag", message: "Unable to contact chatGPT, please contact support.")
             return
         }
         

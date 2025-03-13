@@ -9,44 +9,58 @@ import SwiftUI
 import SwiftData
 
 struct TripsListView: View {
+    @StateObject private var viewModel = TripsListViewModel()
     @Environment(\.modelContext) private var modelContext
-    @Environment(\.presentationMode) var presentation
-    @ObservedObject var viewModel = TripsListViewModel()
-    @Query private var trips: [Trip]
-    
-    @State private var items = [
-        Item.socks,
-        Item.tops,
-        Item.shoes,
-        Item.charger,
-    ]
+     @Environment(\.presentationMode) var presentation
+    @Query(filter: #Predicate<Trip> { !$0.isFinished }) private var tripsCurrent: [Trip]
+    @Query(filter: #Predicate<Trip> { $0.isFinished }) private var tripsPast: [Trip]
+//    @State private var tripsCurrent: [Trip] = [Trip.exampleTrip, Trip.exampleTrip, Trip.exampleTrip]
+//    @State private var tripsPast: [Trip] = [Trip.exampleTrip, Trip.exampleTrip]
 
     var body: some View {
         NavigationSplitView {
             VStack {
-                Spacer()
 
-                if trips.isEmpty {
+                if tripsCurrent.isEmpty && tripsPast.isEmpty {
                     TripsListEmptyView()
                 } else {
-                    List {
-                        ForEach(trips) { trip in
-                            Button {
-                                viewModel.selectedTrip = trip
-                            } label: {
-                                Text("\(trip.destinationName)")
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 20) {
+                            if tripsCurrent.count > 0 {
+                                Section(header:
+                                            Text("Upcoming").font(.title)
+                                ) {
+                                    ForEach(tripsCurrent) { trip in
+                                        Button {
+                                            viewModel.selectedTrip = trip
+                                        } label: {
+                                            TripListCardView(trip: trip)
+                                        }
+                                        .padding(.horizontal, 2)
+                                        .foregroundStyle(Color.primary)
+                                    }
+                                }
                             }
-                            //                            NavigationLink {
-                            //                                PackingListView(trip: trip)
-                            //                            } label: {
-                            //                                Text("\(trip.destinationName)")
-                            //                            }
+                            if tripsPast.count > 0 {
+                                Section(header:
+                                            Text("Past").font(.title)
+                                ) {
+                                        ForEach(tripsPast) { trip in
+                                            Button {
+                                                viewModel.selectedTrip = trip
+                                            } label: {
+                                                TripListCardView(trip: trip, isPast: true)
+                                            }
+                                            .padding(.horizontal, 2)
+                                        }
+                                }
+                            }
+
                         }
-                        //                .onDelete(perform: deleteItems)
+                        .padding()
                     }
-                    .listStyle(.plain)
+                    .foregroundStyle(Color.primary)
                 }
-                Spacer()
             }
             .navigationDestination(item: $viewModel.selectedTrip,
                                    destination: { item in
@@ -59,8 +73,9 @@ struct TripsListView: View {
 
                         viewModel.showTripPlanner.toggle()
                     } label: {
-                        Label("Add new trip", systemImage: "plus")
+                        Label("Add trip", systemImage: "plus.circle.fill")
                             .labelStyle(.titleAndIcon)
+                            .padding()
                     }.buttonStyle(.borderless)
                 }
 
@@ -91,6 +106,7 @@ struct TripsListView: View {
     //            }
     //        }
     //    }
+
 }
 
 #Preview {
