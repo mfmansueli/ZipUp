@@ -21,59 +21,47 @@ struct TripsListView: View {
     var body: some View {
         NavigationSplitView {
             VStack {
-//                Spacer()
 
                 if tripsCurrent.isEmpty && tripsPast.isEmpty {
                     TripsListEmptyView()
                 } else {
-                    VStack(alignment: .leading, spacing: 40) {
-                        Section(header:
-                            Text("Upcoming").font(.title)
-                        ) {
-                            List {
-                                ForEach(tripsCurrent) { trip in
-                                    Button {
-                                        viewModel.selectedTrip = trip
-                                    } label: {
-                                        TripListCardView(trip: trip)
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 20) {
+                            if tripsCurrent.count > 0 {
+                                Section(header:
+                                            Text("Upcoming").font(.title)
+                                ) {
+                                    ForEach(tripsCurrent) { trip in
+                                        Button {
+                                            viewModel.selectedTrip = trip
+                                        } label: {
+                                            TripListCardView(trip: trip)
+                                        }
+                                        .padding(.horizontal, 2)
+                                        .foregroundStyle(Color.primary)
                                     }
-                                    .padding(.vertical, 10)
-                                    .padding(.horizontal, 2)
                                 }
-                                .listRowSeparator(.hidden)
-                                .listRowInsets(EdgeInsets())
                             }
-                            .listStyle(.plain)
-//                         
-                        }
-
-                        Section(header:
-                            Text("Past").font(.title)
-                        ) {
-                            List {
-                                ForEach(tripsCurrent) { trip in
-                                    Button {
-                                        viewModel.selectedTrip = trip
-                                    } label: {
-                                        TripListCardView(trip: trip, isPast: true)
-                                    }
-                                    .padding(.vertical, 10)
-                                    .padding(.horizontal, 2)
+                            if tripsPast.count > 0 {
+                                Section(header:
+                                            Text("Past").font(.title)
+                                ) {
+                                        ForEach(tripsPast) { trip in
+                                            Button {
+                                                viewModel.selectedTrip = trip
+                                            } label: {
+                                                TripListCardView(trip: trip, isPast: true)
+                                            }
+                                            .padding(.horizontal, 2)
+                                        }
                                 }
-                                .listRowSeparator(.hidden)
-                                .listRowInsets(EdgeInsets())
                             }
-                            .listStyle(.plain)
-                        }
-                        
-                       
-                        
-//                        Spacer()
 
+                        }
+                        .padding()
                     }
-                    .padding()
+                    .foregroundStyle(Color.primary)
                 }
-//                Spacer()
             }
             .navigationDestination(item: $viewModel.selectedTrip,
                                    destination: { item in
