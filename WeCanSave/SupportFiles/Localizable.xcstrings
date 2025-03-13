@@ -55,6 +55,9 @@
     "Decrease number of %@" : {
 
     },
+    "Delete" : {
+
+    },
     "Discard from bag" : {
 
     },
@@ -76,10 +79,16 @@
     "Naples, New York, Bangkok..." : {
 
     },
+    "No Trip Selected" : {
+
+    },
     "packed" : {
 
     },
     "Past" : {
+
+    },
+    "Please select a trip to view the packing list." : {
 
     },
     "Search for a location" : {
