@@ -28,6 +28,7 @@ class Trip {
         return (components.day ?? 0) + 1
     }
     
+    
     var category: String = ""
 
 //    @Relationship(deleteRule: .cascade, inverse: \Bag.trip)
@@ -60,6 +61,17 @@ class Trip {
         bag: Bag.exampleBag
     )
     
+    static let exampleTripDecided = Trip(
+        destinationName: "Dublin",
+        //        destinationLatLong: CLLocationCoordinate2D(latitude: 53.34570, longitude: -6.268386),
+        destinationLat: "53.34570",
+        destinationLong: "-6.268386",
+        startDate: Calendar.current.date(from: DateComponents(year: 2025, month: 5, day: 12))!,
+        endDate: Calendar.current.date(from: DateComponents(year: 2025, month: 5, day: 18))!,
+        category: "Adventure",
+        bag: Bag.exampleBagDecided
+    )
+    
     func toCKRecord() -> CKRecord {
         let tripRecord = CKRecord(recordType: "Trip")
         tripRecord["destinationName"] = destinationName as CKRecordValue
@@ -70,6 +82,7 @@ class Trip {
         tripRecord["category"] = category as CKRecordValue
         return tripRecord
     }
+    
 }
 
 @Model
@@ -84,6 +97,18 @@ class Bag {
 //    }
 
     var isDecided: Bool = false
+    
+//    var itemCount: Int {
+//        var count: Int = 0
+//        
+//        for item in itemList {
+//            if item.isDecided {
+//                count += item.userQuantity
+//            }
+//        }
+//        
+//        return count
+//    }
 
     init(id: UUID = UUID(), itemList: [Item] = [Item]()) {
         self.id = id
@@ -96,6 +121,25 @@ class Bag {
         Item.shoes,
         Item.charger,
     ])
+    
+    static let exampleBagDecided = Bag(itemList: [
+        Item.socksDecided,
+        Item.topsDecided,
+        Item.shoesDecided,
+        Item.chargerDecided,
+    ])
+    
+    func getItemCount() -> Int {
+        var count: Int = 0
+        
+        for item in itemList {
+            if item.isDecided {
+                count += item.userQuantity
+            }
+        }
+        
+        return count
+    }
 }
 
 struct Item: Identifiable, Codable {
@@ -108,12 +152,13 @@ struct Item: Identifiable, Codable {
     var isWearing: Bool = false
     var isPacked: Bool = false
     var imageName: String {
-        let proposedImageName = name.lowercased()
-        if Bundle.main.path(forResource: proposedImageName, ofType: "svg") != nil {
-            return proposedImageName
-        } else {
-            return "default"
-        }
+//        let proposedImageName = name.lowercased()
+//        if Bundle.main.path(forResource: proposedImageName, ofType: "svg") != nil {
+//            return proposedImageName
+//        } else {
+//            return "default"
+//        }
+        name.lowercased()
     }
     var isPair = false
     
@@ -125,6 +170,11 @@ struct Item: Identifiable, Codable {
     static let tops = Item(name: "Tops", category: "Clothes", userQuantity: 6, AIQuantity: 6)
     static let shoes = Item(name: "Shoes", category: "Shoes", userQuantity: 2, AIQuantity: 2, isPair: true)
     static let charger = Item(name: "Charger", category: "Electronics", userQuantity: 1, AIQuantity: 1)
+    
+    static let socksDecided = Item(name: "Socks", category: "Clothes", userQuantity: 4, AIQuantity: 4, isDecided: true, isPair: true)
+    static let topsDecided = Item(name: "Tops", category: "Clothes", userQuantity: 6, AIQuantity: 6, isDecided: true)
+    static let shoesDecided = Item(name: "Shoes", category: "Shoes", userQuantity: 2, AIQuantity: 2, isDecided: true, isPair: true)
+    static let chargerDecided = Item(name: "Charger", category: "Electronics", userQuantity: 1, AIQuantity: 1, isDecided: true)
     
     mutating func incrementUserQuantity() {
         self.userQuantity += 1
