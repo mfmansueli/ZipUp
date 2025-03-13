@@ -13,6 +13,8 @@ struct PackingListView: View {
     
     @State private var bagBuilderShowing: Bool
     
+//    @State private var addItemSheetShowing: Bool = false
+    
     var itemCount: Int {
         trip.bag.getItemCount()
     }
@@ -77,6 +79,18 @@ struct PackingListView: View {
                                         .padding(.vertical, 20)
 
                                 }
+                                HStack {
+                                    Button("Add item") {
+                                        //
+                                    }
+                                    Spacer()
+                                    
+                                    Image(systemName: "plus.square")
+                                        .font(.title3)
+                                }
+                                .foregroundStyle(.accent)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 20)
                             }
                         }
                         .listRowInsets(EdgeInsets())
@@ -89,6 +103,9 @@ struct PackingListView: View {
                 .fullScreenCover(isPresented: $bagBuilderShowing) {
                     BagBuilderView(trip: trip)
                 }
+//                .sheet(isPresented: $addItemSheetShowing, content: {
+//                    EmptyView()
+//                })
                 .padding()
             }
         }
