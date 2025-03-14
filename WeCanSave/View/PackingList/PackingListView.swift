@@ -9,47 +9,52 @@ import SwiftUI
 
 struct PackingListView: View {
     
-    @State var trip: Trip
+    @State var trip: Trip?
     
     @State private var bagBuilderShowing: Bool
     
-
-
-    init(trip: Trip) {
+    //    @State private var addItemSheetShowing: Bool = false
+    
+    var itemCount: Int {
+        trip?.getItemCount() ?? 0
+    }
+    
+    init(trip: Trip?) {
         self.trip = trip
-        self.bagBuilderShowing = false //!trip.bag!.isDecided
+        self.bagBuilderShowing = true //!trip.bag!.isDecided
     }
     
     var body: some View {
-        NavigationView {
+        if let trip = trip {
             GeometryReader { geometry in
                 VStack(alignment: .leading) {
                     HStack {
-                        Text("Paris (5 days)")
-                        //                        .padding(.horizontal)
-                            .frame(width: geometry.size.width * 0.6 - 20)
-
+                        WeatherView2(trip: trip)
+                            .frame(width: geometry.size.width * 0.65 - 20)
+                        
                         Divider()
-                            .frame(width: 1, height: 80)
-                            .padding()
-
-                        BagProgressView(bagProgress: 1, isOpen: true, showProgress: false, itemCount: trip.bag!.itemList.count)
-
+                            .frame(width: 1, height: 100)
+                            .padding(.trailing, 20)
+                        
+                        BagProgressView(bagProgress: 1, isOpen: true, showProgress: true, itemCount: itemCount)
+                            .frame(width: geometry.size.width * 0.35 - 40)
+                        
                     }
                     .frame(height: 100)
-
+                    .padding(.bottom, 20)
+                    
                     Text("Your bag")
                         .font(.title).bold()
-
-                    let groupedItems = Dictionary(grouping: trip.bag?.itemList ?? [], by: { $0.category })
-
+                    
+                    let groupedItems = Dictionary(grouping: trip.itemList, by: { $0.category })
+                    
                     List {
                         ForEach(groupedItems.keys.sorted(), id: \.self) { category in
                             Section(
                                 header: HStack {
-                                    Text(category).font(.title2).bold()
+                                    Text(category).font(.title3).bold()
                                     Spacer()
-
+                                    
                                     HStack(spacing: 18) {
                                         Text("packed")
                                         Text("wearing")
@@ -57,94 +62,102 @@ struct PackingListView: View {
                                     }
                                     .foregroundStyle(.foreground.opacity(0.4))
                                     .fontWeight(.light)
+                                    .font(.caption2)
                                     .multilineTextAlignment(.center)
                                 }
                             ) {
-
-                                let filteredItems = trip.bag.itemList.filter { $0.category == category }
-
-                                ForEach(filteredItems.indices, id: \.self) { index in
-
-                                    let item = $trip.bag.itemList.first(where: { $0.id == filteredItems[index].id })!
-
-
-                                    ListItemView(item: item)
-                                        .padding(.horizontal, 10)
-                                        .padding(.vertical, 20)
-
-                                }
+                                SectionView(trip: trip, category: category)
                             }
                         }
                         .listRowInsets(EdgeInsets())
                     }
                     .listStyle(.plain)
-
-
+                    .padding(0)
+                    
+                    
                 }
                 .fullScreenCover(isPresented: $bagBuilderShowing) {
                     BagBuilderView(trip: trip)
                 }
+                //                .sheet(isPresented: $addItemSheetShowing, content: {
+                //                    EmptyView()
+                //                })
                 .padding()
+            }
+            
+        } else {
+            ContentUnavailableView {
+                Label("No Trip Selected", systemImage: "exclamationmark.triangle.fill")
+            } description: {
+                Text("Please select a trip to view the packing list.")
             }
         }
     }
 }
 
 #Preview {
-    PackingListView(trip: Trip.exampleTrip)
+    PackingListView(trip: Trip.exampleTripDecided)
 }
 
 
 struct ListItemView: View {
-
+    
     @Binding var item: Item
-
+    
     var body: some View {
         HStack {
-            NavigationLink {
-                SwipeView(itemList: Binding(
-                    get: { [item] },
-                    set: { newItems in
-                        if let first = newItems.first {
-                            item = first
+            ZStack(alignment: .topLeading) {
+                NavigationLink {
+                    SwipeView(itemList: Binding(
+                        get: { [item] },
+                        set: { newItems in
+                            if let first = newItems.first {
+                                item = first
+                            }
                         }
-                    }
-                ))
-            } label: {
+                    ))
+                } label: {
+                    //                    Text(item.name)
+                    //                        .foregroundStyle(.accent)
+                    //                    //                    .font(.title3)
+                    //                        .padding(0)
+                    EmptyView()
+                }
+                //                .buttonStyle(PlainButtonStyle())
+                .opacity(0)
+                
                 Text(item.name)
                     .foregroundStyle(.accent)
-                    .font(.title2)
+                //                    .font(.title3)
+                    .padding(0)
             }
-            .buttonStyle(PlainButtonStyle())
-
-
-
-
-//            Spacer()
+            
+            
+            
+            
+            //            Spacer()
             HStack(spacing: 35) {
                 ListItemPackedButton(item: $item)
                 ListItemWearingButton(item: $item)
                 Text("x\(item.userQuantity)")
-                    .font(.title)
+                    .font(.title2)
             }
-
+            
         }
     }
 }
 
 struct ListItemWearingButton: View {
-
+    
     @Binding var item: Item
-
+    
     var isSingular: Bool {
         item.userQuantity == 1
     }
-
+    
     var body: some View {
         HStack(alignment: .center) {
-
-
-            Image(isSingular ? "jacket" : item.isWearing ? "jacket_1" : "jacket")
+            Image(isSingular ? "jacket_button" : item.isWearing ? "jacket_1" : "jacket_button")
                 .resizable()
                 .scaledToFill()
                 .frame(width: 35, height: 35)
@@ -161,20 +174,20 @@ struct ListItemWearingButton: View {
 }
 
 struct ListItemPackedButton: View {
-
+    
     @Binding var item: Item
-
+    
     var isSingular: Bool {
         item.userQuantity == 1
     }
-
+    
     var body: some View {
         Image("Check")
             .resizable()
             .scaledToFill()
             .frame(width: 30, height: 30)
             .foregroundStyle(item.isPacked ? Color.accent : Color.primary.opacity(0.4))
-//            .font(.system(size: 20))
+        //            .font(.system(size: 20))
             .padding(.top, 5)
             .onTapGesture {
                 if isSingular && item.isWearing && item.isPacked == false {
@@ -182,5 +195,38 @@ struct ListItemPackedButton: View {
                 }
                 item.isPacked.toggle()
             }
+    }
+}
+
+struct SectionView: View {
+    @State var trip: Trip
+    var filteredItems: [Item] = []
+    
+    init(trip: Trip, category: String) {
+        self.trip = trip
+        filteredItems = trip.itemList.filter { $0.category == category }
+    }
+    
+    var body: some View {
+        ForEach(filteredItems.indices, id: \.self) { index in
+            let item = $trip.itemList.first(where: { $0.id == filteredItems[index].id })!
+            
+            ListItemView(item: item)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 20)
+            
+        }
+        HStack {
+            Button("Add item") {
+                //
+            }
+            Spacer()
+            
+            Image(systemName: "plus.square")
+                .font(.title3)
+        }
+        .foregroundStyle(.accent)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 20)
     }
 }

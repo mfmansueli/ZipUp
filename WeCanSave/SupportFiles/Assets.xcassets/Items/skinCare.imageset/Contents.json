@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "skin care.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

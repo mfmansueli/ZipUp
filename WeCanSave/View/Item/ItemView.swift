@@ -18,13 +18,11 @@ struct ItemView: View {
             
             ZStack {
                 
-                if let image = item.imageName {
-                    Image(image)
-                        .resizable()
-                        .scaledToFit()
-                        .padding(.horizontal, 60)
-                        .padding(.vertical, 20)
-                }
+                Image(uiImage: item.image)
+                    .resizable()
+                    .scaledToFit()
+                
+                
                 Image(systemName: offset.width < 0 ? "xmark.circle" : "checkmark.circle")
                     .resizable()
                     .foregroundStyle(offset.width < 0 ? .red : .green)
@@ -54,7 +52,7 @@ struct ItemView: View {
                             .foregroundStyle(.brandOrange)
                     }
                 }
-
+                
                 
                 Text("\(item.userQuantity)")
                     .font(.system(size: 50, weight: .bold))
@@ -106,7 +104,7 @@ struct ItemView: View {
                             
                         } else {
                             item.userQuantity = 0
-//                            print(item)
+                            //                            print(item)
                         }
                         item.isDecided = true
                         removal?()
@@ -147,5 +145,5 @@ struct ItemView: View {
 }
 
 #Preview {
-    ItemView(item: .constant(Item.shoes))
+    ItemView(item: .constant(Item.socks))
 }

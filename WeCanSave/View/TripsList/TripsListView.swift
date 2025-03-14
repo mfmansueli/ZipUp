@@ -9,38 +9,68 @@ import SwiftUI
 import SwiftData
 
 struct TripsListView: View {
-    @ObservedObject var viewModel = TripsListViewModel()
+    @StateObject private var viewModel = TripsListViewModel()
     @Environment(\.modelContext) private var modelContext
-    @Query private var trips: [Trip]
+    @Environment(\.presentationMode) var presentation
+    @Query(filter: #Predicate<Trip> { !$0.isFinished }) private var tripsCurrent: [Trip]
+    @Query(filter: #Predicate<Trip> { $0.isFinished }) private var tripsPast: [Trip]
     
-    @State private var items = Bag.exampleBag.itemList
-
+    @State private var columnVisibility: NavigationSplitViewVisibility = .doubleColumn
+    
     var body: some View {
-        NavigationSplitView {
+        NavigationSplitView(columnVisibility: $columnVisibility) {
             VStack {
-                Spacer()
-
-                if trips.isEmpty {
+                if tripsCurrent.isEmpty && tripsPast.isEmpty {
                     TripsListEmptyView()
                 } else {
                     List {
-                        ForEach(trips) { trip in
-                            Button {
-                                viewModel.selectedTrip = trip
-                            } label: {
-                                Text("\(trip.destinationName)")
+                        if tripsCurrent.count > 0 {
+                            Section(header: Text("Upcoming").font(.title)) {
+                                ForEach(tripsCurrent) { trip in
+                                    Button {
+                                        viewModel.selectedTrip = trip
+                                    } label: {
+                                        TripListCardView(trip: trip)
+                                    }
+                                    .padding(.horizontal, 2)
+                                    .foregroundStyle(Color.primary)
+                                    .swipeActions {
+                                        Button(role: .destructive) {
+                                            deleteTrip(trip)
+                                        } label: {
+                                            Label("Delete", systemImage: "trash")
+                                        }
+                                    }
+                                }
                             }
-                            //                            NavigationLink {
-                            //                                PackingListView(trip: trip)
-                            //                            } label: {
-                            //                                Text("\(trip.destinationName)")
-                            //                            }
+                            .listRowSeparator(.hidden)
+                            .listSectionSeparator(.hidden)
                         }
-                        //                .onDelete(perform: deleteItems)
+                        if tripsPast.count > 0 {
+                            Section(header: Text("Past").font(.title)) {
+                                ForEach(tripsPast) { trip in
+                                    Button {
+                                        viewModel.selectedTrip = trip
+                                    } label: {
+                                        TripListCardView(trip: trip, isPast: true)
+                                    }
+                                    .padding(.horizontal, 2)
+                                    .swipeActions {
+                                        Button(role: .destructive) {
+                                            deleteTrip(trip)
+                                        } label: {
+                                            Label("Delete", systemImage: "trash")
+                                        }
+                                    }
+                                }
+                            }
+                            .listRowSeparator(.hidden)
+                            .listSectionSeparator(.hidden)
+                        }
                     }
                     .listStyle(.plain)
+                    .foregroundStyle(Color.primary)
                 }
-                Spacer()
             }
             .navigationDestination(item: $viewModel.selectedTrip,
                                    destination: { item in
@@ -48,43 +78,34 @@ struct TripsListView: View {
             })
             .toolbar {
                 ToolbarItem(placement: .bottomBar) {
-
                     Button {
-
                         viewModel.showTripPlanner.toggle()
                     } label: {
-                        Label("Add new trip", systemImage: "plus")
+                        Label("Add trip", systemImage: "plus.circle.fill")
                             .labelStyle(.titleAndIcon)
+                            .padding()
                     }.buttonStyle(.borderless)
                 }
-
                 ToolbarItem(placement: .bottomBar) {
                     Spacer()
                 }
-            }.navigationTitle("ZipUp")
+            }
+            .navigationTitle("ZipUp")
         } detail: {
-            //
+            PackingListView(trip: viewModel.selectedTrip)
         }
         .sheet(isPresented: $viewModel.showTripPlanner) {
-            TripPlannerView(selectedTrip: $viewModel.selectedTrip)
+            TripPlannerView(modelContext: modelContext)
+                .presentationBackground(.thickMaterial)
         }
-
+        .navigationSplitViewStyle(.balanced)
     }
-
-    private func addItem() {
+    
+    private func deleteTrip(_ trip: Trip) {
         withAnimation {
-            //            let newItem = Item(timestamp: Date())
-            //            modelContext.insert(newItem)
+            modelContext.delete(trip)
         }
     }
-    //
-    //    private func deleteItems(offsets: IndexSet) {
-    //        withAnimation {
-    //            for index in offsets {
-    //                modelContext.delete(items[index])
-    //            }
-    //        }
-    //    }
 }
 
 #Preview {

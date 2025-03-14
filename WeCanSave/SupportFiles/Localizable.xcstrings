@@ -10,6 +10,9 @@
     " are you going next?" : {
 
     },
+    "(%lld days)" : {
+
+    },
     "%@" : {
 
     },
@@ -22,13 +25,16 @@
     "%lld Days" : {
 
     },
-    "Add new trip" : {
+    "Add item" : {
 
     },
     "Add or remove our suggestions for your bag" : {
 
     },
     "Add to bag" : {
+
+    },
+    "Add trip" : {
 
     },
     "All good, take me to the bag!" : {
@@ -47,6 +53,9 @@
 
     },
     "Decrease number of %@" : {
+
+    },
+    "Delete" : {
 
     },
     "Discard from bag" : {
@@ -70,10 +79,16 @@
     "Naples, New York, Bangkok..." : {
 
     },
+    "No Trip Selected" : {
+
+    },
     "packed" : {
 
     },
-    "Paris (5 days)" : {
+    "Past" : {
+
+    },
+    "Please select a trip to view the packing list." : {
 
     },
     "Search for a location" : {
@@ -98,6 +113,9 @@
           }
         }
       }
+    },
+    "Upcoming" : {
+
     },
     "wearing" : {
 
