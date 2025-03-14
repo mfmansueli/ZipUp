@@ -151,8 +151,8 @@ struct TripPlannerView: View {
                 }
             }
             .scrollDismissesKeyboard(.immediately)
-            .applyAlert(viewModel: viewModel)
             .applyLoading(viewModel: viewModel)
+            .applyAlert(viewModel: viewModel)
             .onChange(of: viewModel.tripCreatedSuccessfully) { newValue, arg in
                 if newValue {
                     presentation.wrappedValue.dismiss()
