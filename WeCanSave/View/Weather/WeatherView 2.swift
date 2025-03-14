@@ -10,7 +10,7 @@ import WeatherKit
 import CoreLocation
 
 struct WeatherView2: View {
-    @State private var weatherManager = WeatherManager()
+    @State private var weatherManager: WeatherManager
     @State private var isExpanded = false // Add state for expansion
     
     var trip: Trip
@@ -25,6 +25,11 @@ struct WeatherView2: View {
         return formatter
     }()
     //    let paris = CLLocation(latitude: 48.8566, longitude: 2.3522)
+    
+    init(trip: Trip) {
+        self.trip = trip
+        self.weatherManager = WeatherManager(trip: trip)
+    }
     
     var body: some View {
         Button(action: { isExpanded.toggle() }) {
