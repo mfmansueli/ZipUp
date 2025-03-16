@@ -28,12 +28,27 @@ struct ItemView: View {
                     .foregroundStyle(offset.width < 0 ? .red : .green)
                     .opacity(abs(offset.width) > 10 ? 1 : 0)
                     .frame(width: 140, height: 140)
+                    
+                Text(offset.width < 0 ? "Remove from bag" : "Add to bag")
+                    .foregroundStyle(offset.width < 0 ? .red : .green)
+                    .opacity(abs(offset.width) > 10 ? 1 : 0)
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 30)
+                            .fill(.white)
+                            .shadow(radius: 10)
+                            .opacity(abs(offset.width) > 10 ? 1 : 0)
+                    )
+                    .rotationEffect(.degrees(-(offset.width / 5.0)))
+                    .offset(x: -(offset.width * 5 + 20), y: -160 + abs(offset.width / 2))
             }
             
             
             Text("\(item.name)")
                 .font(.title)
                 .bold()
+                .foregroundStyle(.black)
+            
             
             
             HStack(spacing: 40) {
@@ -56,6 +71,7 @@ struct ItemView: View {
                 
                 Text("\(item.userQuantity)")
                     .font(.system(size: 50, weight: .bold))
+                    .foregroundStyle(.black)
                 
                 
                 Button {
@@ -75,17 +91,18 @@ struct ItemView: View {
             }
             
             Text("Here is maybe where we could put our AI-based reasoning for why we picked this number for this item")
+                .foregroundStyle(.black)
                 .fontWeight(.thin).italic()
                 .multilineTextAlignment(.center)
         }
-        .padding(30)
+        .padding(20)
         .background(
             RoundedRectangle(cornerRadius: 20)
                 .stroke(.brandOrange, lineWidth: 15)
                 .fill(.brandTan)
                 .shadow(radius: 5)
         )
-        .frame(width: 320, height: 500)
+        .frame(width: 300, height: 450)
         .rotationEffect(.degrees(offset.width / 5.0))
         .offset(x: offset.width * 5)
         .opacity(2 - Double(abs(offset.width / 30)))
@@ -115,6 +132,7 @@ struct ItemView: View {
                     }
                 }
         )
+        
         .accessibilityRepresentation {
             Text("Suggestion: \(item.name). Number to bring: \(item.userQuantity)")
             
@@ -146,4 +164,8 @@ struct ItemView: View {
 
 #Preview {
     ItemView(item: .constant(Item.socks))
+}
+
+#Preview {
+    BagBuilderView(trip: Trip.exampleTrip)
 }
