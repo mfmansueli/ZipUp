@@ -30,14 +30,8 @@ struct WeatherView: View {
     
     var body: some View {
         Button(action: { isExpanded.toggle() }) {
-            HStack {
+            HStack(spacing: 4) {
                 VStack(alignment: .leading, spacing: 8) {
-                    HStack{
-                        Text(trip.destinationName)
-                            .font(.largeTitle)
-                            .foregroundColor(.primary)
-                            .bold()
-                        
                         HStack {
                             //Number of days
                             Text("\(trip.duration) Days")
@@ -47,7 +41,6 @@ struct WeatherView: View {
                             Image(systemName: "chevron.down.circle")
                                 .rotationEffect(.degrees(isExpanded ? 180 : 0))
                                 .animation(.easeInOut, value: isExpanded)
-                        }
                     }
                     
                     //averageMaxTemp
@@ -75,14 +68,15 @@ struct WeatherView: View {
                 }
                 .padding(.horizontal, 20)
                 
-                Spacer()
                 
                 VStack(spacing: 8) {
-                    Image(systemName: viewmodel.mostCommonCondition.imageName ?? "")
-                        .font(.system(size: 80))
+                    Image(systemName: viewmodel.mostCommonCondition.imageName ?? "cloud.sun")
+                        .font(.system(size: 45))
                         .foregroundColor(.primary)
                     
-                    Text(viewmodel.mostCommonCondition.condition?.description ?? "")
+                    Text(viewmodel.mostCommonCondition.condition?.description ?? "Mostly sunny")
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.01)
                         .font(.body)
                         .foregroundColor(.primary)
                 }

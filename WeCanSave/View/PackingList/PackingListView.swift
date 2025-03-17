@@ -44,15 +44,14 @@ struct PackingListView: View {
                     .padding(.bottom, 20)
                     
                     Text("Your bag")
-                        .font(.title).bold()
-                    
-                    let groupedItems = Dictionary(grouping: trip.itemList, by: { $0.category })
+                        .font(.title)
+                        .bold()
                     
                     List {
-                        ForEach(groupedItems.keys.sorted(), id: \.self) { category in
+                        ForEach(ItemCategory.allCases, id: \.self) { category in
                             Section(
                                 header: HStack {
-                                    Text(category).font(.title3).bold()
+                                    Text(category.rawValue).font(.title3).bold()
                                     Spacer()
                                     
                                     HStack(spacing: 18) {
@@ -202,19 +201,18 @@ struct SectionView: View {
     @State var trip: Trip
     var filteredItems: [Item] = []
     
-    init(trip: Trip, category: String) {
+    init(trip: Trip, category: ItemCategory) {
         self.trip = trip
         filteredItems = trip.itemList.filter { $0.category == category }
     }
     
     var body: some View {
-        ForEach(filteredItems.indices, id: \.self) { index in
-            let item = $trip.itemList.first(where: { $0.id == filteredItems[index].id })!
-            
-            ListItemView(item: item)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 20)
-            
+        ForEach(filteredItems, id: \.self) { item in
+            if let item = $trip.itemList.first(where: { $0.id == item.id }) {
+                ListItemView(item: item)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 20)
+            }
         }
         HStack {
             Button("Add item") {

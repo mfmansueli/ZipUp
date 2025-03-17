@@ -16,6 +16,16 @@
     "%@" : {
 
     },
+    "%@–%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@–%2$@"
+          }
+        }
+      }
+    },
     "%lld" : {
 
     },
@@ -26,9 +36,6 @@
 
     },
     "Add item" : {
-
-    },
-    "Add or remove our suggestions for your bag" : {
 
     },
     "Add to bag" : {
@@ -49,6 +56,9 @@
     "Bag builder progress: Suggestions remaining; 4" : {
 
     },
+    "BUILD ME A BAG!" : {
+
+    },
     "Cancel" : {
 
     },
@@ -64,13 +74,7 @@
     "Here is maybe where we could put our AI-based reasoning for why we picked this number for this item" : {
 
     },
-    "How long for?" : {
-
-    },
     "Increase number of %@" : {
-
-    },
-    "MAKE ME A BAG!" : {
 
     },
     "n.items" : {
@@ -88,7 +92,13 @@
     "Past" : {
 
     },
+    "Pick your dates" : {
+
+    },
     "Please select a trip to view the packing list." : {
+
+    },
+    "Remove from bag" : {
 
     },
     "Search for a location" : {
@@ -114,6 +124,9 @@
         }
       }
     },
+    "Swipe to add or remove our suggestions\nfrom your bag" : {
+
+    },
     "Upcoming" : {
 
     },
@@ -130,7 +143,11 @@
         }
       }
     },
+    "When are you going?" : {
+
+    },
     "When?" : {
+      "extractionState" : "stale",
       "localizations" : {
         "pt-BR" : {
           "stringUnit" : {

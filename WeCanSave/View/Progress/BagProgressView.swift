@@ -15,21 +15,26 @@ struct BagProgressView: View {
     @State var itemCount: Int = 0
     
     var body: some View {
-        GeometryReader { geometry in
+        
+//        
+//        let badgeView = Text("\(itemCount)")
+//                    .monospacedDigit()
+//                    .bold()
+//        
+//        List {
+//            Image(isOpen ? "Bag_open-symbol"  : "Bag_closed-symbol")
+//                .resizable()
+//                .scaledToFit()
+//                .foregroundStyle(.brandOrange)
+//                .padding(32)
+//                .badge(badgeView)
+//                .badgeProminence(.increased)
+//        }
+//        
+//        .listStyle(.plain)
             ZStack {
-                if showProgress {
-                    Circle()
-                        .trim(from: 0, to: bagProgress)
-                        .rotation(.degrees(-90))
-                        .stroke(.brandGreen, style: StrokeStyle(lineWidth: geometry.size.width * 0.06, lineCap: .round))
-                }
                 
                 ZStack(alignment: .bottomLeading) {
-                    Image(isOpen ? "Bag_open-symbol"  : "Bag_closed-symbol")
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundStyle(.brandOrange)
-//                        .padding(10)
                     
                     Text("\(itemCount)")
                         .font(.caption)
@@ -40,24 +45,38 @@ struct BagProgressView: View {
                                 .fill(.background)
                                 .stroke(.foreground, lineWidth: 2)
                         )
-                        .offset(x: -geometry.size.width * 0.1)
+                        .badge(5124)
+//                        .offset(x: -geometry.size.width * 0.1)
                 }
-                .padding(showProgress ? geometry.size.width * 0.15 : 0)
-                .padding(.leading)
+                
+                    if showProgress {
+                        Circle()
+                            .trim(from: 0, to: bagProgress)
+                            .rotation(.degrees(-90))
+                            .stroke(.brandGreen, style: StrokeStyle(lineWidth: 8, lineCap: .round))
+                            .padding()
+                            .background {
+                                    Image(isOpen ? "Bag_open-symbol"  : "Bag_closed-symbol")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .foregroundStyle(.brandOrange)
+                                        .padding(32)
+                            }
+                    }
                 
                 
             }
-            .frame(maxWidth: geometry.size.width * 0.9)
+            .badge(itemCount)
+//            .frame(maxWidth: geometry.size.width * 0.9)
 //            .padding(geometry.size.width * 0.1)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("Bag builder progress: Suggestions remaining; 4")
-        }
         
     }
 }
 
 #Preview {
-    BagProgressView(bagProgress: 0.4, isOpen: false, showProgress: true, itemCount: 10)
+    BagProgressView(bagProgress: 0.8, isOpen: false, showProgress: true, itemCount: 10)
 }
 
 #Preview {

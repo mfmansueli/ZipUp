@@ -204,15 +204,8 @@ class TripPlannerViewModel: BaseViewModel {
         }
         content += " Please respond in \(currentLanguage)."
         
-        let allowedImageNames = [
-            "belt", "binoculars", "bodyWash", "book", "bottoms", "camera", "campingGear", "charger",
-            "contactLens", "deodorant", "earplugs", "firstAidKit", "flashlight", "flipflops", "hairbrush",
-            "hatAndGloves", "insectRepellent", "jacket", "laptop", "lipBalm", "makeUp", "pajamas",
-            "passport", "powerbank", "rainCoat", "razorAndShavingCream", "reusableBottle", "scarf",
-            "shampoo", "shoes", "skinCare", "snorkelGear", "socks", "sunglasses", "sunscreen",
-            "sweater", "swimsuit", "tickets", "tissues", "toothbrushToothpaste", "tops", "toteBag",
-            "travelAdapter", "travelPillow", "trekkingPoles", "tweezers", "umbrella", "underwear", "wallet"
-        ].joined(separator: ", ")
+        let itemImages = ItemImage.allCases.map { $0.rawValue }.joined(separator: ", ")
+        let itemCategories = ItemCategory.allCases.map { $0.rawValue }.joined(separator: ", ")
         
         let systemPrompt = """
         You are a helpful assistant that generates a smart packing list for a trip. 
@@ -227,8 +220,9 @@ class TripPlannerViewModel: BaseViewModel {
           "isPair": false
         }
         
-        Use the following predefined image names if they match an item: \(allowedImageNames). 
+        Use the following predefined image names if they match an item: \(itemImages).
         If an item does not match any, use an appropriate SF Symbol as the imageName.
+        For the item category, always use one of the following: \(itemCategories).
         """
         
         let parameters: [String: Any] = [
