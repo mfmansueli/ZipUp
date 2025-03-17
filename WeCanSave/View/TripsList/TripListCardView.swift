@@ -33,7 +33,7 @@ struct TripListCardView: View {
                 Spacer()
 
                 Text(trip.destinationName)
-                    .font(.system(size: 40))
+                    .font(.system(size: 24))
                     .fontWeight(.semibold)
                 Text("(\(trip.duration) days)")
                     .fontWeight(.light)
