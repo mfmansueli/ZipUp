@@ -38,23 +38,29 @@ struct WeatherView2: View {
                     HStack {
                         // Location and duration
                         HStack{
-                            Text(trip.destinationName)
-                                .font(.title)
-                                .foregroundColor(.black)
-                                .lineLimit(1)
-                                .bold()
+//                            Text(trip.destinationName)
+//                                .font(.title)
+//                                .foregroundColor(.black)
+//                                .lineLimit(1)
+//                                .bold()
                             //                        Text("\(weatherManager.temperature)")
                             //                        Button(action: { isExpanded.toggle() }) {
+//                            Spacer()
+
                             HStack {
                                 //Number of days
-                                Text("\(trip.duration) Days")
-                                    .font(.body)
-                                    .foregroundColor(.black)
+                                Text("\(shortDateString(startDate: trip.startDate, endDate: trip.endDate))")
+                                    .font(.headline)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.primary)
 
                                 Image(systemName: "chevron.down.circle")
                                     .rotationEffect(.degrees(isExpanded ? 90 : 0))
                                     .animation(.easeInOut, value: isExpanded)
                             }
+                            
+                            Spacer()
+
                             //                        }
                             //Start and End date
                             //                        VStack(alignment: .leading) {
@@ -162,6 +168,18 @@ struct WeatherView2: View {
                 }
             }
         }
+    }
+    
+    func shortDateString(startDate: Date, endDate: Date) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale.autoupdatingCurrent
+        dateFormatter.setLocalizedDateFormatFromTemplate("dd/MM")
+        
+        let beginning = dateFormatter.string(from: startDate)
+        let end = dateFormatter.string(from: endDate)
+        
+        return "\(beginning)–\(end)"
+        
     }
 }
 

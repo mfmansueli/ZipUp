@@ -36,7 +36,7 @@ struct ItemView: View {
                     .background(
                         RoundedRectangle(cornerRadius: 30)
                             .fill(.white)
-                            .shadow(radius: 10)
+                            .shadow(color: .black, radius: 10)
                             .opacity(abs(offset.width) > 10 ? 1 : 0)
                     )
                     .rotationEffect(.degrees(-(offset.width / 5.0)))
@@ -100,7 +100,7 @@ struct ItemView: View {
             RoundedRectangle(cornerRadius: 20)
                 .stroke(.brandOrange, lineWidth: 15)
                 .fill(.brandTan)
-                .shadow(radius: 5)
+                .shadow(color: .primary.opacity(0.1), radius: 5)
         )
         .frame(width: 300, height: 450)
         .rotationEffect(.degrees(offset.width / 5.0))

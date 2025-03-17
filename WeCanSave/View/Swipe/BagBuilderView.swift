@@ -34,68 +34,86 @@ struct BagBuilderView: View {
     }
     
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                
-                HStack {
-                    Image(systemName: "xmark")
-                        .foregroundStyle(.red.opacity(0.4))
-                        .padding(10)
-                        
-                    Spacer()
-
-                    Image(systemName: "checkmark")
-                        .foregroundStyle(.green.opacity(0.4))
-                        .padding(15)
-                }
-                .font(.title2)
-                .offset(y: 50)
-                
-                VStack(spacing: 40) {
+        NavigationStack {
+            GeometryReader { geometry in
+                ZStack {
+                    
                     HStack {
-                        WeatherView2(trip: trip)
-                            .frame(width: geometry.size.width * 0.6 - 20)
+                        Image(systemName: "xmark")
+                            .foregroundStyle(.red.opacity(0.4))
+                            .padding(10)
                         
-                        Divider()
-                            .frame(width: 1, height: 100)
-                            .padding(.trailing, 20)
-                        Button {
-                            presentation.wrappedValue.dismiss()
-                        } label: {
-                            BagProgressView(bagProgress: progress, isOpen: false, showProgress: true, itemCount: itemCount)
-                                .frame(width: geometry.size.width * 0.4 - 40)
+                        Spacer()
+                        
+                        Image(systemName: "checkmark")
+                            .foregroundStyle(.green.opacity(0.4))
+                            .padding(15)
+                    }
+                    .font(.title2)
+                    .offset(y: 50)
+                    
+                    VStack(spacing: 35) {
+                        HStack {
+                            WeatherView2(trip: trip)
+                                .frame(width: geometry.size.width * 0.6 - 20)
+                            
+                            Divider()
+                                .frame(width: 1, height: 100)
+                                .padding(.trailing, 20)
+                            Button {
+                                presentation.wrappedValue.dismiss()
+                            } label: {
+                                BagProgressView(bagProgress: progress, isOpen: false, showProgress: true, itemCount: itemCount)
+                                    .frame(width: geometry.size.width * 0.4 - 40)
+                            }
+                            .foregroundStyle(.primary)
+                            .padding(0)
+                            
                         }
-                        .foregroundStyle(.primary)
-                        .padding(0)
+                        .frame(height: 100)
+                        //                .padding(.bottom, 20)
+                        //                .padding(.trailing, 20)
                         
+                        
+                        
+                        Text("Swipe to add or remove our suggestions from your bag")
+                            .font(.system(size: 14))
+                            .foregroundStyle(.foreground.opacity(0.4))
+//                            .lineLimit(2, reservesSpace: true)
+                            .multilineTextAlignment(.center)
+                        
+                        
+                        SwipeView(itemList: $itemList)
+                        
+                        //                .accessibilitySortPriority(2)
+                        
+                        Button("All good, take me to the bag!") {
+                            print(itemList.count)
+                        }
+                        .buttonStyle(.bordered)
+
+                        //                    .padding(.top, 30)
                     }
-                    .frame(height: 100)
-                    //                .padding(.bottom, 20)
-                    //                .padding(.trailing, 20)
-                    
-                    
-                    
-                    Text("Swipe to add or remove our suggestions\nfrom your bag")
-                        .font(.callout)
-                        .foregroundStyle(.foreground.opacity(0.4))
-                        .lineLimit(2, reservesSpace: true)
-                        .multilineTextAlignment(.center)
-                    
-                    
-                    SwipeView(itemList: $itemList)
-                    
-                    //                .accessibilitySortPriority(2)
-                    
-                    Button("All good, take me to the bag!") {
-                        print(itemList.count)
+                    .onAppear {
+                        totalCards = itemList.count
                     }
-                    .buttonStyle(.bordered)
-//                    .padding(.top, 30)
+                    .padding()
                 }
-                .onAppear {
-                    totalCards = itemList.count
+                .navigationTitle(trip.destinationName + " (\(trip.duration) days)")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        NavigationLink {
+                            TripsListView()
+                        } label: {
+                            
+                            HStack(spacing: 5) {
+                                Image(systemName: "chevron.left")
+                                Text("Trip list")
+                            }
+                        }
+                    }
                 }
-                .padding()
             }
         }
     }

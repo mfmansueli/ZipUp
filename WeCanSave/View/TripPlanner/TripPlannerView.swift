@@ -136,7 +136,7 @@ struct TripPlannerView: View {
                         .font(.title)
                     
 //                    LazyVGrid(columns: columns, alignment: .center, spacing: 16) {
-                    VStack(spacing: 20) {
+                    VStack(spacing: 10) {
                         HStack(spacing: 20) {
                             ForEach(TripType.allCases.prefix(2), id: \.self) { item in
                                 tripTypeButton(for: item)
@@ -206,7 +206,8 @@ struct TripPlannerView: View {
             } icon: {
                 Image(item.image)
                     .resizable()
-                    .renderingMode(.template)
+                    .scaledToFit()
+
                     .frame(width: 35, height: 24)
             }
             .fixedSize()
