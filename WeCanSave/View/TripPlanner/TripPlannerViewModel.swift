@@ -65,14 +65,32 @@ class TripPlannerViewModel: BaseViewModel {
                 print("Error: \(error?.localizedDescription ?? "Unknown error")")
                 return
             }
-
-            self?.searchResults = response.mapItems
+            
+            var filteredSearchResults: [MKMapItem] {
+                response.mapItems.filter { result in
+                    if result.name?.range(of: "\\d", options: .regularExpression) != nil {
+                        return false
+                    }
+                    
+                    if result.placemark.thoroughfare != nil  {
+                        return false
+                    }
+                    
+                    // other filters if necessary
+//                    print(result)
+                    return true
+                }
+                
+            }
+            self?.searchResults = filteredSearchResults
             self?.showAddressPopover = true
             self?.printSearchResults()
         }
+        
     }
 
     func printSearchResults() {
+        
         for item in searchResults {
             print("Name: \(item.name ?? "No name")")
             print("Phone: \(item.phoneNumber ?? "No phone number")")
