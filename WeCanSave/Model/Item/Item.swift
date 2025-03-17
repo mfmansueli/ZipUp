@@ -11,7 +11,7 @@ import UIKit
 
 struct Item: Identifiable, Codable, Equatable, Hashable {
     var id = UUID()
-    let name: String
+    var name: String
     let category: ItemCategory
     var userQuantity: Int
     let AIQuantity: Int

@@ -17,7 +17,7 @@ class WeatherViewModel: ObservableObject {
     @Published var averageHighTemperature: String = ""
     @Published var averageLowTemperature: String = ""
     @Published var mostCommonCondition: (condition: WeatherCondition?, imageName: String?) = (nil, nil)
-    
+    var isSuccessfulLoaded = false
     private var cancellables = Set<AnyCancellable>()
 
     func fetchWeather(lat: Double, long: Double, startDate: Date, endDate: Date) -> AnyPublisher<[DayWeather], Error> {
@@ -34,7 +34,7 @@ class WeatherViewModel: ObservableObject {
                         let endDate = min(currentEndDate, endDate)
                         let weather = try await WeatherService().weather(for: location, including: .daily(startDate: currentStartDate, endDate: endDate))
                         allForecasts.append(contentsOf: weather.forecast)
-                        
+                        print("Weather: \(weather.forecast)")
                         currentStartDate = calendar.date(byAdding: .day, value: 10, to: currentStartDate) ?? endDate
                     }
                     
@@ -48,7 +48,7 @@ class WeatherViewModel: ObservableObject {
     }
     
     init(trip: Trip) {
-        if let lat = Double(trip.destinationLat),
+        if !isSuccessfulLoaded, let lat = Double(trip.destinationLat),
            let long = Double(trip.destinationLong) {
             isLoading = true
             fetchWeather(lat: lat, long: long, startDate: trip.startDate, endDate: trip.endDate)
@@ -61,6 +61,7 @@ class WeatherViewModel: ObservableObject {
                         print("Failed to fetch weather: \(error)")
                     }
                 }, receiveValue: { [weak self] forecasts in
+                    self?.isSuccessfulLoaded = true
                     self?.allForecasts = forecasts
                     self?.averageHighTemperature = self?.calculateAverageHighTemperature() ?? ""
                     self?.averageLowTemperature = self?.calculateAverageLowTemperature() ?? ""

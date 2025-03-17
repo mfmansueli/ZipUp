@@ -20,8 +20,8 @@ struct TripPlannerView: View {
     @State private var isDateActivated: Bool = false
     @FocusState private var isDestinationFocused: Bool
     
-    init(modelContext: ModelContext) {
-        viewModel = TripPlannerViewModel(modelContext: modelContext)
+    init(modelContext: ModelContext, selectedTrip: Binding<Trip?>) {
+        viewModel = TripPlannerViewModel(modelContext: modelContext, selectedTrip: selectedTrip)
     }
     
     var body: some View {
@@ -33,6 +33,7 @@ struct TripPlannerView: View {
                         .font(.title)
                     
                     TextField("", text: $viewModel.searchText)
+                        .autocorrectionDisabled(true)
                         .multilineTextAlignment(.leading)
                         .font(.headline)
                         .padding()
@@ -135,7 +136,7 @@ struct TripPlannerView: View {
                         .font(.title)
                     
 //                    LazyVGrid(columns: columns, alignment: .center, spacing: 16) {
-                    VStack(spacing: 20) {
+                    VStack(spacing: 10) {
                         HStack(spacing: 20) {
                             ForEach(TripType.allCases.prefix(2), id: \.self) { item in
                                 tripTypeButton(for: item)
@@ -187,11 +188,12 @@ struct TripPlannerView: View {
             .scrollDismissesKeyboard(.immediately)
             .applyLoading(viewModel: viewModel)
             .applyAlert(viewModel: viewModel)
-            .onChange(of: viewModel.tripCreatedSuccessfully) { newValue, arg in
-                if newValue {
-                    presentation.wrappedValue.dismiss()
-                }
-            }
+//            .onChange(of: viewModel.tripCreatedSuccessfully) { newValue, arg in
+//                if newValue {
+//                    presentation.wrappedValue.dismiss()
+//                    selectedTrip = viewModel.createdTrip
+//                }
+//            }
         }
     }
     
@@ -205,7 +207,8 @@ struct TripPlannerView: View {
             } icon: {
                 Image(item.image)
                     .resizable()
-                    .renderingMode(.template)
+                    .scaledToFit()
+
                     .frame(width: 35, height: 24)
             }
             .fixedSize()
@@ -239,5 +242,5 @@ struct TripPlannerView: View {
 
 #Preview {
     @Previewable @Environment(\.modelContext) var modelContext
-    TripPlannerView(modelContext: modelContext)
+    TripPlannerView(modelContext: modelContext, selectedTrip: .constant(nil))
 }

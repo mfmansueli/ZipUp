@@ -32,9 +32,6 @@
     "%lld days" : {
 
     },
-    "%lld Days" : {
-
-    },
     "Add item" : {
 
     },
@@ -75,6 +72,9 @@
 
     },
     "Increase number of %@" : {
+
+    },
+    "Item name" : {
 
     },
     "n.items" : {
@@ -124,7 +124,7 @@
         }
       }
     },
-    "Swipe to add or remove our suggestions\nfrom your bag" : {
+    "Swipe to add or remove our suggestions from your bag" : {
 
     },
     "Upcoming" : {

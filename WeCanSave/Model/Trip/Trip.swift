@@ -110,4 +110,13 @@ class Trip {
 
         return count
     }
+    
+    func isBagDecided() -> Bool {
+        for item in itemList {
+            if !item.isDecided {
+                return false
+            }
+        }
+        return true
+    }
 }

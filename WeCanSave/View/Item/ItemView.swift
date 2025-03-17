@@ -33,19 +33,18 @@ struct ItemView: View {
                     .background(
                         RoundedRectangle(cornerRadius: 30)
                             .fill(.white)
-                            .shadow(radius: 10)
+                            .shadow(color: .black, radius: 10)
                             .opacity(abs(offset.width) > 10 ? 1 : 0)
                     )
                     .rotationEffect(.degrees(-(offset.width / 5.0)))
                     .offset(x: -(offset.width * 5 + 20), y: -160 + abs(offset.width / 2))
             }
             
-            
-            Text("\(item.name)")
+            TextField("Item name", text: $item.name)
+                .multilineTextAlignment(.center)
                 .font(.title)
                 .bold()
                 .foregroundStyle(.black)
-            
             
             HStack(spacing: 30) {
                 
@@ -97,7 +96,7 @@ struct ItemView: View {
             RoundedRectangle(cornerRadius: 20)
                 .stroke(.brandOrange, lineWidth: 15)
                 .fill(.brandTan)
-                .shadow(radius: 5)
+                .shadow(color: .primary.opacity(0.1), radius: 5)
         )
         .frame(width: 300, height: 450)
         .rotationEffect(.degrees(offset.width / 5.0))
@@ -107,8 +106,8 @@ struct ItemView: View {
             DragGesture()
                 .onChanged { gesture in
                     withAnimation {
-                        offset = CGSize(width: gesture.translation.width / 4,
-                                        height: gesture.translation.height / 4)
+                        offset = CGSize(width: gesture.translation.width / 3,
+                                        height: gesture.translation.height / 3)
                     }
                 }
                 .onEnded { _ in

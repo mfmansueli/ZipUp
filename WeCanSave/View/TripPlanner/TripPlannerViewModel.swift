@@ -16,7 +16,7 @@ class TripPlannerViewModel: BaseViewModel {
     var modelContext: ModelContext!
     var searchTimer: Timer?
     var weatherInfo: String?
-    @Published var selectedTrip: Trip?
+    @Binding var selectedTrip: Trip?
     @Published var dates: Set<DateComponents> = []
     @Published var searchResults: [MKMapItem] = []
     @Published var selectedItem: MKMapItem?
@@ -44,8 +44,9 @@ class TripPlannerViewModel: BaseViewModel {
         }
     }
 
-    init(modelContext: ModelContext) {
+    init(modelContext: ModelContext, selectedTrip: Binding<Trip?>) {
         self.modelContext = modelContext
+        self._selectedTrip = selectedTrip
         super.init()
     }
     
@@ -160,14 +161,25 @@ class TripPlannerViewModel: BaseViewModel {
                 weatherInfo = await fetchWeather(startDate: startDate, endDate: endDate)
                 print("Weather Info: \(weatherInfo ?? "No weather info")")
                 let items = try await fetchPackingList(openAIKey: openAIKey, selectedPlacemark: selectedPlacemark, dates: dates, weatherInfo: weatherInfo)
+                
+                let destination = cleanDestinationName(name: selectedPlacemark.title ?? "Unknown Destination")
+                
+                let sortedItems = items.sorted { (item1, item2) -> Bool in
+                    guard let index1 = ItemCategory.allCases.firstIndex(of: item1.category),
+                          let index2 = ItemCategory.allCases.firstIndex(of: item2.category) else {
+                        return false
+                    }
+                    return index1 < index2
+                }
+                
                 let trip = Trip(
-                    destinationName: selectedPlacemark.title ?? "Unknown Destination",
+                    destinationName: destination,
                     destinationLat: "\(selectedPlacemark.coordinate.latitude)",
                     destinationLong: "\(selectedPlacemark.coordinate.longitude)",
                     startDate: startDate,
                     endDate: endDate,
                     category: selectedTripType?.rawValue ?? "General",
-                    itemList: items
+                    itemList: sortedItems
                 )
 
                 let database = CKContainer.default().publicCloudDatabase
@@ -175,6 +187,7 @@ class TripPlannerViewModel: BaseViewModel {
                 
                 modelContext.insert(trip)
                 isLoading = false
+                selectedTrip = trip
                 tripCreatedSuccessfully = true
             } catch {
                 print("Error while generating the bag: \(error)")
@@ -182,6 +195,24 @@ class TripPlannerViewModel: BaseViewModel {
                 showAlert(title: "Error while generating the bag", message: "Unable to proceed, please contact support. \nError: \(error)")
             }
         }
+    }
+    
+    func cleanDestinationName(name: String) -> String {
+        let pattern = #"^(.+?)\s*[,—–:;-]\s*(.*)$"#
+        
+        if let regex = try? NSRegularExpression(pattern: pattern),
+           let match = regex.firstMatch(in: name, range: NSRange(name.startIndex..., in: name)) {
+            
+            let prefixRange = Range(match.range(at: 1), in: name)
+            let restRange = Range(match.range(at: 2), in: name)
+            
+            let prefix = prefixRange.map { String(name[$0]) } ?? name
+            let rest = restRange.map { String(name[$0]) } ?? ""
+            
+            return prefix
+        }
+        
+        return name // No match, return the whole string as the prefix
     }
 
     func fetchPackingList(openAIKey: String, selectedPlacemark: MKPlacemark, dates: Set<DateComponents>, weatherInfo: String?) async throws -> [Item] {

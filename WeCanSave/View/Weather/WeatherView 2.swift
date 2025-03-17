@@ -4,13 +4,13 @@
 //
 //  Created by Lehebel Florence on 10/03/25.
 //
-
+//
 //import SwiftUI
 //import WeatherKit
 //import CoreLocation
 //
 //struct WeatherView2: View {
-//    @ObservedObject private var viewModel: WeatherViewModel
+//    @State private var weatherManager: WeatherViewModel
 //    @State private var isExpanded = false // Add state for expansion
 //    
 //    var trip: Trip
@@ -28,7 +28,7 @@
 //    
 //    init(trip: Trip) {
 //        self.trip = trip
-//        self.weatherManager = WeatherManager(trip: trip)
+//        self.weatherManager = WeatherViewModel(trip: trip)
 //    }
 //    
 //    var body: some View {
@@ -38,23 +38,29 @@
 //                    HStack {
 //                        // Location and duration
 //                        HStack{
-//                            Text(trip.destinationName)
-//                                .font(.title)
-//                                .foregroundColor(.black)
-//                                .lineLimit(1)
-//                                .bold()
+////                            Text(trip.destinationName)
+////                                .font(.title)
+////                                .foregroundColor(.black)
+////                                .lineLimit(1)
+////                                .bold()
 //                            //                        Text("\(weatherManager.temperature)")
 //                            //                        Button(action: { isExpanded.toggle() }) {
+////                            Spacer()
+//
 //                            HStack {
 //                                //Number of days
-//                                Text("\(trip.duration) Days")
-//                                    .font(.body)
-//                                    .foregroundColor(.black)
+//                                Text("\(shortDateString(startDate: trip.startDate, endDate: trip.endDate))")
+//                                    .font(.headline)
+//                                    .fontWeight(.semibold)
+//                                    .foregroundColor(.primary)
 //
 //                                Image(systemName: "chevron.down.circle")
 //                                    .rotationEffect(.degrees(isExpanded ? 90 : 0))
 //                                    .animation(.easeInOut, value: isExpanded)
 //                            }
+//
+//                            Spacer()
+//
 //                            //                        }
 //                            //Start and End date
 //                            //                        VStack(alignment: .leading) {
@@ -63,16 +69,16 @@
 //                            //                        }
 //                            //                        .font(.caption)
 //                            .popover(isPresented: $isExpanded) {
-//                                
+//
 //                                VStack(spacing: 15) {
 //                                    ForEach(weatherManager.dailyForecasts, id: \.date) { forecast in
 //                                        HStack {
 //                                            Text(forecast.date, style: .date)
 //                                                .frame(width: 100, alignment: .leading)
-//                                            
+//
 //                                            Text(forecast.maxTemp)
 //                                                .frame(width: 50)
-//                                            
+//
 //                                            Text(forecast.minTemp)
 //                                                .foregroundColor(.gray)
 //                                                .frame(width: 50)
@@ -85,19 +91,19 @@
 //                                    }
 //                                }
 //                                .foregroundColor(.black)
-//                                
+//
 //                                    .presentationCompactAdaptation(.popover)
 //                                .padding(.vertical)
 //                            }
 //                        }
 //                        .padding(.bottom, 10)
-//                        
-//                        
+//
+//
 //                    }
 ////                    .padding(.horizontal, 20)
-//                    
+//
 ////                    Spacer()
-//                    
+//
 //                    HStack(alignment: .bottom) {
 //                        VStack {
 //                            //averageMaxTemp
@@ -106,12 +112,12 @@
 //                                    .font(.title2)
 //                                    .fontWeight(.light)
 //                                    .foregroundColor(.black)
-//                                
+//
 //                                Text("avg. max.")
 //                                    .font(.body)
 //                                    .fontWeight(.light)
 //                                    .foregroundColor(.black)
-//                                
+//
 //                            }
 //                            Spacer()
 //
@@ -127,11 +133,11 @@
 //                                    .foregroundColor(.gray)
 //                            }
 //                        }
-//                        
+//
 //                        Spacer()
 //
-//                        
-//                        
+//
+//
 //                        VStack(spacing: 8) {
 //                            Image(systemName: weatherManager.averageWeatherCondition.icon)
 //    //                            .font(.system(size: 80))
@@ -147,9 +153,9 @@
 //
 //                    }
 //                        .padding(.trailing, 20)
-//                        
-//                    
-//                        
+//
+//
+//
 //                    }
 ////                    .padding(.top, 10)
 //                }
@@ -163,6 +169,8 @@
 //            }
 //        }
 //    }
+//
+
 //}
 //
 //#Preview {

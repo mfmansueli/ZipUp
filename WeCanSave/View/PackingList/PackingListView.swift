@@ -9,23 +9,23 @@ import SwiftUI
 
 struct PackingListView: View {
     
-    @State var trip: Trip?
+    @State var trip: Trip
     
     @State private var bagBuilderShowing: Bool
     
     //    @State private var addItemSheetShowing: Bool = false
     
     var itemCount: Int {
-        trip?.getItemCount() ?? 0
+        trip.getItemCount()
     }
     
-    init(trip: Trip?) {
+    init(trip: Trip) {
         self.trip = trip
-        self.bagBuilderShowing = true //!trip.bag!.isDecided
+        self.bagBuilderShowing = !trip.isBagDecided()
     }
     
     var body: some View {
-        if let trip = trip {
+        NavigationStack {
             GeometryReader { geometry in
                 VStack(alignment: .leading) {
                     HStack {
@@ -51,7 +51,10 @@ struct PackingListView: View {
                         ForEach(ItemCategory.allCases, id: \.self) { category in
                             Section(
                                 header: HStack {
-                                    Text(category.rawValue).font(.title3).bold()
+                                    Text(category.rawValue)
+                                        .font(.title3)
+                                        .bold()
+                                    
                                     Spacer()
                                     
                                     HStack(spacing: 18) {
@@ -83,14 +86,10 @@ struct PackingListView: View {
                 //                })
                 .padding()
             }
-            
-        } else {
-            ContentUnavailableView {
-                Label("No Trip Selected", systemImage: "exclamationmark.triangle.fill")
-            } description: {
-                Text("Please select a trip to view the packing list.")
-            }
+            .navigationTitle(trip.destinationName + " (\(trip.duration) days)")
+            .navigationBarTitleDisplayMode(.inline)
         }
+        
     }
 }
 
@@ -199,6 +198,7 @@ struct ListItemPackedButton: View {
 
 struct SectionView: View {
     @State var trip: Trip
+    @State var showAddItemSheet: Bool = false
     var filteredItems: [Item] = []
     
     init(trip: Trip, category: ItemCategory) {
@@ -216,7 +216,7 @@ struct SectionView: View {
         }
         HStack {
             Button("Add item") {
-                //
+                showAddItemSheet = true
             }
             Spacer()
             
