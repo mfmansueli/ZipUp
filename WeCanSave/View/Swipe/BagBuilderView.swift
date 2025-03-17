@@ -37,7 +37,7 @@ struct BagBuilderView: View {
         GeometryReader { geometry in
             VStack(spacing: 20) {
                 HStack {
-                    WeatherView2(trip: trip)
+                    WeatherView(trip: trip)
                         .frame(width: geometry.size.width * 0.6 - 20)
                     
                     Divider()

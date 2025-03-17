@@ -29,7 +29,7 @@ struct PackingListView: View {
             GeometryReader { geometry in
                 VStack(alignment: .leading) {
                     HStack {
-                        WeatherView2(trip: trip)
+                        WeatherView(trip: trip)
                             .frame(width: geometry.size.width * 0.65 - 20)
                         
                         Divider()
