@@ -56,7 +56,14 @@
 
     },
     "Delete" : {
-
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer"
+          }
+        }
+      }
     },
     "Discard from bag" : {
 
