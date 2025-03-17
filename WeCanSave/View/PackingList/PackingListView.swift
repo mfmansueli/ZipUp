@@ -26,63 +26,67 @@ struct PackingListView: View {
     
     var body: some View {
         if let trip = trip {
-            GeometryReader { geometry in
-                VStack(alignment: .leading) {
-                    HStack {
-                        WeatherView2(trip: trip)
-                            .frame(width: geometry.size.width * 0.65 - 20)
-                        
-                        Divider()
-                            .frame(width: 1, height: 100)
-                            .padding(.trailing, 20)
-                        
-                        BagProgressView(bagProgress: 1, isOpen: true, showProgress: true, itemCount: itemCount)
-                            .frame(width: geometry.size.width * 0.35 - 40)
-                        
-                    }
-                    .frame(height: 100)
-                    .padding(.bottom, 20)
-                    
-                    Text("Your bag")
-                        .font(.title).bold()
-                    
-                    let groupedItems = Dictionary(grouping: trip.itemList, by: { $0.category })
-                    
-                    List {
-                        ForEach(groupedItems.keys.sorted(), id: \.self) { category in
-                            Section(
-                                header: HStack {
-                                    Text(category).font(.title3).bold()
-                                    Spacer()
-                                    
-                                    HStack(spacing: 18) {
-                                        Text("packed")
-                                        Text("wearing")
-                                        Text("n.items")
-                                    }
-                                    .foregroundStyle(.foreground.opacity(0.4))
-                                    .fontWeight(.light)
-                                    .font(.caption2)
-                                    .multilineTextAlignment(.center)
-                                }
-                            ) {
-                                SectionView(trip: trip, category: category)
-                            }
+            NavigationStack {
+                GeometryReader { geometry in
+                    VStack(alignment: .leading) {
+                        HStack {
+                            WeatherView2(trip: trip)
+                                .frame(width: geometry.size.width * 0.65 - 20)
+                            
+                            Divider()
+                                .frame(width: 1, height: 100)
+                                .padding(.trailing, 20)
+                            
+                            BagProgressView(bagProgress: 1, isOpen: true, showProgress: true, itemCount: itemCount)
+                                .frame(width: geometry.size.width * 0.35 - 40)
+                            
                         }
-                        .listRowInsets(EdgeInsets())
+                        .frame(height: 100)
+                        .padding(.bottom, 20)
+                        
+                        Text("Your bag")
+                            .font(.title).bold()
+                        
+                        let groupedItems = Dictionary(grouping: trip.itemList, by: { $0.category })
+                        
+                        List {
+                            ForEach(groupedItems.keys.sorted(), id: \.self) { category in
+                                Section(
+                                    header: HStack {
+                                        Text(category).font(.title3).bold()
+                                        Spacer()
+                                        
+                                        HStack(spacing: 18) {
+                                            Text("packed")
+                                            Text("wearing")
+                                            Text("n.items")
+                                        }
+                                        .foregroundStyle(.foreground.opacity(0.4))
+                                        .fontWeight(.light)
+                                        .font(.caption2)
+                                        .multilineTextAlignment(.center)
+                                    }
+                                ) {
+                                    SectionView(trip: trip, category: category)
+                                }
+                            }
+                            .listRowInsets(EdgeInsets())
+                        }
+                        .listStyle(.plain)
+                        .padding(0)
+                        
+                        
                     }
-                    .listStyle(.plain)
-                    .padding(0)
-                    
-                    
+                    .fullScreenCover(isPresented: $bagBuilderShowing) {
+                        BagBuilderView(trip: trip)
+                    }
+                    //                .sheet(isPresented: $addItemSheetShowing, content: {
+                    //                    EmptyView()
+                    //                })
+                    .padding()
                 }
-                .fullScreenCover(isPresented: $bagBuilderShowing) {
-                    BagBuilderView(trip: trip)
-                }
-                //                .sheet(isPresented: $addItemSheetShowing, content: {
-                //                    EmptyView()
-                //                })
-                .padding()
+                .navigationTitle(trip.destinationName + " (\(trip.duration) days)")
+                .navigationBarTitleDisplayMode(.inline)
             }
             
         } else {

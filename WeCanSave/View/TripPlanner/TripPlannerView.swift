@@ -34,6 +34,7 @@ struct TripPlannerView: View {
                         .font(.title)
                     
                     TextField("", text: $viewModel.searchText)
+                        .autocorrectionDisabled(true)
                         .multilineTextAlignment(.leading)
                         .font(.headline)
                         .padding()

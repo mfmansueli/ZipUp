@@ -103,15 +103,22 @@ struct BagBuilderView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
-                        NavigationLink {
-                            TripsListView()
+//                        NavigationLink {
+//                            TripsListView()
+//                        } label: {
+//                            
+//                            HStack(spacing: 5) {
+//                                Image(systemName: "chevron.left")
+//                                Text("Trip list")
+//                            }
+//                        }
+                        
+                        Button {
+                            presentation.wrappedValue.dismiss()
                         } label: {
-                            
-                            HStack(spacing: 5) {
-                                Image(systemName: "chevron.left")
-                                Text("Trip list")
-                            }
+                            Image(systemName: "chevron.down")
                         }
+
                     }
                 }
             }
