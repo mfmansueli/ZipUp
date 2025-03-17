@@ -83,7 +83,7 @@ class TripPlannerViewModel: BaseViewModel {
                 
             }
             self?.searchResults = filteredSearchResults
-            self?.showAddressPopover = true
+            self?.showAddressPopover = !(self?.searchResults.isEmpty ?? true)
             self?.printSearchResults()
         }
         
