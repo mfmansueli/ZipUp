@@ -160,8 +160,11 @@ class TripPlannerViewModel: BaseViewModel {
                 weatherInfo = await fetchWeather(startDate: startDate, endDate: endDate)
                 print("Weather Info: \(weatherInfo ?? "No weather info")")
                 let items = try await fetchPackingList(openAIKey: openAIKey, selectedPlacemark: selectedPlacemark, dates: dates, weatherInfo: weatherInfo)
+                
+                let destination = cleanDestinationName(name: selectedPlacemark.title ?? "Unknown Destination")
+                
                 let trip = Trip(
-                    destinationName: selectedPlacemark.title ?? "Unknown Destination",
+                    destinationName: destination,
                     destinationLat: "\(selectedPlacemark.coordinate.latitude)",
                     destinationLong: "\(selectedPlacemark.coordinate.longitude)",
                     startDate: startDate,
@@ -182,6 +185,24 @@ class TripPlannerViewModel: BaseViewModel {
                 showAlert(title: "Error while generating the bag", message: "Unable to proceed, please contact support. \nError: \(error)")
             }
         }
+    }
+    
+    func cleanDestinationName(name: String) -> String {
+        let pattern = #"^(.+?)\s*[,—–:;-]\s*(.*)$"#
+        
+        if let regex = try? NSRegularExpression(pattern: pattern),
+           let match = regex.firstMatch(in: name, range: NSRange(name.startIndex..., in: name)) {
+            
+            let prefixRange = Range(match.range(at: 1), in: name)
+            let restRange = Range(match.range(at: 2), in: name)
+            
+            let prefix = prefixRange.map { String(name[$0]) } ?? name
+            let rest = restRange.map { String(name[$0]) } ?? ""
+            
+            return prefix
+        }
+        
+        return name // No match, return the whole string as the prefix
     }
 
     func fetchPackingList(openAIKey: String, selectedPlacemark: MKPlacemark, dates: Set<DateComponents>, weatherInfo: String?) async throws -> [Item] {
