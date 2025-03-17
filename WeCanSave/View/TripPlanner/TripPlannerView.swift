@@ -28,7 +28,7 @@ struct TripPlannerView: View {
         NavigationView {
             ScrollView {
                 
-                Divider()
+//                Divider()
                 VStack(alignment: .leading, spacing: 16) {
                     Text("Where are you going?")
                         .font(.title)
@@ -39,8 +39,9 @@ struct TripPlannerView: View {
                         .padding()
                         .placeholder(when: viewModel.searchText.isEmpty) {
                             Text("Naples, New York, Bangkok...")
-                                .font(.headline)
+                                .fontWeight(.light)
                                 .tint(.primary)
+                                .opacity(0.5)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding()
                                 .onTapGesture {
@@ -75,23 +76,44 @@ struct TripPlannerView: View {
                         }
                         .padding(.bottom, 16)
                     
-                    Text("How long for?")
+                    Text("When are you going?")
                         .font(.title)
                     
                     Button {
                         isDateActivated.toggle()
+                        print(viewModel.dates)
                     } label: {
                         HStack {
-                            Text("When?")
-                                .font(.headline)
-                                .tint(.primary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding()
                             
-                            Text(viewModel.dates.isEmpty ? "" : "\(viewModel.dates.count) days")
-                                .font(.headline)
-                                .tint(.primary)
-                                .padding()
+                            if viewModel.dates.isEmpty {
+                                Text("Pick your dates")
+                                    .fontWeight(.light)
+                                    .tint(.primary)
+                                    .opacity(0.5)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding()
+                                Spacer()
+
+                                Image(systemName: "calendar.badge.plus")
+                                    .padding()
+                                    .padding(.trailing, 5)
+                                    .tint(.primary.mix(with: .secondary, by: 0.9))
+                            } else {
+                                Text("\(getShortTravelDates())–\(getShortTravelDates(isStart: false))")
+                                    .font(.headline)
+                                    .tint(.primary)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding()
+                                
+                                Spacer()
+
+                                
+                                Text(viewModel.dates.isEmpty ? "" : "\(viewModel.dates.count) days")
+                                    .font(.headline)
+                                    .tint(.primary)
+                                    .padding()
+                            }
+                            
                             
                         }
                         .accessibilityAddTraits(.isSearchField)
@@ -113,9 +135,21 @@ struct TripPlannerView: View {
                     Text("What are you doing?")
                         .font(.title)
                     
-                    LazyVGrid(columns: columns, alignment: .center, spacing: 16) {
-                        ForEach(TripType.allCases, id: \.self) { item in
-                            tripTypeButton(for: item)
+//                    LazyVGrid(columns: columns, alignment: .center, spacing: 16) {
+                    VStack(spacing: 20) {
+                        HStack(spacing: 20) {
+                            ForEach(TripType.allCases.prefix(2), id: \.self) { item in
+                                tripTypeButton(for: item)
+                            }
+                        }
+                        
+                        tripTypeButton(for: TripType.allCases[2])
+                            .frame(maxWidth: .infinity)
+                        
+                        HStack(spacing: 20) {
+                            ForEach(TripType.allCases.suffix(2), id: \.self) { item in
+                                tripTypeButton(for: item)
+                            }
                         }
                     }
                     
@@ -125,10 +159,11 @@ struct TripPlannerView: View {
                     HStack {
                         Spacer()
                         
-                        Button("MAKE ME A BAG!") {
+                        Button("BUILD ME A BAG!") {
                             viewModel.loadBag()
                         }
                         .padding()
+                        .padding(.horizontal, 20)
                         .foregroundStyle(.white)
                         .font(.headline)
                         .background {
@@ -176,12 +211,32 @@ struct TripPlannerView: View {
             }
             .fixedSize()
             .padding()
+            .frame(width: 140)
             .background {
                 RoundedRectangle(cornerRadius: 32)
                     .strokeBorder(viewModel.selectedTripType == item ? Color.accentColor : Color.gray, lineWidth: viewModel.selectedTripType == item ? 2 : 1)
             }
         }
         .tint(viewModel.selectedTripType == item ? Color.accentColor : Color.gray)
+    }
+    
+    func getShortTravelDates(isStart: Bool = true) -> String {
+        
+        let longDate: Date?
+        
+        if isStart {
+            longDate = viewModel.dates.sorted(by: { $0.date ?? Date.distantPast < $1.date ?? Date.distantPast }).first?.date
+        } else {
+            longDate = viewModel.dates.sorted(by: { $0.date ?? Date.distantPast < $1.date ?? Date.distantPast }).last?.date
+        }
+    
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale.autoupdatingCurrent
+        dateFormatter.setLocalizedDateFormatFromTemplate("dd/MM")
+        
+        let shortDate = dateFormatter.string(from: longDate ?? .distantPast)
+        return shortDate
+        
     }
 }
 
