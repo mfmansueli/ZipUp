@@ -20,15 +20,14 @@ struct TripPlannerView: View {
     @State private var isDateActivated: Bool = false
     @FocusState private var isDestinationFocused: Bool
     
-    init(modelContext: ModelContext) {
-        viewModel = TripPlannerViewModel(modelContext: modelContext)
+    init(modelContext: ModelContext, selectedTrip: Binding<Trip?>) {
+        viewModel = TripPlannerViewModel(modelContext: modelContext, selectedTrip: selectedTrip)
     }
     
     var body: some View {
         NavigationView {
             ScrollView {
-                
-//                Divider()
+                Divider()
                 VStack(alignment: .leading, spacing: 16) {
                     Text("Where are you going?")
                         .font(.title)
@@ -189,11 +188,12 @@ struct TripPlannerView: View {
             .scrollDismissesKeyboard(.immediately)
             .applyLoading(viewModel: viewModel)
             .applyAlert(viewModel: viewModel)
-            .onChange(of: viewModel.tripCreatedSuccessfully) { newValue, arg in
-                if newValue {
-                    presentation.wrappedValue.dismiss()
-                }
-            }
+//            .onChange(of: viewModel.tripCreatedSuccessfully) { newValue, arg in
+//                if newValue {
+//                    presentation.wrappedValue.dismiss()
+//                    selectedTrip = viewModel.createdTrip
+//                }
+//            }
         }
     }
     
@@ -223,7 +223,6 @@ struct TripPlannerView: View {
     }
     
     func getShortTravelDates(isStart: Bool = true) -> String {
-        
         let longDate: Date?
         
         if isStart {
@@ -238,11 +237,10 @@ struct TripPlannerView: View {
         
         let shortDate = dateFormatter.string(from: longDate ?? .distantPast)
         return shortDate
-        
     }
 }
 
 #Preview {
     @Previewable @Environment(\.modelContext) var modelContext
-    TripPlannerView(modelContext: modelContext)
+    TripPlannerView(modelContext: modelContext, selectedTrip: .constant(nil))
 }

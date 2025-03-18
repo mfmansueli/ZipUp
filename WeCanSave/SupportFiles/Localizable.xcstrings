@@ -32,9 +32,6 @@
     "%lld days" : {
 
     },
-    "%lld Days" : {
-
-    },
     "Add item" : {
 
     },
@@ -75,6 +72,9 @@
 
     },
     "Increase number of %@" : {
+
+    },
+    "Item name" : {
 
     },
     "n.items" : {

@@ -8,11 +8,6 @@
 import SwiftUI
 
 struct SwipeView: View {
-    
-    // user.trip id = trip id
-    
-    // trip.bag
-    
     @Binding var itemList: [Item]
     
     var body: some View {
@@ -32,7 +27,6 @@ struct SwipeView: View {
     
     func removeItem(at index: Int) {
         itemList.remove(at: index)
-        
     }
 }
 

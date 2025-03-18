@@ -16,7 +16,7 @@ class TripPlannerViewModel: BaseViewModel {
     var modelContext: ModelContext!
     var searchTimer: Timer?
     var weatherInfo: String?
-    @Published var selectedTrip: Trip?
+    @Binding var selectedTrip: Trip?
     @Published var dates: Set<DateComponents> = []
     @Published var searchResults: [MKMapItem] = []
     @Published var selectedItem: MKMapItem?
@@ -44,8 +44,9 @@ class TripPlannerViewModel: BaseViewModel {
         }
     }
 
-    init(modelContext: ModelContext) {
+    init(modelContext: ModelContext, selectedTrip: Binding<Trip?>) {
         self.modelContext = modelContext
+        self._selectedTrip = selectedTrip
         super.init()
     }
     
@@ -163,6 +164,14 @@ class TripPlannerViewModel: BaseViewModel {
                 
                 let destination = cleanDestinationName(name: selectedPlacemark.title ?? "Unknown Destination")
                 
+                let sortedItems = items.sorted { (item1, item2) -> Bool in
+                    guard let index1 = ItemCategory.allCases.firstIndex(of: item1.category),
+                          let index2 = ItemCategory.allCases.firstIndex(of: item2.category) else {
+                        return false
+                    }
+                    return index1 < index2
+                }
+                
                 let trip = Trip(
                     destinationName: destination,
                     destinationLat: "\(selectedPlacemark.coordinate.latitude)",
@@ -170,7 +179,7 @@ class TripPlannerViewModel: BaseViewModel {
                     startDate: startDate,
                     endDate: endDate,
                     category: selectedTripType?.rawValue ?? "General",
-                    itemList: items
+                    itemList: sortedItems
                 )
 
                 let database = CKContainer.default().publicCloudDatabase
@@ -178,6 +187,7 @@ class TripPlannerViewModel: BaseViewModel {
                 
                 modelContext.insert(trip)
                 isLoading = false
+                selectedTrip = trip
                 tripCreatedSuccessfully = true
             } catch {
                 print("Error while generating the bag: \(error)")
@@ -225,15 +235,8 @@ class TripPlannerViewModel: BaseViewModel {
         }
         content += " Please respond in \(currentLanguage)."
         
-        let allowedImageNames = [
-            "belt", "binoculars", "bodyWash", "book", "bottoms", "camera", "campingGear", "charger",
-            "contactLens", "deodorant", "earplugs", "firstAidKit", "flashlight", "flipflops", "hairbrush",
-            "hatAndGloves", "insectRepellent", "jacket", "laptop", "lipBalm", "makeUp", "pajamas",
-            "passport", "powerbank", "rainCoat", "razorAndShavingCream", "reusableBottle", "scarf",
-            "shampoo", "shoes", "skinCare", "snorkelGear", "socks", "sunglasses", "sunscreen",
-            "sweater", "swimsuit", "tickets", "tissues", "toothbrushToothpaste", "tops", "toteBag",
-            "travelAdapter", "travelPillow", "trekkingPoles", "tweezers", "umbrella", "underwear", "wallet"
-        ].joined(separator: ", ")
+        let itemImages = ItemImage.allCases.map { $0.rawValue }.joined(separator: ", ")
+        let itemCategories = ItemCategory.allCases.map { $0.rawValue }.joined(separator: ", ")
         
         let systemPrompt = """
         You are a helpful assistant that generates a smart packing list for a trip. 
@@ -248,8 +251,9 @@ class TripPlannerViewModel: BaseViewModel {
           "isPair": false
         }
         
-        Use the following predefined image names if they match an item: \(allowedImageNames). 
+        Use the following predefined image names if they match an item: \(itemImages).
         If an item does not match any, use an appropriate SF Symbol as the imageName.
+        For the item category, always use one of the following: \(itemCategories).
         """
         
         let parameters: [String: Any] = [

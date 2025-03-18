@@ -10,92 +10,74 @@ import SwiftUI
 struct BagBuilderView: View {
     
     @Environment(\.presentationMode) var presentation
-    @State private var trip: Trip
-    
-    @State var itemList: [Item]
-    
+    @State var trip: Trip
     @State var totalCards: Int = 0
     
     var progress: Double {
-        1.0 - Double(itemList.count) / Double(totalCards)
+        1.0 - Double(trip.itemList.count) / Double(totalCards)
     }
     
     var itemCount: Int {
-//        print(trip.bag!.getItemCount())
         return trip.getItemCount()
-
     }
     
     init(trip: Trip) {
         self.trip = trip
-        self.itemList = trip.itemList
-        
-        print(trip.itemList)
     }
     
     var body: some View {
         NavigationStack {
-            GeometryReader { geometry in
+            ScrollView {
                 ZStack {
-                    
                     HStack {
                         Image(systemName: "xmark")
                             .foregroundStyle(.red.opacity(0.4))
-                            .padding(10)
+                            .padding(.leading, 6)
                         
                         Spacer()
                         
                         Image(systemName: "checkmark")
                             .foregroundStyle(.green.opacity(0.4))
-                            .padding(15)
+                            .padding(.trailing, 6)
                     }
                     .font(.title2)
                     .offset(y: 50)
                     
                     VStack(spacing: 35) {
                         HStack {
-                            WeatherView2(trip: trip)
-                                .frame(width: geometry.size.width * 0.6 - 20)
+                            WeatherView(trip: trip)
                             
                             Divider()
                                 .frame(width: 1, height: 100)
-                                .padding(.trailing, 20)
+                            
                             Button {
                                 presentation.wrappedValue.dismiss()
                             } label: {
-                                BagProgressView(bagProgress: progress, isOpen: false, showProgress: true, itemCount: itemCount)
-                                    .frame(width: geometry.size.width * 0.4 - 40)
+                                BagProgressView(bagProgress: progress,
+                                                isOpen: false,
+                                                showProgress: true,
+                                                itemCount: itemCount)
+                                .frame(maxWidth: 100)
                             }
                             .foregroundStyle(.primary)
-                            .padding(0)
-                            
                         }
                         .frame(height: 100)
-                        //                .padding(.bottom, 20)
-                        //                .padding(.trailing, 20)
-                        
-                        
                         
                         Text("Swipe to add or remove our suggestions from your bag")
                             .font(.system(size: 14))
                             .foregroundStyle(.foreground.opacity(0.4))
-//                            .lineLimit(2, reservesSpace: true)
                             .multilineTextAlignment(.center)
                         
                         
-                        SwipeView(itemList: $itemList)
-                        
-                        //                .accessibilitySortPriority(2)
+                        SwipeView(itemList: $trip.itemList)
                         
                         Button("All good, take me to the bag!") {
-                            print(itemList.count)
+                            print(trip.itemList.count)
                         }
                         .buttonStyle(.bordered)
-
-                        //                    .padding(.top, 30)
                     }
                     .onAppear {
-                        totalCards = itemList.count
+                        totalCards = trip.itemList.count
                     }
                     .padding()
                 }
@@ -103,24 +85,20 @@ struct BagBuilderView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
-//                        NavigationLink {
-//                            TripsListView()
-//                        } label: {
-//                            
-//                            HStack(spacing: 5) {
-//                                Image(systemName: "chevron.left")
-//                                Text("Trip list")
-//                            }
-//                        }
                         
                         Button {
                             presentation.wrappedValue.dismiss()
                         } label: {
                             Image(systemName: "chevron.down")
                         }
-
+                        
                     }
                 }
+            }
+            .scrollDismissesKeyboard(.immediately)
+        }.onChange(of: trip.itemList) { oldValue, newValue in
+            if trip.itemList.isEmpty || trip.isBagDecided() {
+                presentation.wrappedValue.dismiss()
             }
         }
     }

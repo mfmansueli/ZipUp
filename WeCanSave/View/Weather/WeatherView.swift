@@ -10,12 +10,11 @@ import WeatherKit
 import CoreLocation
 
 struct WeatherView: View {
-    @State private var weatherManager: WeatherManager
+    @ObservedObject private var viewmodel: WeatherViewModel
     @State private var isExpanded = false // Add state for expansion
-    
     var trip: Trip
     
-
+    
     // Custom date formatter for forecast dates
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -25,86 +24,84 @@ struct WeatherView: View {
     }()
     
     init(trip: Trip) {
-        self.weatherManager = WeatherManager(trip: trip)
+        self.viewmodel = WeatherViewModel(trip: trip)
         self.trip = trip
     }
     
     var body: some View {
         Button(action: { isExpanded.toggle() }) {
-            ZStack {
-                HStack {
-                    VStack(alignment: .leading, spacing: 8) {
-                        HStack{
-                            Text(trip.destinationName)
-                                .font(.largeTitle)
-                                .foregroundColor(.black)
-                                .bold()
+            
+            HStack {
+                VStack(alignment: .leading, spacing: 0) {
+                    HStack {
+                        Text("\(shortDateString(startDate: trip.startDate, endDate: trip.endDate))")
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.primary)
+                        
+                        Image(systemName: "chevron.down.circle")
+                            .rotationEffect(.degrees(isExpanded ? 180 : 0))
+                            .animation(.easeInOut, value: isExpanded)
+                        
+                    }
+                    
+                    HStack(spacing: 4) {
+                        VStack(alignment: .leading, spacing: 8) {
                             
-                            HStack {
-                                //Number of days
-                                Text("\(trip.duration) Days")
-                                    .font(.body)
-                                    .foregroundColor(.black)
+                            //averageMaxTemp
+                            HStack(spacing: 4) {
+                                Text(viewmodel.averageHighTemperature) // Update this line
+                                    .font(.title)
+                                    .minimumScaleFactor(0.01)
+                                    .foregroundColor(.primary)
                                 
-                                Image(systemName: "chevron.down.circle")
-                                    .rotationEffect(.degrees(isExpanded ? 90 : 0))
-                                    .animation(.easeInOut, value: isExpanded)
+                                Text("avg. max.")
+                                    .font(.body)
+                                    .minimumScaleFactor(0.01)
+                                    .foregroundColor(.primary)
+                                
                             }
                             
-                            .popover(isPresented: $isExpanded) {
-                                forecastList
+                            //averageMinTemp
+                            HStack(spacing: 4) {
+                                Text(viewmodel.averageLowTemperature)
+                                    .font(.title)
+                                    .minimumScaleFactor(0.01)
+                                    .foregroundColor(.secondary)
+                                
+                                Text("avg. min.")
+                                    .font(.body)
+                                    .minimumScaleFactor(0.01)
+                                    .foregroundColor(.secondary)
                             }
                         }
-                        
-                        //averageMaxTemp
-                        HStack(spacing: 4) {
-                            Text(weatherManager.averageHighTemperature()) // Update this line
-                                .font(.title)
-                                .foregroundColor(.black)
-                            
-                            Text("avg. max.")
-                                .font(.body)
-                                .foregroundColor(.black)
-                            
-                        }
-                        
-                        //averageMinTemp
-                        HStack(spacing: 4) {
-                            Text(weatherManager.averageLowTemperature())
-                                .font(.title)
-                                .foregroundColor(.gray)
-                            Text("avg. min.")
-                                .font(.body)
-                                .foregroundColor(.gray)
-                        }
                     }
-                    .padding(.horizontal, 20)
+                }.layoutPriority(1)
+                
+                VStack(spacing: 8) {
+                    Image(systemName: viewmodel.mostCommonCondition.imageName ?? "cloud.sun")
+                        .resizable()
+                        .scaledToFit()
+                        .foregroundColor(.primary)
+                        .frame(minWidth: 40, maxWidth: 60)
                     
-                    Spacer()
-                    
-                    VStack(spacing: 8) {
-                        Image(systemName: weatherManager.mostCommonCondition().imageName ?? "")
-                            .font(.system(size: 80))
-                            .foregroundColor(.black)
-                        
-                        Text(weatherManager.averageWeatherCondition.description)
-                            .font(.body)
-                            .foregroundColor(.black)
-                        
-                        
-                    }
-                    .padding(.horizontal, 15)
+                    Text(viewmodel.mostCommonCondition.condition?.description ?? "Mostly sunny")
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.01)
+                        .font(.body)
+                        .foregroundColor(.primary)
                 }
-//                .onAppear {
-//                }
             }
+        }
+        .popover(isPresented: $isExpanded) {
+            forecastList
         }
     }
     
     var forecastList: some View {
         ScrollView {
             VStack(spacing: 8) {
-                ForEach(weatherManager.dailyForecasts, id: \.date) { forecast in
+                ForEach(viewmodel.allForecasts, id: \.date) { (forecast: DayWeather) in
                     VStack {
                         HStack {
                             // Date
@@ -113,20 +110,20 @@ struct WeatherView: View {
                                 .font(.system(.body, weight: .medium))
                             
                             // Weather icon
-                            Image(systemName: forecast.icon)
+                            Image(systemName: forecast.symbolName)
                                 .symbolRenderingMode(.multicolor)
                                 .font(.title2)
                                 .frame(width: 40)
                             
                             // Max temperature
-                            Text(forecast.maxTemp)
+                            Text(formattedTemperature(temperature: forecast.highTemperature))
                                 .frame(width: 40)
                                 .fontWeight(.medium)
                             
                             // Min temperature
-                            Text(forecast.minTemp)
+                            Text(formattedTemperature(temperature: forecast.lowTemperature))
                                 .frame(width: 40)
-                                .foregroundColor(.gray)
+                                .foregroundColor(.secondary)
                         }
                         .padding(.horizontal)
                         .padding(.vertical, 12)
@@ -137,10 +134,27 @@ struct WeatherView: View {
                 }
             }
         }
-        .foregroundColor(.black)
-        
+        .foregroundColor(.primary)
         .presentationCompactAdaptation(.popover)
         .padding(.vertical)
+    }
+    
+    func formattedTemperature(temperature: Measurement<UnitTemperature>) -> String {
+        let formatter = MeasurementFormatter()
+        formatter.unitOptions = .providedUnit
+        formatter.numberFormatter.maximumFractionDigits = 0
+        return formatter.string(from: temperature)
+    }
+    
+    func shortDateString(startDate: Date, endDate: Date) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale.autoupdatingCurrent
+        dateFormatter.setLocalizedDateFormatFromTemplate("dd/MM")
+        
+        let beginning = dateFormatter.string(from: startDate)
+        let end = dateFormatter.string(from: endDate)
+        
+        return "\(beginning)–\(end)"
     }
 }
 

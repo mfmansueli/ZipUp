@@ -9,93 +9,87 @@ import SwiftUI
 
 struct PackingListView: View {
     
-    @State var trip: Trip?
+    @State var trip: Trip
     
     @State private var bagBuilderShowing: Bool
     
     //    @State private var addItemSheetShowing: Bool = false
     
     var itemCount: Int {
-        trip?.getItemCount() ?? 0
+        trip.getItemCount()
     }
     
-    init(trip: Trip?) {
+    init(trip: Trip) {
         self.trip = trip
-        self.bagBuilderShowing = true //!trip.bag!.isDecided
+        self.bagBuilderShowing = !trip.isBagDecided()
     }
     
     var body: some View {
-        if let trip = trip {
-            NavigationStack {
-                GeometryReader { geometry in
-                    VStack(alignment: .leading) {
-                        HStack {
-                            WeatherView2(trip: trip)
-                                .frame(width: geometry.size.width * 0.65 - 20)
-                            
-                            Divider()
-                                .frame(width: 1, height: 100)
-                                .padding(.trailing, 20)
-                            
-                            BagProgressView(bagProgress: 1, isOpen: true, showProgress: true, itemCount: itemCount)
-                                .frame(width: geometry.size.width * 0.35 - 40)
-                            
-                        }
-                        .frame(height: 100)
-                        .padding(.bottom, 20)
+        NavigationStack {
+            GeometryReader { geometry in
+                VStack(alignment: .leading) {
+                    HStack {
+                        WeatherView(trip: trip)
+                            .frame(width: geometry.size.width * 0.65 - 20)
                         
-                        Text("Your bag")
-                            .font(.title).bold()
+                        Divider()
+                            .frame(width: 1, height: 100)
+                            .padding(.trailing, 20)
                         
-                        let groupedItems = Dictionary(grouping: trip.itemList, by: { $0.category })
+                        BagProgressView(bagProgress: 1, isOpen: true, showProgress: true, itemCount: itemCount)
+                            .frame(width: geometry.size.width * 0.35 - 40)
                         
-                        List {
-                            ForEach(groupedItems.keys.sorted(), id: \.self) { category in
-                                Section(
-                                    header: HStack {
-                                        Text(category).font(.title3).bold()
-                                        Spacer()
-                                        
-                                        HStack(spacing: 18) {
-                                            Text("packed")
-                                            Text("wearing")
-                                            Text("n.items")
-                                        }
-                                        .foregroundStyle(.foreground.opacity(0.4))
-                                        .fontWeight(.light)
-                                        .font(.caption2)
-                                        .multilineTextAlignment(.center)
+                    }
+                    .frame(height: 100)
+                    .padding(.bottom, 20)
+                    
+                    Text("Your bag")
+                        .font(.title)
+                        .bold()
+                    
+                    List {
+                        ForEach(ItemCategory.allCases, id: \.self) { category in
+                            Section(
+                                header: HStack {
+                                    Text(category.rawValue)
+                                        .font(.title3)
+                                        .bold()
+                                    
+                                    Spacer()
+                                    
+                                    HStack(spacing: 18) {
+                                        Text("packed")
+                                        Text("wearing")
+                                        Text("n.items")
                                     }
-                                ) {
-                                    SectionView(trip: trip, category: category)
+                                    .foregroundStyle(.foreground.opacity(0.4))
+                                    .fontWeight(.light)
+                                    .font(.caption2)
+                                    .multilineTextAlignment(.center)
                                 }
+                            ) {
+                                SectionView(trip: trip, category: category)
                             }
-                            .listRowInsets(EdgeInsets())
                         }
-                        .listStyle(.plain)
-                        .padding(0)
-                        
-                        
+                        .listRowInsets(EdgeInsets())
                     }
-                    .fullScreenCover(isPresented: $bagBuilderShowing) {
-                        BagBuilderView(trip: trip)
-                    }
-                    //                .sheet(isPresented: $addItemSheetShowing, content: {
-                    //                    EmptyView()
-                    //                })
-                    .padding()
+                    .listStyle(.plain)
+                    .padding(0)
+                    
+                    
                 }
-                .navigationTitle(trip.destinationName + " (\(trip.duration) days)")
-                .navigationBarTitleDisplayMode(.inline)
+                .fullScreenCover(isPresented: $bagBuilderShowing) {
+                    BagBuilderView(trip: trip)
+                }
+                //                .sheet(isPresented: $addItemSheetShowing, content: {
+                //                    EmptyView()
+                //                })
+                .padding()
             }
-            
-        } else {
-            ContentUnavailableView {
-                Label("No Trip Selected", systemImage: "exclamationmark.triangle.fill")
-            } description: {
-                Text("Please select a trip to view the packing list.")
-            }
+            .navigationTitle(trip.destinationName + " (\(trip.duration) days)")
+            .navigationBarTitleDisplayMode(.inline)
         }
+        
     }
 }
 
@@ -204,25 +198,25 @@ struct ListItemPackedButton: View {
 
 struct SectionView: View {
     @State var trip: Trip
+    @State var showAddItemSheet: Bool = false
     var filteredItems: [Item] = []
     
-    init(trip: Trip, category: String) {
+    init(trip: Trip, category: ItemCategory) {
         self.trip = trip
         filteredItems = trip.itemList.filter { $0.category == category }
     }
     
     var body: some View {
-        ForEach(filteredItems.indices, id: \.self) { index in
-            let item = $trip.itemList.first(where: { $0.id == filteredItems[index].id })!
-            
-            ListItemView(item: item)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 20)
-            
+        ForEach(filteredItems, id: \.self) { item in
+            if let item = $trip.itemList.first(where: { $0.id == item.id }) {
+                ListItemView(item: item)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 20)
+            }
         }
         HStack {
             Button("Add item") {
-                //
+                showAddItemSheet = true
             }
             Spacer()
             

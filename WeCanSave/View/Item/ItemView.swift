@@ -15,20 +15,17 @@ struct ItemView: View {
     
     var body: some View {
         VStack(spacing: 30) {
-            
             ZStack {
-                
                 Image(uiImage: item.image)
                     .resizable()
                     .scaledToFit()
-                
                 
                 Image(systemName: offset.width < 0 ? "xmark.circle" : "checkmark.circle")
                     .resizable()
                     .foregroundStyle(offset.width < 0 ? .red : .green)
                     .opacity(abs(offset.width) > 10 ? 0.7 : 0)
                     .frame(width: 140, height: 140)
-                    
+                
                 Text(offset.width < 0 ? "Remove from bag" : "Add to bag")
                     .foregroundStyle(offset.width < 0 ? .red : .green)
                     .opacity(abs(offset.width) > 10 ? 1 : 0)
@@ -43,15 +40,13 @@ struct ItemView: View {
                     .offset(x: -(offset.width * 5 + 20), y: -160 + abs(offset.width / 2))
             }
             
-            
-            Text("\(item.name)")
+            TextField("Item name", text: $item.name)
+                .multilineTextAlignment(.center)
                 .font(.title)
                 .bold()
                 .foregroundStyle(.black)
             
-            
-            
-            HStack(spacing: 40) {
+            HStack(spacing: 30) {
                 
                 Button {
                     item.decrementUserQuantity()
@@ -71,6 +66,7 @@ struct ItemView: View {
                 
                 Text("\(item.userQuantity)")
                     .font(.system(size: 50, weight: .bold))
+                    .minimumScaleFactor(0.01)
                     .foregroundStyle(.black)
                 
                 
@@ -110,40 +106,34 @@ struct ItemView: View {
             DragGesture()
                 .onChanged { gesture in
                     withAnimation {
-                        offset = gesture.translation
+                        offset = CGSize(width: gesture.translation.width / 3,
+                                        height: gesture.translation.height / 3)
                     }
                 }
                 .onEnded { _ in
                     if abs(offset.width) > 60 {
-                        
-                        if offset.width > 0 {
-                            //added to list
-                            
-                        } else {
-                            item.userQuantity = 0
-                            //                            print(item)
-                        }
                         item.isDecided = true
+                        if offset.width > 0 {
+                            // added to list
+                            return
+                        }
+                        item.userQuantity = 0
                         removal?()
-                        
-                    } else {
+                        return
+                    }
+                    withAnimation {
                         offset = .zero
-                        
                     }
                 }
         )
-        
         .accessibilityRepresentation {
             Text("Suggestion: \(item.name). Number to bring: \(item.userQuantity)")
-            
         }
         .accessibilityAction(named: "Add to bag", {
-            
             item.isDecided = true
             removal?()
         })
         .accessibilityAction(named: "Discard from bag", {
-            
             item.userQuantity = 0
             item.isDecided = true
             removal?()
@@ -158,14 +148,9 @@ struct ItemView: View {
             let editedAnnouncement = AttributedString("\(item.userQuantity) \(item.name)s")
             AccessibilityNotification.Announcement(editedAnnouncement).post()
         }
-        
     }
 }
 
 #Preview {
     ItemView(item: .constant(Item.socks))
-}
-
-#Preview {
-    BagBuilderView(trip: Trip.exampleTrip)
 }
