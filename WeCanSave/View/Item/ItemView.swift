@@ -86,11 +86,12 @@ struct ItemView: View {
                 }
             }
             
-            Text("Here is maybe where we could put our AI-based reasoning for why we picked this number for this item")
+            Text(item.tipReason)
                 .foregroundStyle(.black)
                 .fontWeight(.thin).italic()
                 .multilineTextAlignment(.center)
         }
+        .scrollDismissesKeyboard(.immediately)
         .padding(20)
         .background(
             RoundedRectangle(cornerRadius: 20)

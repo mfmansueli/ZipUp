@@ -13,10 +13,6 @@ struct BagBuilderView: View {
     @State var trip: Trip
     @State var totalCards: Int = 0
     
-    var progress: Double {
-        1.0 - Double(trip.itemList.count) / Double(totalCards)
-    }
-    
     var itemCount: Int {
         return trip.getItemCount()
     }
@@ -53,10 +49,11 @@ struct BagBuilderView: View {
                             Button {
                                 presentation.wrappedValue.dismiss()
                             } label: {
-                                BagProgressView(bagProgress: progress,
+                                BagProgressView(trip: trip,
+                                                bagProgress: trip.progress,
                                                 isOpen: false,
                                                 showProgress: true,
-                                                itemCount: itemCount)
+                                                itemCount: trip.getItemCount())
                                 .frame(maxWidth: 100)
                             }
                             .foregroundStyle(.primary)

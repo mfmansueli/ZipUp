@@ -249,11 +249,13 @@ class TripPlannerViewModel: BaseViewModel {
           "AIQuantity": 1,
           "imageName": "image name",
           "isPair": false
+          "tipReason": "reason"
         }
         
         Use the following predefined image names if they match an item: \(itemImages).
         If an item does not match any, use an appropriate SF Symbol as the imageName.
         For the item category, always use one of the following: \(itemCategories).
+        Also add a tipReson with maximum 100 characters for each item.
         """
         
         let parameters: [String: Any] = [

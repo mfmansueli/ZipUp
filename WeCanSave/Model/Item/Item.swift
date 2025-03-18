@@ -20,9 +20,10 @@ struct Item: Identifiable, Codable, Equatable, Hashable {
     var isWearing: Bool = false
     var isPacked: Bool = false
     var isPair = false
+    var tipReason: String = ""
     
     enum CodingKeys: String, CodingKey {
-        case name, category, userQuantity, AIQuantity, imageName, isPair
+        case name, category, userQuantity, AIQuantity, imageName, isPair, tipReason
     }
     
     static let socks = Item(name: "Socks", category: .clothing, userQuantity: 4, AIQuantity: 4, isPair: true)
@@ -77,6 +78,7 @@ struct Item: Identifiable, Codable, Equatable, Hashable {
         itemRecord["isPacked"] = isPacked as CKRecordValue
         itemRecord["imageName"] = imageName as CKRecordValue
         itemRecord["isPair"] = isPair as CKRecordValue
+        itemRecord["tipReason"] = tipReason as CKRecordValue
         return itemRecord
     }
 }

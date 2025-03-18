@@ -108,6 +108,7 @@ class Trip {
             }
         }
 
+        print("getCount \(count)")
         return count
     }
     
@@ -118,5 +119,32 @@ class Trip {
             }
         }
         return true
+    }
+    
+    func totalDecidedAndUndecidedItems() -> (decided: Int, undecided: Int) {
+        var decidedCount = 0
+        var undecidedCount = 0
+        for item in itemList {
+            
+            if item.isDecided {
+                decidedCount += item.userQuantity
+            } else {
+                undecidedCount += item.userQuantity
+            }
+        }
+        return (decided: decidedCount, undecided: undecidedCount)
+    }
+    
+    var progress: Double {
+        var decidedCount = 0
+        for item in itemList {
+            
+            if item.isDecided {
+                decidedCount += 1
+            }
+        }
+        
+        print("bagProgress \(Double(decidedCount) / Double(itemList.count))")
+        return Double(decidedCount) / Double(itemList.count)
     }
 }

@@ -50,7 +50,7 @@
     "avg. min." : {
 
     },
-    "Bag builder progress: Suggestions remaining; 4" : {
+    "Bag builder progress: Suggestions remaining; %lld" : {
 
     },
     "BUILD ME A BAG!" : {
@@ -66,9 +66,6 @@
 
     },
     "Discard from bag" : {
-
-    },
-    "Here is maybe where we could put our AI-based reasoning for why we picked this number for this item" : {
 
     },
     "Increase number of %@" : {

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PackingListView: View {
     
-    @State var trip: Trip
+    var trip: Trip
     
     @State private var bagBuilderShowing: Bool
     
@@ -26,66 +26,72 @@ struct PackingListView: View {
     
     var body: some View {
         NavigationStack {
-            GeometryReader { geometry in
-                VStack(alignment: .leading) {
-                    HStack {
-                        WeatherView(trip: trip)
-                            .frame(width: geometry.size.width * 0.65 - 20)
-                        
-                        Divider()
-                            .frame(width: 1, height: 100)
-                            .padding(.trailing, 20)
-                        
-                        BagProgressView(bagProgress: 1, isOpen: true, showProgress: true, itemCount: itemCount)
-                            .frame(width: geometry.size.width * 0.35 - 40)
-                        
+            VStack(alignment: .leading) {
+                
+                HStack {
+                    WeatherView(trip: trip)
+                    
+                    Divider()
+                        .frame(width: 1, height: 100)
+                        .padding(.horizontal, 10)
+                    
+                    Button {
+                        bagBuilderShowing = true
+                    } label: {
+                        BagProgressView(trip: trip,
+                                        bagProgress: trip.progress,
+                                        isOpen: false,
+                                        showProgress: true,
+                                        itemCount: trip.getItemCount())
+                        .frame(maxWidth: 100)
                     }
-                    .frame(height: 100)
-                    .padding(.bottom, 20)
-                    
-                    Text("Your bag")
-                        .font(.title)
-                        .bold()
-                    
-                    List {
-                        ForEach(ItemCategory.allCases, id: \.self) { category in
-                            Section(
-                                header: HStack {
-                                    Text(category.rawValue)
-                                        .font(.title3)
-                                        .bold()
-                                    
-                                    Spacer()
-                                    
-                                    HStack(spacing: 18) {
-                                        Text("packed")
-                                        Text("wearing")
-                                        Text("n.items")
-                                    }
-                                    .foregroundStyle(.foreground.opacity(0.4))
-                                    .fontWeight(.light)
-                                    .font(.caption2)
-                                    .multilineTextAlignment(.center)
+                    .foregroundStyle(.primary)
+                }
+                .frame(height: 100)
+                .padding(.bottom, 20)
+                
+                Text("Your bag")
+                    .font(.title)
+                    .bold()
+                
+                List {
+                    ForEach(ItemCategory.allCases, id: \.self) { category in
+                        Section(
+                            header: HStack {
+                                Text(category.rawValue)
+                                    .font(.title3)
+                                    .bold()
+                                
+                                Spacer()
+                                
+                                HStack(spacing: 18) {
+                                    Text("packed")
+                                    Text("wearing")
+                                    Text("n.items")
                                 }
-                            ) {
-                                SectionView(trip: trip, category: category)
+                                .foregroundStyle(.foreground.opacity(0.4))
+                                .fontWeight(.light)
+                                .font(.caption2)
+                                .multilineTextAlignment(.center)
                             }
+                        ) {
+                            SectionView(trip: trip, category: category)
                         }
-                        .listRowInsets(EdgeInsets())
                     }
-                    .listStyle(.plain)
-                    .padding(0)
-                    
-                    
+                    .listRowInsets(EdgeInsets())
                 }
-                .fullScreenCover(isPresented: $bagBuilderShowing) {
-                    BagBuilderView(trip: trip)
-                }
-                //                .sheet(isPresented: $addItemSheetShowing, content: {
-                //                    EmptyView()
-                //                })
-                .padding()
+                .listStyle(.plain)
+                .padding(0)
+                
+                
             }
+            .fullScreenCover(isPresented: $bagBuilderShowing) {
+                BagBuilderView(trip: trip)
+            }
+            //                .sheet(isPresented: $addItemSheetShowing, content: {
+            //                    EmptyView()
+            //                })
+            .padding()
             .navigationTitle(trip.destinationName + " (\(trip.duration) days)")
             .navigationBarTitleDisplayMode(.inline)
         }
@@ -155,11 +161,11 @@ struct ListItemWearingButton: View {
     
     var body: some View {
         HStack(alignment: .center) {
-            Image(isSingular ? "jacket_button" : item.isWearing ? "jacket_1" : "jacket_button")
+            Image(isSingular ? "jacket_button" : item.isWearing ? "Jacket_1" : "jacket_button")
                 .resizable()
                 .scaledToFill()
                 .frame(width: 35, height: 35)
-                .foregroundStyle(item.isWearing ? Color.accent : Color.primary.opacity(0.4))
+                .foregroundColor(item.isWearing ? Color.accent : Color.primary.opacity(0.4))
                 .padding(.top, 5)
                 .onTapGesture {
                     if isSingular && item.isPacked && item.isWearing == false {

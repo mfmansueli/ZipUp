@@ -20,7 +20,6 @@ struct SwipeView: View {
                 }
                 .stacked(at: index, in: itemList.count)
                 .accessibilityHidden(index == itemList.count - 1 ? false : true)
-            
             }
         }
     }
