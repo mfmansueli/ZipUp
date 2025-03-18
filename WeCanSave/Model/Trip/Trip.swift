@@ -118,5 +118,10 @@ class Trip {
             }
         }
         return true
+        
+    }
+        
+    func addItem(_ item: Item) {
+        itemList.append(item)
     }
 }
