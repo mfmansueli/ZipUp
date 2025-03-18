@@ -12,6 +12,7 @@ struct ItemView: View {
     @Binding var item: Item
     @State private var offset = CGSize.zero
     var removal: (() -> Void)? = nil
+    var added: (() -> Void)? = nil
     
     var body: some View {
         VStack(spacing: 30) {
@@ -115,7 +116,7 @@ struct ItemView: View {
                     if abs(offset.width) > 60 {
                         item.isDecided = true
                         if offset.width > 0 {
-                            // added to list
+                            added?()
                             return
                         }
                         item.userQuantity = 0

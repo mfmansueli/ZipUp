@@ -9,13 +9,16 @@ import SwiftUI
 import SwiftData
 
 struct TripsListView: View {
-    @StateObject private var viewModel = TripsListViewModel()
+    @ObservedObject private var viewModel = TripsListViewModel()
     @Environment(\.modelContext) private var modelContext
     @Environment(\.presentationMode) var presentation
     @Query(filter: #Predicate<Trip> { !$0.isFinished }) private var tripsCurrent: [Trip]
     @Query(filter: #Predicate<Trip> { $0.isFinished }) private var tripsPast: [Trip]
     
     @State private var columnVisibility: NavigationSplitViewVisibility = .doubleColumn
+    
+    init() {
+    }
     
     var body: some View {
         NavigationSplitView(columnVisibility: $columnVisibility) {

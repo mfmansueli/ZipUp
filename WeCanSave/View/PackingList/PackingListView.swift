@@ -9,11 +9,10 @@ import SwiftUI
 
 struct PackingListView: View {
     
-    var trip: Trip
-    
+    @State var trip: Trip
     @State private var bagBuilderShowing: Bool
     
-
+    
     //    @State private var addItemSheetShowing: Bool = false
     
     var itemCount: Int {
@@ -28,29 +27,29 @@ struct PackingListView: View {
     var body: some View {
         NavigationStack {
             VStack(alignment: .leading) {
-
+                
                 HStack {
                     WeatherView(trip: trip)
-
+                    
                     Divider()
                         .frame(width: 1, height: 100)
                         .padding(.horizontal, 10)
-
+                    
                     Button {
                         bagBuilderShowing = true
                     } label: {
-                        BagProgressView(trip: trip, isOpen: true)
-                        .frame(maxWidth: 100)
+                        BagProgressView(trip: $trip, isOpen: true)
+                            .frame(maxWidth: 100)
                     }
                     .foregroundStyle(.primary)
                 }
                 .frame(height: 100)
                 .padding(.bottom, 20)
-
+                
                 Text("Your bag")
                     .font(.title)
                     .bold()
-
+                
                 List {
                     ForEach(ItemCategory.allCases, id: \.self) { category in
                         Section(
@@ -58,9 +57,9 @@ struct PackingListView: View {
                                 Text(category.rawValue)
                                     .font(.title3)
                                     .bold()
-
+                                
                                 Spacer()
-
+                                
                                 HStack(spacing: 18) {
                                     Text("packed")
                                     Text("wearing")
@@ -70,6 +69,7 @@ struct PackingListView: View {
                                 .fontWeight(.light)
                                 .font(.caption2)
                                 .multilineTextAlignment(.center)
+                                .padding(.trailing, 6)
                             }
                         ) {
                             SectionView(trip: trip, category: category)
@@ -79,11 +79,11 @@ struct PackingListView: View {
                 }
                 .listStyle(.plain)
                 .padding(0)
-
-
+                
+                
             }
             .fullScreenCover(isPresented: $bagBuilderShowing) {
-                BagBuilderView(trip: trip)
+                BagBuilderView(trip: $trip)
             }
             //                .sheet(isPresented: $addItemSheetShowing, content: {
             //                    EmptyView()
@@ -94,9 +94,9 @@ struct PackingListView: View {
         }
         
     }
-
+    
     func addNewItem() {
-
+        
     }
 }
 
@@ -141,12 +141,15 @@ struct ListItemView: View {
             
             
             //            Spacer()
-            HStack(spacing: 35) {
+            HStack(spacing: 34) {
                 ListItemPackedButton(item: $item)
                 ListItemWearingButton(item: $item)
                 Text("x\(item.userQuantity)")
                     .font(.title2)
+                    .frame(width: 35)
+                
             }
+            .multilineTextAlignment(.trailing)
             
         }
     }
@@ -208,25 +211,25 @@ struct SectionView: View {
     @State var showAddItemSheet: Bool = false
     var filteredItems: [Item] = []
     var category: ItemCategory
-
+    
     enum FocusedField {
         case name, qty
     }
-
+    
     @FocusState private var focusedField: FocusedField?
-
+    
     init(trip: Trip, category: ItemCategory) {
         self.trip = trip
         self.category = category
         filteredItems = trip.itemList.filter { $0.category == category }
-
+        
     }
-
+    
     @State private var addItemFieldsShowing: Bool = false
     @State private var itemName: String = ""
     @State private var itemQuantity: Int = 1
-
-
+    
+    
     var body: some View {
         ForEach(filteredItems, id: \.self) { item in
             if let item = $trip.itemList.first(where: { $0.id == item.id }) {
@@ -235,7 +238,7 @@ struct SectionView: View {
                     .padding(.vertical, 20)
             }
         }
-
+        
         if addItemFieldsShowing {
             GeometryReader { geometry in
                 HStack {
@@ -246,7 +249,7 @@ struct SectionView: View {
                     }
                     .labelStyle(.iconOnly)
                     .foregroundStyle(.accent)
-
+                    
                     TextField("Item name", text: $itemName)
                         .frame(width: geometry.size.width * 0.75)
                         .focused($focusedField, equals: .name)
@@ -264,8 +267,8 @@ struct SectionView: View {
                 .textFieldStyle(.roundedBorder)
                 .padding(.leading, 10)
                 .padding(.vertical, 10)
-
-
+                
+                
             }
             .listSectionSeparator(.hidden)
         } else {
@@ -275,7 +278,7 @@ struct SectionView: View {
                     focusedField = .name
                 }
                 Spacer()
-
+                
                 Image(systemName: "plus.square")
                     .font(.title3)
             }
@@ -283,9 +286,9 @@ struct SectionView: View {
             .padding(.horizontal, 10)
             .padding(.vertical, 20)
         }
-
+        
     }
-
+    
     private func addNewItem() {
         let newItem = Item(
             name: itemName,
@@ -293,7 +296,7 @@ struct SectionView: View {
             userQuantity: itemQuantity,
             AIQuantity: itemQuantity
         )
-
+        
         trip.addItem(newItem)
         itemName = ""
         itemQuantity = 1

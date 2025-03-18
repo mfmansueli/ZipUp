@@ -10,15 +10,15 @@ import SwiftUI
 struct BagBuilderView: View {
     
     @Environment(\.presentationMode) var presentation
-    @State var trip: Trip
+    @Binding var trip: Trip
     @State var totalCards: Int = 0
-    
+
     var itemCount: Int {
         return trip.getItemCount()
     }
     
-    init(trip: Trip) {
-        self.trip = trip
+    init(trip: Binding<Trip>) {
+        _trip = trip
     }
     
     var body: some View {
@@ -49,7 +49,7 @@ struct BagBuilderView: View {
                             Button {
                                 presentation.wrappedValue.dismiss()
                             } label: {
-                                BagProgressView(trip: trip, isOpen: false)
+                                BagProgressView(trip: $trip, isOpen: false)
                                     .frame(maxWidth: 100)
                             }
                             .foregroundStyle(.primary)
@@ -61,8 +61,14 @@ struct BagBuilderView: View {
                             .foregroundStyle(.foreground.opacity(0.4))
                             .multilineTextAlignment(.center)
                         
-                        
                         SwipeView(itemList: $trip.itemList)
+                        
+                        Button("All good, take me to the bag!") {
+                            presentation.wrappedValue.dismiss()
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(.accent)
+                        .clipShape(Capsule())
                     }
                     .onAppear {
                         totalCards = trip.itemList.count
@@ -77,21 +83,18 @@ struct BagBuilderView: View {
                             presentation.wrappedValue.dismiss()
                         } label: {
                             Image(systemName: "chevron.down")
+//                            Text("close")
                         }
                         
                     }
                 }
             }
             .scrollDismissesKeyboard(.immediately)
-        }.onChange(of: trip.itemList) { oldValue, newValue in
-            if trip.itemList.isEmpty || trip.isBagDecided() {
-                presentation.wrappedValue.dismiss()
-            }
         }
     }
 }
 
 #Preview {
-    BagBuilderView(trip: Trip.exampleTrip)
+    BagBuilderView(trip: .constant(Trip.exampleTrip))
 }
 

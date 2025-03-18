@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct SwipeView: View {
+    
+    @Environment(\.presentationMode) var presentation
     @Binding var itemList: [Item]
     
     var body: some View {
@@ -15,8 +17,11 @@ struct SwipeView: View {
             ForEach(0..<itemList.count, id: \.self) { index in
                 ItemView(item: $itemList[index]) {
                     withAnimation {
-                        removeItem(at: index)
+                        itemList[index].trip?.remove(item: itemList[index])
+                        checkBag()
                     }
+                } added: {
+                    checkBag()
                 }
                 .stacked(at: index, in: itemList.count)
                 .accessibilityHidden(index == itemList.count - 1 ? false : true)
@@ -24,8 +29,19 @@ struct SwipeView: View {
         }
     }
     
-    func removeItem(at index: Int) {
-        itemList.remove(at: index)
+    func isListDecided() -> Bool {
+        for item in itemList {
+            if !item.isDecided {
+                return false
+            }
+        }
+        return true
+    }
+    
+    func checkBag() {
+        if itemList.isEmpty || isListDecided() {
+            presentation.wrappedValue.dismiss()
+        }
     }
 }
 
@@ -38,10 +54,5 @@ extension View {
 }
 
 #Preview {
-    SwipeView(itemList: .constant([
-        Item.socks,
-        Item.tops,
-        Item.shoes,
-        Item.charger,
-    ]))
+    SwipeView(itemList: .constant(Trip.exampleTrip.itemList))
 }

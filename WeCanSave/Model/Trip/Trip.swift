@@ -26,6 +26,8 @@ class Trip {
         let components = calendar.dateComponents([.day], from: start, to: end)
         return (components.day ?? 0) + 1
     }
+    
+    @Relationship(deleteRule: .cascade)
     var itemList: [Item] = []
     var category: String = ""
     var isFinished = false
@@ -119,11 +121,20 @@ class Trip {
             }
         }
         return true
-        
+    }
+    
+    func undecidedItems() -> [Item] {
+        return itemList.filter { !$0.isDecided }
     }
         
     func addItem(_ item: Item) {
         itemList.append(item)
+    }
+    
+    func remove(item: Item) {
+        if let index = itemList.firstIndex(of: item) {
+            itemList.remove(at: index)
+        }
     }
     
     func totalDecidedAndUndecidedItems() -> (decided: Int, undecided: Int) {
