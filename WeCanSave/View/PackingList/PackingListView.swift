@@ -13,6 +13,7 @@ struct PackingListView: View {
     
     @State private var bagBuilderShowing: Bool
     
+    
     //    @State private var addItemSheetShowing: Bool = false
     
     var itemCount: Int {
@@ -69,13 +70,13 @@ struct PackingListView: View {
                                 }
                             ) {
                                 SectionView(trip: trip, category: category)
+                                    
                             }
                         }
                         .listRowInsets(EdgeInsets())
                     }
                     .listStyle(.plain)
                     .padding(0)
-                    
                     
                 }
                 .fullScreenCover(isPresented: $bagBuilderShowing) {
@@ -89,6 +90,10 @@ struct PackingListView: View {
             .navigationTitle(trip.destinationName + " (\(trip.duration) days)")
             .navigationBarTitleDisplayMode(.inline)
         }
+        
+    }
+    
+    func addNewItem() {
         
     }
 }
@@ -200,11 +205,25 @@ struct SectionView: View {
     @State var trip: Trip
     @State var showAddItemSheet: Bool = false
     var filteredItems: [Item] = []
+    var category: ItemCategory
+    
+    enum FocusedField {
+        case name, qty
+    }
+    
+    @FocusState private var focusedField: FocusedField?
     
     init(trip: Trip, category: ItemCategory) {
         self.trip = trip
+        self.category = category
         filteredItems = trip.itemList.filter { $0.category == category }
+ 
     }
+    
+    @State private var addItemFieldsShowing: Bool = false
+    @State private var itemName: String = ""
+    @State private var itemQuantity: Int = 1
+    
     
     var body: some View {
         ForEach(filteredItems, id: \.self) { item in
@@ -214,17 +233,69 @@ struct SectionView: View {
                     .padding(.vertical, 20)
             }
         }
-        HStack {
-            Button("Add item") {
-                showAddItemSheet = true
+        
+        if addItemFieldsShowing {
+            GeometryReader { geometry in
+                HStack {
+                    Button("Cancel", systemImage: "xmark.circle") {
+                        addItemFieldsShowing.toggle()
+                        itemName = ""
+                        itemQuantity = 0
+                    }
+                    .labelStyle(.iconOnly)
+                    .foregroundStyle(.accent)
+                    
+                    TextField("Item name", text: $itemName)
+                        .frame(width: geometry.size.width * 0.75)
+                        .focused($focusedField, equals: .name)
+                        .submitLabel(.next)
+                        .onSubmit {
+                            focusedField = .qty
+                        }
+                    TextField("Qty", value: $itemQuantity, format: .number)
+                        .focused($focusedField, equals: .qty)
+                        .onSubmit {
+                            addNewItem()
+                        }
+                        .submitLabel(.done)
+                }
+                .textFieldStyle(.roundedBorder)
+                .padding(.leading, 10)
+                .padding(.vertical, 10)
+                
+                
             }
-            Spacer()
-            
-            Image(systemName: "plus.square")
-                .font(.title3)
+            .listSectionSeparator(.hidden)
+        } else {
+            HStack {
+                Button("Add item") {
+                    addItemFieldsShowing.toggle()
+                    focusedField = .name
+                }
+                Spacer()
+                
+                Image(systemName: "plus.square")
+                    .font(.title3)
+            }
+            .foregroundStyle(.accent)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 20)
         }
-        .foregroundStyle(.accent)
-        .padding(.horizontal, 10)
-        .padding(.vertical, 20)
+
+    }
+    
+    private func addNewItem() {
+        let newItem = Item(
+            name: itemName,
+            category: category,
+            userQuantity: itemQuantity,
+            AIQuantity: itemQuantity
+        )
+        
+        trip.addItem(newItem)
+        itemName = ""
+        itemQuantity = 1
+        addItemFieldsShowing.toggle()
     }
 }
+
