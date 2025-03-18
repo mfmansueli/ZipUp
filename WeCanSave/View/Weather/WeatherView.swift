@@ -31,67 +31,82 @@ struct WeatherView: View {
     var body: some View {
         Button(action: { isExpanded.toggle() }) {
             
-            HStack {
-                VStack(alignment: .leading, spacing: 0) {
-                    HStack {
-                        Text("\(shortDateString(startDate: trip.startDate, endDate: trip.endDate))")
-                            .font(.headline)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.primary)
-                        
-                        Image(systemName: "chevron.down.circle")
-                            .rotationEffect(.degrees(isExpanded ? 180 : 0))
-                            .animation(.easeInOut, value: isExpanded)
-                        
-                    }
+            VStack(alignment: .leading) {
+                
+                HStack {
+                    Text("\(shortDateString(startDate: trip.startDate, endDate: trip.endDate))")
+                        .font(.callout)
+                        .fontWeight(.thin)
+                        .foregroundColor(.primary)
+                    
+                    Image(systemName: "chevron.down.circle")
+                        .rotationEffect(.degrees(isExpanded ? 180 : 0))
+                        .animation(.easeInOut, value: isExpanded)
+                    
+                }
+                
+                HStack(alignment: .bottom) {
+                    
                     
                     HStack(spacing: 4) {
-                        VStack(alignment: .leading, spacing: 8) {
+                        VStack(alignment: .trailing, spacing: 8) {
                             
                             //averageMaxTemp
-                            HStack(spacing: 4) {
+                            HStack(alignment: .firstTextBaseline, spacing: 5) {
                                 Text(viewmodel.averageHighTemperature) // Update this line
                                     .font(.title)
                                     .minimumScaleFactor(0.01)
                                     .foregroundColor(.primary)
                                 
+
+                                
                                 Text("avg. max.")
                                     .font(.body)
+                                    .frame(width: 80)
                                     .minimumScaleFactor(0.01)
                                     .foregroundColor(.primary)
                                 
                             }
                             
                             //averageMinTemp
-                            HStack(spacing: 4) {
+                            HStack(alignment: .firstTextBaseline, spacing: 5) {
                                 Text(viewmodel.averageLowTemperature)
                                     .font(.title)
                                     .minimumScaleFactor(0.01)
                                     .foregroundColor(.secondary)
                                 
+
                                 Text("avg. min.")
                                     .font(.body)
+                                    .frame(width: 80)
                                     .minimumScaleFactor(0.01)
                                     .foregroundColor(.secondary)
                             }
                         }
                     }
+                    
+                    Spacer()
+
+                    
+                    VStack(spacing: 8) {
+                        Image(systemName: viewmodel.mostCommonCondition.imageName ?? "cloud.sun")
+                            .resizable()
+                            .scaledToFit()
+                            .foregroundColor(.primary)
+                            .frame(minWidth: 40, maxWidth: 60)
+                        
+                        Text(viewmodel.mostCommonCondition.condition?.description ?? "Mostly sunny")
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.01)
+                            .font(.body)
+                            .fontWeight(.light)
+                            .foregroundColor(.primary)
+                    }
                 }.layoutPriority(1)
                 
-                VStack(spacing: 8) {
-                    Image(systemName: viewmodel.mostCommonCondition.imageName ?? "cloud.sun")
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundColor(.primary)
-                        .frame(minWidth: 40, maxWidth: 60)
-                    
-                    Text(viewmodel.mostCommonCondition.condition?.description ?? "Mostly sunny")
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.01)
-                        .font(.body)
-                        .foregroundColor(.primary)
-                }
+                
             }
+            .padding(.horizontal, 5)
         }
         .popover(isPresented: $isExpanded) {
             forecastList
@@ -160,4 +175,8 @@ struct WeatherView: View {
 
 #Preview {
     WeatherView(trip: Trip.exampleTrip)
+}
+
+#Preview {
+    BagBuilderView(trip: Trip.exampleTrip)
 }

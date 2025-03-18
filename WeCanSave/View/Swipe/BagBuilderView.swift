@@ -75,6 +75,8 @@ struct BagBuilderView: View {
                             print(trip.itemList.count)
                         }
                         .buttonStyle(.bordered)
+                        .tint(.accent)
+                        .clipShape(Capsule())
                     }
                     .onAppear {
                         totalCards = trip.itemList.count
@@ -90,6 +92,7 @@ struct BagBuilderView: View {
                             presentation.wrappedValue.dismiss()
                         } label: {
                             Image(systemName: "chevron.down")
+//                            Text("close")
                         }
                         
                     }

@@ -129,6 +129,7 @@ struct TripPlannerView: View {
                             viewModel.dates = newDates
                         }))
                         .presentationCompactAdaptation(.popover)
+                        .tint(.accent)
                     }
                     .padding(.bottom, 16)
                     

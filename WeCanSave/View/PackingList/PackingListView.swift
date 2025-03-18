@@ -58,7 +58,7 @@ struct PackingListView: View {
                                     
                                     Spacer()
                                     
-                                    HStack(spacing: 18) {
+                                    HStack(spacing: 32) {
                                         Text("packed")
                                         Text("wearing")
                                         Text("n.items")
@@ -66,7 +66,8 @@ struct PackingListView: View {
                                     .foregroundStyle(.foreground.opacity(0.4))
                                     .fontWeight(.light)
                                     .font(.caption2)
-                                    .multilineTextAlignment(.center)
+                                    .multilineTextAlignment(.leading)
+                                    .padding(.trailing, 6)
                                 }
                             ) {
                                 SectionView(trip: trip, category: category)
@@ -139,12 +140,15 @@ struct ListItemView: View {
             
             
             //            Spacer()
-            HStack(spacing: 35) {
+            HStack(spacing: 34) {
                 ListItemPackedButton(item: $item)
                 ListItemWearingButton(item: $item)
                 Text("x\(item.userQuantity)")
                     .font(.title2)
+                    .frame(width: 35)
+                
             }
+            .multilineTextAlignment(.trailing)
             
         }
     }
