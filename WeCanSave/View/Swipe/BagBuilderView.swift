@@ -67,11 +67,6 @@ struct BagBuilderView: View {
                         
                         
                         SwipeView(itemList: $trip.itemList)
-                        
-                        Button("All good, take me to the bag!") {
-                            print(trip.itemList.count)
-                        }
-                        .buttonStyle(.bordered)
                     }
                     .onAppear {
                         totalCards = trip.itemList.count
@@ -82,7 +77,6 @@ struct BagBuilderView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
-                        
                         Button {
                             presentation.wrappedValue.dismiss()
                         } label: {

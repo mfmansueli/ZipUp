@@ -41,9 +41,6 @@
     "Add trip" : {
 
     },
-    "All good, take me to the bag!" : {
-
-    },
     "avg. max." : {
 
     },
@@ -93,6 +90,9 @@
 
     },
     "Please select a trip to view the packing list." : {
+
+    },
+    "Qty" : {
 
     },
     "Remove from bag" : {
