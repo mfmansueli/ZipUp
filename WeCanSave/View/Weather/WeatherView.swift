@@ -10,11 +10,10 @@ import WeatherKit
 import CoreLocation
 
 struct WeatherView: View {
-    @ObservedObject private var viewmodel: WeatherViewModel
+    @StateObject private var viewmodel: WeatherViewModel
     @State private var isExpanded = false // Add state for expansion
     var trip: Trip
-    
-    
+
     // Custom date formatter for forecast dates
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -24,7 +23,7 @@ struct WeatherView: View {
     }()
     
     init(trip: Trip) {
-        self.viewmodel = WeatherViewModel(trip: trip)
+        _viewmodel = StateObject(wrappedValue: WeatherViewModel(trip: trip))
         self.trip = trip
     }
     
@@ -32,49 +31,49 @@ struct WeatherView: View {
         Button(action: { isExpanded.toggle() }) {
             
             VStack(alignment: .leading) {
-                
+
                 HStack {
                     Text("\(shortDateString(startDate: trip.startDate, endDate: trip.endDate))")
                         .font(.callout)
                         .fontWeight(.thin)
                         .foregroundColor(.primary)
-                    
+
                     Image(systemName: "chevron.down.circle")
                         .rotationEffect(.degrees(isExpanded ? 180 : 0))
                         .animation(.easeInOut, value: isExpanded)
-                    
+
                 }
-                
+
                 HStack(alignment: .bottom) {
-                    
-                    
+
+
                     HStack(spacing: 4) {
                         VStack(alignment: .trailing, spacing: 8) {
-                            
+
                             //averageMaxTemp
                             HStack(alignment: .firstTextBaseline, spacing: 5) {
                                 Text(viewmodel.averageHighTemperature) // Update this line
                                     .font(.title)
                                     .minimumScaleFactor(0.01)
                                     .foregroundColor(.primary)
-                                
 
-                                
+
+
                                 Text("avg. max.")
                                     .font(.body)
                                     .frame(width: 80)
                                     .minimumScaleFactor(0.01)
                                     .foregroundColor(.primary)
-                                
+
                             }
-                            
+
                             //averageMinTemp
                             HStack(alignment: .firstTextBaseline, spacing: 5) {
                                 Text(viewmodel.averageLowTemperature)
                                     .font(.title)
                                     .minimumScaleFactor(0.01)
                                     .foregroundColor(.secondary)
-                                
+
 
                                 Text("avg. min.")
                                     .font(.body)
@@ -84,17 +83,17 @@ struct WeatherView: View {
                             }
                         }
                     }
-                    
+
                     Spacer()
 
-                    
+
                     VStack(spacing: 8) {
                         Image(systemName: viewmodel.mostCommonCondition.imageName ?? "cloud.sun")
                             .resizable()
                             .scaledToFit()
                             .foregroundColor(.primary)
                             .frame(minWidth: 40, maxWidth: 60)
-                        
+
                         Text(viewmodel.mostCommonCondition.condition?.description ?? "Mostly sunny")
                             .lineLimit(1)
                             .minimumScaleFactor(0.01)
@@ -103,8 +102,8 @@ struct WeatherView: View {
                             .foregroundColor(.primary)
                     }
                 }.layoutPriority(1)
-                
-                
+
+
             }
             .padding(.horizontal, 5)
         }
@@ -178,5 +177,5 @@ struct WeatherView: View {
 }
 
 #Preview {
-    BagBuilderView(trip: Trip.exampleTrip)
+    BagBuilderView(trip: .constant(Trip.exampleTrip))
 }

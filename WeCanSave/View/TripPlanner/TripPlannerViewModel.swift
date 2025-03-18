@@ -178,9 +178,19 @@ class TripPlannerViewModel: BaseViewModel {
                 let openAIKey = try await fetchAPIKey()
                 weatherInfo = await fetchWeather(startDate: startDate, endDate: endDate)
                 print("Weather Info: \(weatherInfo ?? "No weather info")")
-                let items = try await fetchPackingList(openAIKey: openAIKey, selectedPlacemark: selectedPlacemark, dates: dates, weatherInfo: weatherInfo)
                 
                 let destination = cleanDestinationName(name: selectedPlacemark.title ?? "Unknown Destination")
+                let trip = Trip(
+                    destinationName: destination,
+                    destinationLat: "\(selectedPlacemark.coordinate.latitude)",
+                    destinationLong: "\(selectedPlacemark.coordinate.longitude)",
+                    startDate: startDate,
+                    endDate: endDate,
+                    category: selectedTripType?.rawValue ?? "General",
+                    itemList: []
+                )
+                
+                let items = try await fetchPackingList(openAIKey: openAIKey, selectedPlacemark: selectedPlacemark, dates: dates, weatherInfo: weatherInfo)
                 
                 let sortedItems = items.sorted { (item1, item2) -> Bool in
                     guard let index1 = ItemCategory.allCases.firstIndex(of: item1.category),
@@ -189,17 +199,11 @@ class TripPlannerViewModel: BaseViewModel {
                     }
                     return index1 < index2
                 }
+                sortedItems.forEach { item in
+                    item.trip = trip
+                }
+                trip.itemList = sortedItems
                 
-                let trip = Trip(
-                    destinationName: destination,
-                    destinationLat: "\(selectedPlacemark.coordinate.latitude)",
-                    destinationLong: "\(selectedPlacemark.coordinate.longitude)",
-                    startDate: startDate,
-                    endDate: endDate,
-                    category: selectedTripType?.rawValue ?? "General",
-                    itemList: sortedItems
-                )
-
                 let database = CKContainer.default().publicCloudDatabase
                 try await database.save(trip.toCKRecord())
                 
@@ -257,8 +261,8 @@ class TripPlannerViewModel: BaseViewModel {
         let itemCategories = ItemCategory.allCases.map { $0.rawValue }.joined(separator: ", ")
         
         let systemPrompt = """
-        You are a helpful assistant that generates a smart packing list for a trip. 
-        Always respond in JSON format. Return at least 32 or more items in the format inside a list:
+        You are a helpful assistant that generates a smart packing list for trips using only a carry-on bag. 
+        Always respond in JSON format. Return at least 32 or more items from this list \(itemImages) in the format inside a list:
         
         {
           "name": "item name",
@@ -266,8 +270,13 @@ class TripPlannerViewModel: BaseViewModel {
           "userQuantity": 1,
           "AIQuantity": 1,
           "imageName": "image name",
-          "isPair": false
+          "isPair": false,
+          "tipReason": "reason"
         }
+        
+        "AIQuantity" and "userQuantity" should always match, and should be based on how many of each item they should pack. 
+        The "AIJustification" should be a single sentence explaining why you think they need that many of the item. For example, if you're suggesting
+        7 tops for a 14 day trip, explain that it's possible to do laundry at most hotels and you don't need to bring a top for each day.
         
         Use the following predefined image names if they match an item: \(itemImages).
         If an item does not match any, use an appropriate SF Symbol as the imageName.

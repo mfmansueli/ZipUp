@@ -12,7 +12,7 @@ import SwiftData
 struct WeCanSaveApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Trip.self,
+            Trip.self
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false, cloudKitDatabase: .none)
         

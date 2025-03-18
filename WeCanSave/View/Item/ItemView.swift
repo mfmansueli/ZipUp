@@ -12,6 +12,7 @@ struct ItemView: View {
     @Binding var item: Item
     @State private var offset = CGSize.zero
     var removal: (() -> Void)? = nil
+    var added: (() -> Void)? = nil
     
     var body: some View {
         VStack(spacing: 30) {
@@ -86,11 +87,12 @@ struct ItemView: View {
                 }
             }
             
-            Text("Here is maybe where we could put our AI-based reasoning for why we picked this number for this item")
+            Text(item.tipReason)
                 .foregroundStyle(.black)
                 .fontWeight(.thin).italic()
                 .multilineTextAlignment(.center)
         }
+        .scrollDismissesKeyboard(.immediately)
         .padding(20)
         .background(
             RoundedRectangle(cornerRadius: 20)
@@ -114,7 +116,7 @@ struct ItemView: View {
                     if abs(offset.width) > 60 {
                         item.isDecided = true
                         if offset.width > 0 {
-                            // added to list
+                            added?()
                             return
                         }
                         item.userQuantity = 0

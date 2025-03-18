@@ -10,19 +10,15 @@ import SwiftUI
 struct BagBuilderView: View {
     
     @Environment(\.presentationMode) var presentation
-    @State var trip: Trip
+    @Binding var trip: Trip
     @State var totalCards: Int = 0
-    
-    var progress: Double {
-        1.0 - Double(trip.itemList.count) / Double(totalCards)
-    }
-    
+
     var itemCount: Int {
         return trip.getItemCount()
     }
     
-    init(trip: Trip) {
-        self.trip = trip
+    init(trip: Binding<Trip>) {
+        _trip = trip
     }
     
     var body: some View {
@@ -53,11 +49,8 @@ struct BagBuilderView: View {
                             Button {
                                 presentation.wrappedValue.dismiss()
                             } label: {
-                                BagProgressView(bagProgress: progress,
-                                                isOpen: false,
-                                                showProgress: true,
-                                                itemCount: itemCount)
-                                .frame(maxWidth: 100)
+                                BagProgressView(trip: $trip, isOpen: false)
+                                    .frame(maxWidth: 100)
                             }
                             .foregroundStyle(.primary)
                         }
@@ -68,11 +61,10 @@ struct BagBuilderView: View {
                             .foregroundStyle(.foreground.opacity(0.4))
                             .multilineTextAlignment(.center)
                         
-                        
                         SwipeView(itemList: $trip.itemList)
                         
                         Button("All good, take me to the bag!") {
-                            print(trip.itemList.count)
+                            presentation.wrappedValue.dismiss()
                         }
                         .buttonStyle(.bordered)
                         .tint(.accent)
@@ -87,7 +79,6 @@ struct BagBuilderView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
-                        
                         Button {
                             presentation.wrappedValue.dismiss()
                         } label: {
@@ -99,15 +90,11 @@ struct BagBuilderView: View {
                 }
             }
             .scrollDismissesKeyboard(.immediately)
-        }.onChange(of: trip.itemList) { oldValue, newValue in
-            if trip.itemList.isEmpty || trip.isBagDecided() {
-                presentation.wrappedValue.dismiss()
-            }
         }
     }
 }
 
 #Preview {
-    BagBuilderView(trip: Trip.exampleTrip)
+    BagBuilderView(trip: .constant(Trip.exampleTrip))
 }
 

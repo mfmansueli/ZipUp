@@ -26,6 +26,8 @@ class Trip {
         let components = calendar.dateComponents([.day], from: start, to: end)
         return (components.day ?? 0) + 1
     }
+    
+    @Relationship(deleteRule: .cascade)
     var itemList: [Item] = []
     var category: String = ""
     var isFinished = false
@@ -108,6 +110,7 @@ class Trip {
             }
         }
 
+        print("getCount \(count)")
         return count
     }
     
@@ -118,10 +121,46 @@ class Trip {
             }
         }
         return true
-        
+    }
+    
+    func undecidedItems() -> [Item] {
+        return itemList.filter { !$0.isDecided }
     }
         
     func addItem(_ item: Item) {
         itemList.append(item)
+    }
+    
+    func remove(item: Item) {
+        if let index = itemList.firstIndex(of: item) {
+            itemList.remove(at: index)
+        }
+    }
+    
+    func totalDecidedAndUndecidedItems() -> (decided: Int, undecided: Int) {
+        var decidedCount = 0
+        var undecidedCount = 0
+        for item in itemList {
+            
+            if item.isDecided {
+                decidedCount += item.userQuantity
+            } else {
+                undecidedCount += item.userQuantity
+            }
+        }
+        return (decided: decidedCount, undecided: undecidedCount)
+    }
+    
+    var progress: Double {
+        var decidedCount = 0
+        for item in itemList {
+            
+            if item.isDecided {
+                decidedCount += 1
+            }
+        }
+        
+        print("bagProgress \(Double(decidedCount) / Double(itemList.count))")
+        return Double(decidedCount) / Double(itemList.count)
     }
 }
