@@ -9,25 +9,17 @@ import SwiftUI
 
 struct BagProgressView: View {
     
-    @State var trip: Trip
-    @State var bagProgress: Double
+    var trip: Trip
     @State var isOpen: Bool
-    @State var showProgress: Bool
-    @State var itemCount: Int = 0
     
-    init(trip: Trip, bagProgress: Double, isOpen: Bool, showProgress: Bool, itemCount: Int) {
+    init(trip: Trip, isOpen: Bool) {
         self.trip = trip
-        self.bagProgress = bagProgress
         self.isOpen = isOpen
-        self.showProgress = showProgress
-        self.itemCount = itemCount
-        
-        print("bagProgress \(bagProgress)")
     }
     
     var body: some View {
         Circle()
-            .trim(from: 0, to: 1)
+            .trim(from: 0, to: trip.progress)
             .rotation(.degrees(-90))
             .stroke(.brandGreen, style: StrokeStyle(lineWidth: 8, lineCap: .round))
             .background {
@@ -41,26 +33,28 @@ struct BagProgressView: View {
                 HStack {
                     VStack(alignment: .leading) {
                         Spacer()
-                        Text("\(itemCount)")
+                        Text("\(trip.getItemCount())")
                             .font(.caption)
                             .foregroundStyle(.primary)
-                            .padding(5)
                             .background(
                                 Circle()
                                     .fill(.background)
                                     .stroke(.foreground, lineWidth: 2)
+                                    .frame(width: 20, height: 20)
                             )
+                            .padding(16)
                     }
                     Spacer()
                 }
             }
+            .animation(.easeInOut(duration: 1.0), value: trip.progress)
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel("Bag builder progress: Suggestions remaining; \(itemCount)")
+            .accessibilityLabel("Bag builder progress: Suggestions remaining; \(trip.getItemCount())")
     }
 }
 
 #Preview {
-    BagProgressView(trip: Trip.exampleTrip, bagProgress: 0.8, isOpen: false, showProgress: true, itemCount: 10)
+    BagProgressView(trip: Trip.exampleTrip, isOpen: true)
 }
 
 #Preview {

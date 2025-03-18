@@ -49,12 +49,8 @@ struct BagBuilderView: View {
                             Button {
                                 presentation.wrappedValue.dismiss()
                             } label: {
-                                BagProgressView(trip: trip,
-                                                bagProgress: trip.progress,
-                                                isOpen: false,
-                                                showProgress: true,
-                                                itemCount: trip.getItemCount())
-                                .frame(maxWidth: 100)
+                                BagProgressView(trip: trip, isOpen: false)
+                                    .frame(maxWidth: 100)
                             }
                             .foregroundStyle(.primary)
                         }

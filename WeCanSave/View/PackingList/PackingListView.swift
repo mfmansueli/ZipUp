@@ -39,11 +39,7 @@ struct PackingListView: View {
                     Button {
                         bagBuilderShowing = true
                     } label: {
-                        BagProgressView(trip: trip,
-                                        bagProgress: trip.progress,
-                                        isOpen: true,
-                                        showProgress: true,
-                                        itemCount: trip.getItemCount())
+                        BagProgressView(trip: trip, isOpen: true)
                         .frame(maxWidth: 100)
                     }
                     .foregroundStyle(.primary)
