@@ -108,8 +108,8 @@ struct ItemView: View {
             DragGesture()
                 .onChanged { gesture in
                     withAnimation {
-                        offset = CGSize(width: gesture.translation.width / 3,
-                                        height: gesture.translation.height / 3)
+                        offset = CGSize(width: gesture.translation.width / 2,
+                                        height: gesture.translation.height / 2)
                     }
                 }
                 .onEnded { _ in
