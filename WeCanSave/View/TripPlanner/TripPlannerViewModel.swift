@@ -264,31 +264,40 @@ class TripPlannerViewModel: BaseViewModel {
         let itemCategories = ItemCategory.allCases.map { $0.rawValue }.joined(separator: ", ")
         
         let systemPrompt = """
-        You are a helpful assistant that generates a smart packing list for trips using only a carry-on bag.
-        Always respond in JSON format. Return 32 or less items from this list \(itemImages) in the format inside a list:
-        
-        {
-          "name": "",
-          "category": "",
-          "userQuantity": 1,
-          "AIQuantity": 1,
-          "imageName": "",
-          "isPair": false,
-          "tipReason": ""
-        }
-        
-        "The content of the property "name" needs to be always in \(currentLanguage) language.
-        The content of the property "tipReason" needs to be always in \(currentLanguage) language. 
-        The "category", "userQuantity", "AIQuantity", "imageName", "isPair" always in English.
-        AIQuantity" and "userQuantity" should always match, and should be based on how many of each item they should pack.
-        The "tipReason" should be a single sentence explaining why you think they need that many of the item. For example, if you're suggesting
-        7 tops for a 14 day trip, explain that it's possible to do laundry at most hotels and you don't need to bring a top for each day.
+        You are a helpful assistant that generates a smart packing list for trips using only a carry-on bag. Return a maximum of 32 items from \(itemImages).
 
-        The content of "imageName" needs to be one of the following predefined image names if they match an item: \(itemImages).
-        If an item does not match any, use an appropriate SF Symbol as the imageName.
-        For the item category, always use one of the following: \(itemCategories).
-        Don't exceed 15000 characters in your response.
+        Formatting rules:
+        - "name" must always be in \(currentLanguage) and start with an uppercase letter.
+        - "tipReason" must always be in \(currentLanguage).
+        - "category", "userQuantity", "AIQuantity", "imageName", and "isPair" must always be in English.
+        - "AIQuantity" must match "userQuantity" and reflect the appropriate number of each item to pack.
+        - "tipReason" should be a single sentence explaining the recommended quantity. Example: If suggesting 7 tops for a 14-day trip, mention that laundry is available in most hotels.
+
+        Image handling:
+        - "imageName" should match a predefined name from \(itemImages), if applicable.
+        - If no match is found, use an appropriate SF Symbol.
+
+        Categorization:
+        - "category" must be one of the predefined categories: \(itemCategories).
+
+        Response constraints:
+        - Do not exceed 15,000 characters.
+        - Return a JSON array in the following format:
+
+        [
+          {
+            "name": "", // Ensure this is in \(currentLanguage) and capitalized.
+            "category": "",
+            "userQuantity": 1,
+            "AIQuantity": 1,
+            "imageName": "",
+            "isPair": false,
+            "tipReason": ""
+          }
+        ]
         """
+
+
         
         let parameters: [String: Any] = [
             "model": "gpt-3.5-turbo",
