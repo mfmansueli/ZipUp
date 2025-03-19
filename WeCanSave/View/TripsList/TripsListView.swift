@@ -9,13 +9,16 @@ import SwiftUI
 import SwiftData
 
 struct TripsListView: View {
-    @StateObject private var viewModel = TripsListViewModel()
+    @ObservedObject private var viewModel = TripsListViewModel()
     @Environment(\.modelContext) private var modelContext
     @Environment(\.presentationMode) var presentation
     @Query(filter: #Predicate<Trip> { !$0.isFinished }) private var tripsCurrent: [Trip]
     @Query(filter: #Predicate<Trip> { $0.isFinished }) private var tripsPast: [Trip]
     
     @State private var columnVisibility: NavigationSplitViewVisibility = .doubleColumn
+    
+    init() {
+    }
     
     var body: some View {
         NavigationSplitView(columnVisibility: $columnVisibility) {
@@ -92,10 +95,18 @@ struct TripsListView: View {
             }
             .navigationTitle("ZipUp")
         } detail: {
-            PackingListView(trip: viewModel.selectedTrip)
+            if let trip = viewModel.selectedTrip {
+                PackingListView(trip: trip)
+        } else {
+            ContentUnavailableView {
+                Label("No Trip Selected", systemImage: "exclamationmark.triangle.fill")
+            } description: {
+                Text("Please select a trip to view the packing list.")
+            }
+        }
         }
         .sheet(isPresented: $viewModel.showTripPlanner) {
-            TripPlannerView(modelContext: modelContext)
+            TripPlannerView(modelContext: modelContext, selectedTrip: $viewModel.selectedTrip)
                 .presentationBackground(.thickMaterial)
         }
         .navigationSplitViewStyle(.balanced)

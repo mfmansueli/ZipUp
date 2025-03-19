@@ -10,98 +10,91 @@ import SwiftUI
 struct BagBuilderView: View {
     
     @Environment(\.presentationMode) var presentation
-    @State private var trip: Trip
-    
-    @State var itemList: [Item]
-    
+    @Binding var trip: Trip
     @State var totalCards: Int = 0
-    
-    var progress: Double {
-        1.0 - Double(itemList.count) / Double(totalCards)
-    }
-    
-    var itemCount: Int {
-//        print(trip.bag!.getItemCount())
-        return trip.getItemCount()
 
+    var itemCount: Int {
+        return trip.getItemCount()
     }
     
-    init(trip: Trip) {
-        self.trip = trip
-        self.itemList = trip.itemList
-        
-        print(trip.itemList)
+    init(trip: Binding<Trip>) {
+        _trip = trip
     }
     
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                
-                HStack {
-                    Image(systemName: "xmark")
-                        .foregroundStyle(.red.opacity(0.4))
-                        .padding(10)
-                        
-                    Spacer()
-
-                    Image(systemName: "checkmark")
-                        .foregroundStyle(.green.opacity(0.4))
-                        .padding(15)
-                }
-                .font(.title2)
-                .offset(y: 50)
-                
-                VStack(spacing: 40) {
+        NavigationStack {
+            ScrollView {
+                ZStack {
                     HStack {
-                        WeatherView2(trip: trip)
-                            .frame(width: geometry.size.width * 0.6 - 20)
+                        Image(systemName: "xmark")
+                            .foregroundStyle(.red.opacity(0.4))
+                            .padding(.leading, 6)
                         
-                        Divider()
-                            .frame(width: 1, height: 100)
-                            .padding(.trailing, 20)
+                        Spacer()
+                        
+                        Image(systemName: "checkmark")
+                            .foregroundStyle(.green.opacity(0.4))
+                            .padding(.trailing, 6)
+                    }
+                    .font(.title2)
+                    .offset(y: 50)
+                    
+                    VStack(spacing: 35) {
+                        HStack {
+                            WeatherView(trip: trip)
+                            
+                            Divider()
+                                .frame(width: 1, height: 100)
+                            
+                            Button {
+                                presentation.wrappedValue.dismiss()
+                            } label: {
+                                BagProgressView(trip: $trip, isOpen: false)
+                                    .frame(maxWidth: 100)
+                            }
+                            .foregroundStyle(.primary)
+                        }
+                        .frame(height: 100)
+                        
+                        Text("Swipe to add or remove our suggestions from your bag")
+                            .font(.system(size: 14))
+                            .foregroundStyle(.foreground.opacity(0.4))
+                            .multilineTextAlignment(.center)
+                        
+                        SwipeView(itemList: $trip.itemList)
+                        
+                        Button("All good, take me to the bag!") {
+                            presentation.wrappedValue.dismiss()
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(.accent)
+                        .clipShape(Capsule())
+                    }
+                    .onAppear {
+                        totalCards = trip.itemList.count
+                    }
+                    .padding()
+                }
+                .navigationTitle(trip.destinationName + " (\(trip.duration) days)")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
                         Button {
                             presentation.wrappedValue.dismiss()
                         } label: {
-                            BagProgressView(bagProgress: progress, isOpen: false, showProgress: true, itemCount: itemCount)
-                                .frame(width: geometry.size.width * 0.4 - 40)
+                            Image(systemName: "chevron.down")
+//                            Text("close")
                         }
-                        .foregroundStyle(.primary)
-                        .padding(0)
                         
                     }
-                    .frame(height: 100)
-                    //                .padding(.bottom, 20)
-                    //                .padding(.trailing, 20)
-                    
-                    
-                    
-                    Text("Swipe to add or remove our suggestions\nfrom your bag")
-                        .font(.callout)
-                        .foregroundStyle(.foreground.opacity(0.4))
-                        .lineLimit(2, reservesSpace: true)
-                        .multilineTextAlignment(.center)
-                    
-                    
-                    SwipeView(itemList: $itemList)
-                    
-                    //                .accessibilitySortPriority(2)
-                    
-                    Button("All good, take me to the bag!") {
-                        print(itemList.count)
-                    }
-                    .buttonStyle(.bordered)
-//                    .padding(.top, 30)
                 }
-                .onAppear {
-                    totalCards = itemList.count
-                }
-                .padding()
             }
+            .scrollDismissesKeyboard(.immediately)
         }
     }
 }
 
 #Preview {
-    BagBuilderView(trip: Trip.exampleTrip)
+    BagBuilderView(trip: .constant(Trip.exampleTrip))
 }
 

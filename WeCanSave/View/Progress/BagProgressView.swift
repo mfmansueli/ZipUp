@@ -9,55 +9,53 @@ import SwiftUI
 
 struct BagProgressView: View {
     
-    @State var bagProgress: Double
+    @Environment(\.presentationMode) var presentation
+    @Binding var trip: Trip
     @State var isOpen: Bool
-    @State var showProgress: Bool
-    @State var itemCount: Int = 0
+    
+//    init(trip: Trip, isOpen: Bool) {
+//        self.trip = trip
+//        self.isOpen = isOpen
+//    }
     
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                if showProgress {
-                    Circle()
-                        .trim(from: 0, to: bagProgress)
-                        .rotation(.degrees(-90))
-                        .stroke(.brandGreen, style: StrokeStyle(lineWidth: geometry.size.width * 0.06, lineCap: .round))
-                }
-                
-                ZStack(alignment: .bottomLeading) {
-                    Image(isOpen ? "Bag_open-symbol"  : "Bag_closed-symbol")
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundStyle(.brandOrange)
-//                        .padding(10)
-                    
-                    Text("\(itemCount)")
-                        .font(.caption)
-                        .foregroundStyle(.primary)
-                        .padding(5)
-                        .background(
-                            Circle()
-                                .fill(.background)
-                                .stroke(.foreground, lineWidth: 2)
-                        )
-                        .offset(x: -geometry.size.width * 0.1)
-                }
-                .padding(showProgress ? geometry.size.width * 0.15 : 0)
-                .padding(.leading)
-                
-                
+        Circle()
+            .trim(from: 0, to: trip.progress)
+            .rotation(.degrees(-90))
+            .stroke(.brandGreen, style: StrokeStyle(lineWidth: 8, lineCap: .round))
+            .background {
+                Image(isOpen ? "Bag_open-symbol" : "Bag_closed-symbol")
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundStyle(.brandOrange)
+                    .padding(16)
             }
-            .frame(maxWidth: geometry.size.width * 0.9)
-//            .padding(geometry.size.width * 0.1)
+            .overlay {
+                HStack {
+                    VStack(alignment: .leading) {
+                        Spacer()
+                        Text("\(trip.getItemCount())")
+                            .font(.caption)
+                            .foregroundStyle(.primary)
+                            .background(
+                                Circle()
+                                    .fill(.background)
+                                    .stroke(.foreground, lineWidth: 2)
+                                    .frame(width: 20, height: 20)
+                            )
+                            .padding(16)
+                    }
+                    Spacer()
+                }
+            }
+            .animation(.easeInOut(duration: 1.0), value: trip.progress)
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel("Bag builder progress: Suggestions remaining; 4")
-        }
-        
+            .accessibilityLabel("Bag builder progress: Suggestions remaining; \(trip.getItemCount())")
     }
 }
 
 #Preview {
-    BagProgressView(bagProgress: 0.4, isOpen: false, showProgress: true, itemCount: 10)
+    BagProgressView(trip: .constant(Trip.exampleTrip), isOpen: true)
 }
 
 #Preview {

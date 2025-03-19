@@ -9,89 +9,94 @@ import SwiftUI
 
 struct PackingListView: View {
     
-    @State var trip: Trip?
-    
+    @State var trip: Trip
     @State private var bagBuilderShowing: Bool
+    
     
     //    @State private var addItemSheetShowing: Bool = false
     
     var itemCount: Int {
-        trip?.getItemCount() ?? 0
+        trip.getItemCount()
     }
     
-    init(trip: Trip?) {
+    init(trip: Trip) {
         self.trip = trip
-        self.bagBuilderShowing = true //!trip.bag!.isDecided
+        self.bagBuilderShowing = !trip.isBagDecided()
     }
     
     var body: some View {
-        if let trip = trip {
-            GeometryReader { geometry in
-                VStack(alignment: .leading) {
-                    HStack {
-                        WeatherView2(trip: trip)
-                            .frame(width: geometry.size.width * 0.65 - 20)
-                        
-                        Divider()
-                            .frame(width: 1, height: 100)
-                            .padding(.trailing, 20)
-                        
-                        BagProgressView(bagProgress: 1, isOpen: true, showProgress: true, itemCount: itemCount)
-                            .frame(width: geometry.size.width * 0.35 - 40)
-                        
+        NavigationStack {
+            VStack(alignment: .leading) {
+                
+                HStack {
+                    WeatherView(trip: trip)
+                    
+                    Divider()
+                        .frame(width: 1, height: 100)
+                        .padding(.horizontal, 10)
+                    
+                    Button {
+                        bagBuilderShowing = true
+                    } label: {
+                        BagProgressView(trip: $trip, isOpen: true)
+                            .frame(maxWidth: 100)
                     }
-                    .frame(height: 100)
-                    .padding(.bottom, 20)
-                    
-                    Text("Your bag")
-                        .font(.title).bold()
-                    
-                    let groupedItems = Dictionary(grouping: trip.itemList, by: { $0.category })
-                    
-                    List {
-                        ForEach(groupedItems.keys.sorted(), id: \.self) { category in
-                            Section(
-                                header: HStack {
-                                    Text(category).font(.title3).bold()
-                                    Spacer()
-                                    
-                                    HStack(spacing: 18) {
-                                        Text("packed")
-                                        Text("wearing")
-                                        Text("n.items")
-                                    }
-                                    .foregroundStyle(.foreground.opacity(0.4))
-                                    .fontWeight(.light)
-                                    .font(.caption2)
-                                    .multilineTextAlignment(.center)
+                    .foregroundStyle(.primary)
+                }
+                .frame(height: 100)
+                .padding(.bottom, 20)
+                
+                Text("Your bag")
+                    .font(.title)
+                    .bold()
+                
+                List {
+                    ForEach(ItemCategory.allCases, id: \.self) { category in
+                        Section(
+                            header: HStack {
+                                Text(category.rawValue)
+                                    .font(.title3)
+                                    .bold()
+                                
+                                Spacer()
+                                
+                                HStack(spacing: 18) {
+                                    Text("packed")
+                                    Text("wearing")
+                                    Text("n.items")
                                 }
-                            ) {
-                                SectionView(trip: trip, category: category)
+                                .foregroundStyle(.foreground.opacity(0.4))
+                                .fontWeight(.light)
+                                .font(.caption2)
+                                .multilineTextAlignment(.center)
+                                .padding(.trailing, 6)
                             }
+                        ) {
+                            SectionView(trip: trip, category: category)
                         }
-                        .listRowInsets(EdgeInsets())
                     }
-                    .listStyle(.plain)
-                    .padding(0)
-                    
-                    
+                    .listRowInsets(EdgeInsets())
                 }
-                .fullScreenCover(isPresented: $bagBuilderShowing) {
-                    BagBuilderView(trip: trip)
-                }
-                //                .sheet(isPresented: $addItemSheetShowing, content: {
-                //                    EmptyView()
-                //                })
-                .padding()
+                .listStyle(.plain)
+                .padding(0)
+                
+                
             }
-            
-        } else {
-            ContentUnavailableView {
-                Label("No Trip Selected", systemImage: "exclamationmark.triangle.fill")
-            } description: {
-                Text("Please select a trip to view the packing list.")
+            .fullScreenCover(isPresented: $bagBuilderShowing) {
+                BagBuilderView(trip: $trip)
             }
+            //                .sheet(isPresented: $addItemSheetShowing, content: {
+            //                    EmptyView()
+            //                })
+            .padding()
+            .navigationTitle(trip.destinationName + " (\(trip.duration) days)")
+            .navigationBarTitleDisplayMode(.inline)
         }
+        
+    }
+    
+    func addNewItem() {
+        
     }
 }
 
@@ -136,12 +141,15 @@ struct ListItemView: View {
             
             
             //            Spacer()
-            HStack(spacing: 35) {
+            HStack(spacing: 34) {
                 ListItemPackedButton(item: $item)
                 ListItemWearingButton(item: $item)
                 Text("x\(item.userQuantity)")
                     .font(.title2)
+                    .frame(width: 35)
+                
             }
+            .multilineTextAlignment(.trailing)
             
         }
     }
@@ -157,11 +165,11 @@ struct ListItemWearingButton: View {
     
     var body: some View {
         HStack(alignment: .center) {
-            Image(isSingular ? "jacket_button" : item.isWearing ? "jacket_1" : "jacket_button")
+            Image(isSingular ? "jacket_button" : item.isWearing ? "Jacket_1" : "jacket_button")
                 .resizable()
                 .scaledToFill()
                 .frame(width: 35, height: 35)
-                .foregroundStyle(item.isWearing ? Color.accent : Color.primary.opacity(0.4))
+                .foregroundColor(item.isWearing ? Color.accent : Color.primary.opacity(0.4))
                 .padding(.top, 5)
                 .onTapGesture {
                     if isSingular && item.isPacked && item.isWearing == false {
@@ -200,33 +208,99 @@ struct ListItemPackedButton: View {
 
 struct SectionView: View {
     @State var trip: Trip
+    @State var showAddItemSheet: Bool = false
     var filteredItems: [Item] = []
+    var category: ItemCategory
     
-    init(trip: Trip, category: String) {
-        self.trip = trip
-        filteredItems = trip.itemList.filter { $0.category == category }
+    enum FocusedField {
+        case name, qty
     }
+    
+    @FocusState private var focusedField: FocusedField?
+    
+    init(trip: Trip, category: ItemCategory) {
+        self.trip = trip
+        self.category = category
+        filteredItems = trip.itemList.filter { $0.category == category }
+        
+    }
+    
+    @State private var addItemFieldsShowing: Bool = false
+    @State private var itemName: String = ""
+    @State private var itemQuantity: Int = 1
+    
     
     var body: some View {
-        ForEach(filteredItems.indices, id: \.self) { index in
-            let item = $trip.itemList.first(where: { $0.id == filteredItems[index].id })!
-            
-            ListItemView(item: item)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 20)
-            
-        }
-        HStack {
-            Button("Add item") {
-                //
+        ForEach(filteredItems, id: \.self) { item in
+            if let item = $trip.itemList.first(where: { $0.id == item.id }) {
+                ListItemView(item: item)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 20)
             }
-            Spacer()
-            
-            Image(systemName: "plus.square")
-                .font(.title3)
         }
-        .foregroundStyle(.accent)
-        .padding(.horizontal, 10)
-        .padding(.vertical, 20)
+        
+        if addItemFieldsShowing {
+            GeometryReader { geometry in
+                HStack {
+                    Button("Cancel", systemImage: "xmark.circle") {
+                        addItemFieldsShowing.toggle()
+                        itemName = ""
+                        itemQuantity = 0
+                    }
+                    .labelStyle(.iconOnly)
+                    .foregroundStyle(.accent)
+                    
+                    TextField("Item name", text: $itemName)
+                        .frame(width: geometry.size.width * 0.75)
+                        .focused($focusedField, equals: .name)
+                        .submitLabel(.next)
+                        .onSubmit {
+                            focusedField = .qty
+                        }
+                    TextField("Qty", value: $itemQuantity, format: .number)
+                        .focused($focusedField, equals: .qty)
+                        .onSubmit {
+                            addNewItem()
+                        }
+                        .submitLabel(.done)
+                }
+                .textFieldStyle(.roundedBorder)
+                .padding(.leading, 10)
+                .padding(.vertical, 10)
+                
+                
+            }
+            .listSectionSeparator(.hidden)
+        } else {
+            HStack {
+                Button("Add item") {
+                    addItemFieldsShowing.toggle()
+                    focusedField = .name
+                }
+                Spacer()
+                
+                Image(systemName: "plus.square")
+                    .font(.title3)
+            }
+            .foregroundStyle(.accent)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 20)
+        }
+        
+    }
+    
+    private func addNewItem() {
+        let newItem = Item(
+            name: itemName,
+            category: category,
+            userQuantity: itemQuantity,
+            AIQuantity: itemQuantity
+        )
+        
+        trip.addItem(newItem)
+        itemName = ""
+        itemQuantity = 1
+        addItemFieldsShowing.toggle()
     }
 }
+

@@ -16,7 +16,7 @@ class TripPlannerViewModel: BaseViewModel {
     var modelContext: ModelContext!
     var searchTimer: Timer?
     var weatherInfo: String?
-    @Published var selectedTrip: Trip?
+    @Binding var selectedTrip: Trip?
     @Published var dates: Set<DateComponents> = []
     @Published var searchResults: [MKMapItem] = []
     @Published var selectedItem: MKMapItem?
@@ -44,8 +44,9 @@ class TripPlannerViewModel: BaseViewModel {
         }
     }
 
-    init(modelContext: ModelContext) {
+    init(modelContext: ModelContext, selectedTrip: Binding<Trip?>) {
         self.modelContext = modelContext
+        self._selectedTrip = selectedTrip
         super.init()
     }
     
@@ -66,13 +67,31 @@ class TripPlannerViewModel: BaseViewModel {
                 return
             }
 
-            self?.searchResults = response.mapItems
-            self?.showAddressPopover = true
+            var filteredSearchResults: [MKMapItem] {
+                response.mapItems.filter { result in
+                    if result.name?.range(of: "\\d", options: .regularExpression) != nil {
+                        return false
+                    }
+
+                    if result.placemark.thoroughfare != nil  {
+                        return false
+                    }
+
+                    // other filters if necessary
+//                    print(result)
+                    return true
+                }
+
+            }
+            self?.searchResults = filteredSearchResults
+            self?.showAddressPopover = !(self?.searchResults.isEmpty ?? true)
             self?.printSearchResults()
         }
+
     }
 
     func printSearchResults() {
+
         for item in searchResults {
             print("Name: \(item.name ?? "No name")")
             print("Phone: \(item.phoneNumber ?? "No phone number")")
@@ -161,22 +180,38 @@ class TripPlannerViewModel: BaseViewModel {
                 let openAIKey = try await fetchAPIKey()
                 weatherInfo = await fetchWeather(startDate: startDate, endDate: endDate)
                 print("Weather Info: \(weatherInfo ?? "No weather info")")
-                let items = try await fetchPackingList(openAIKey: openAIKey, selectedPlacemark: selectedPlacemark, dates: dates, weatherInfo: weatherInfo)
+
+                let destination = cleanDestinationName(name: selectedPlacemark.title ?? "Unknown Destination")
                 let trip = Trip(
-                    destinationName: selectedPlacemark.title ?? "Unknown Destination",
+                    destinationName: destination,
                     destinationLat: "\(selectedPlacemark.coordinate.latitude)",
                     destinationLong: "\(selectedPlacemark.coordinate.longitude)",
                     startDate: startDate,
                     endDate: endDate,
                     category: selectedTripType?.rawValue.key ?? "General",
-                    itemList: items
+                    itemList: []
                 )
+
+                let items = try await fetchPackingList(openAIKey: openAIKey, selectedPlacemark: selectedPlacemark, dates: dates, weatherInfo: weatherInfo)
+
+                let sortedItems = items.sorted { (item1, item2) -> Bool in
+                    guard let index1 = ItemCategory.allCases.firstIndex(of: item1.category),
+                          let index2 = ItemCategory.allCases.firstIndex(of: item2.category) else {
+                        return false
+                    }
+                    return index1 < index2
+                }
+                sortedItems.forEach { item in
+                    item.trip = trip
+                }
+                trip.itemList = sortedItems
 
                 let database = CKContainer.default().publicCloudDatabase
                 try await database.save(trip.toCKRecord())
                 
                 modelContext.insert(trip)
                 isLoading = false
+                selectedTrip = trip
                 tripCreatedSuccessfully = true
             } catch {
                 print("Error while generating the bag: \(error)")
@@ -186,6 +221,24 @@ class TripPlannerViewModel: BaseViewModel {
                 showAlert(title: "Error while generating the bag", message: "Unable to proceed, please contact support. \nError: \(error)")
             }
         }
+    }
+
+    func cleanDestinationName(name: String) -> String {
+        let pattern = #"^(.+?)\s*[,—–:;-]\s*(.*)$"#
+
+        if let regex = try? NSRegularExpression(pattern: pattern),
+           let match = regex.firstMatch(in: name, range: NSRange(name.startIndex..., in: name)) {
+
+            let prefixRange = Range(match.range(at: 1), in: name)
+            let restRange = Range(match.range(at: 2), in: name)
+
+            let prefix = prefixRange.map { String(name[$0]) } ?? name
+            let rest = restRange.map { String(name[$0]) } ?? ""
+
+            return prefix
+        }
+
+        return name // No match, return the whole string as the prefix
     }
 
     func fetchPackingList(openAIKey: String, selectedPlacemark: MKPlacemark, dates: Set<DateComponents>, weatherInfo: String?) async throws -> [Item] {
@@ -208,19 +261,12 @@ class TripPlannerViewModel: BaseViewModel {
         }
         content += " Please respond in \(currentLanguage)."
         
-        let allowedImageNames = [
-            "belt", "binoculars", "bodyWash", "book", "bottoms", "camera", "campingGear", "charger",
-            "contactLens", "deodorant", "earplugs", "firstAidKit", "flashlight", "flipflops", "hairbrush",
-            "hatAndGloves", "insectRepellent", "jacket", "laptop", "lipBalm", "makeUp", "pajamas",
-            "passport", "powerbank", "rainCoat", "razorAndShavingCream", "reusableBottle", "scarf",
-            "shampoo", "shoes", "skinCare", "snorkelGear", "socks", "sunglasses", "sunscreen",
-            "sweater", "swimsuit", "tickets", "tissues", "toothbrushToothpaste", "tops", "toteBag",
-            "travelAdapter", "travelPillow", "trekkingPoles", "tweezers", "umbrella", "underwear", "wallet"
-        ].joined(separator: ", ")
+        let itemImages = ItemImage.allCases.map { $0.rawValue }.joined(separator: ", ")
+        let itemCategories = ItemCategory.allCases.map { $0.rawValue }.joined(separator: ", ")
         
         let systemPrompt = """
-        You are a helpful assistant that generates a smart packing list for a trip. 
-        Always respond in JSON format. Return at least 32 or more items in the format inside a list:
+        You are a helpful assistant that generates a smart packing list for trips using only a carry-on bag.
+        Always respond in JSON format. Return at least 32 or more items from this list \(itemImages) in the format inside a list:
         
         {
           "name": "item name",
@@ -228,11 +274,17 @@ class TripPlannerViewModel: BaseViewModel {
           "userQuantity": 1,
           "AIQuantity": 1,
           "imageName": "image name",
-          "isPair": false
+          "isPair": false,
+          "tipReason": "reason"
         }
         
-        Use the following predefined image names if they match an item: \(allowedImageNames). 
+        "AIQuantity" and "userQuantity" should always match, and should be based on how many of each item they should pack.
+        The "AIJustification" should be a single sentence explaining why you think they need that many of the item. For example, if you're suggesting
+        7 tops for a 14 day trip, explain that it's possible to do laundry at most hotels and you don't need to bring a top for each day.
+
+        Use the following predefined image names if they match an item: \(itemImages).
         If an item does not match any, use an appropriate SF Symbol as the imageName.
+        For the item category, always use one of the following: \(itemCategories).
         """
         
         let parameters: [String: Any] = [

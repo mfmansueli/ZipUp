@@ -10,7 +10,7 @@ import Foundation
 class TripsListViewModel: BaseViewModel {
     @Published var trips: [Trip] = []
     @Published var showTripPlanner = false
-    @Published var selectedTrip: Trip?
+    @Published var selectedTrip: Trip! { didSet { showTripPlanner = false } }
     
 }
 

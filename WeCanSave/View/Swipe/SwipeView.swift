@@ -9,10 +9,7 @@ import SwiftUI
 
 struct SwipeView: View {
     
-    // user.trip id = trip id
-    
-    // trip.bag
-    
+    @Environment(\.presentationMode) var presentation
     @Binding var itemList: [Item]
     
     var body: some View {
@@ -20,19 +17,31 @@ struct SwipeView: View {
             ForEach(0..<itemList.count, id: \.self) { index in
                 ItemView(item: $itemList[index]) {
                     withAnimation {
-                        removeItem(at: index)
+                        itemList[index].trip?.remove(item: itemList[index])
+                        checkBag()
                     }
+                } added: {
+                    checkBag()
                 }
                 .stacked(at: index, in: itemList.count)
                 .accessibilityHidden(index == itemList.count - 1 ? false : true)
-            
             }
         }
     }
     
-    func removeItem(at index: Int) {
-        itemList.remove(at: index)
-        
+    func isListDecided() -> Bool {
+        for item in itemList {
+            if !item.isDecided {
+                return false
+            }
+        }
+        return true
+    }
+    
+    func checkBag() {
+        if itemList.isEmpty || isListDecided() {
+            presentation.wrappedValue.dismiss()
+        }
     }
 }
 
@@ -40,15 +49,10 @@ extension View {
     func stacked(at position: Int, in total: Int) -> some View {
         let offset = Double(total - position)
 //        return self.offset(x: offset * Double.random(in: -1...1), y: offset * Double.random(in: -1...1))
-        return self.offset(x: offset * Double.random(in: -0.5...0.5), y: 2)
+        return self.offset(x: offset * Double.random(in: -0.2...0.2), y: offset * Double.random(in: -0.2...0.2))
     }
 }
 
 #Preview {
-    SwipeView(itemList: .constant([
-        Item.socks,
-        Item.tops,
-        Item.shoes,
-        Item.charger,
-    ]))
+    SwipeView(itemList: .constant(Trip.exampleTrip.itemList))
 }

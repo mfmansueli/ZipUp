@@ -27,7 +27,7 @@ struct LoadingView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
                 .onAppear {
-                    Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { timer in
+                    Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { timer in
                         withAnimation(.easeInOut(duration: 0.5)) {
                             currentMessageIndex = (currentMessageIndex + 1) % messages.count
                         }

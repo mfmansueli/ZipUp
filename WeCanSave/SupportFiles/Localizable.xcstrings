@@ -674,6 +674,9 @@
         }
       }
     },
+    "Item name" : {
+
+    },
     "n.items" : {
       "localizations" : {
         "fr" : {
@@ -872,6 +875,9 @@
         }
       }
     },
+    "Qty" : {
+
+    },
     "Relaxation" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1012,6 +1018,9 @@
         }
       }
     },
+    "Swipe to add or remove our suggestions from your bag" : {
+
+    },
     "Upcoming" : {
       "localizations" : {
         "fr" : {
@@ -1101,26 +1110,7 @@
       }
     },
     "When are you going?" : {
-      "localizations" : {
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quand pars-tu?"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quando partirai?"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quando você vai viajar?"
-          }
-        }
-      }
+
     },
     "When?" : {
       "extractionState" : "stale",
@@ -1162,7 +1152,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Qual o"
+            "value" : "Onde será"
           }
         }
       }
