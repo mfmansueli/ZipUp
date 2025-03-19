@@ -259,32 +259,35 @@ class TripPlannerViewModel: BaseViewModel {
         if let selectedTripType = selectedTripType {
             content += " I'm going on a \(selectedTripType.rawValue) trip."
         }
-        content += " Please respond in \(currentLanguage)."
         
         let itemImages = ItemImage.allCases.map { $0.rawValue }.joined(separator: ", ")
         let itemCategories = ItemCategory.allCases.map { $0.rawValue }.joined(separator: ", ")
         
         let systemPrompt = """
         You are a helpful assistant that generates a smart packing list for trips using only a carry-on bag.
-        Always respond in JSON format. Return at least 32 or more items from this list \(itemImages) in the format inside a list:
+        Always respond in JSON format. Return 32 or less items from this list \(itemImages) in the format inside a list:
         
         {
-          "name": "item name",
-          "category": "category name",
+          "name": "",
+          "category": "",
           "userQuantity": 1,
           "AIQuantity": 1,
-          "imageName": "image name",
+          "imageName": "",
           "isPair": false,
-          "tipReason": "reason"
+          "tipReason": ""
         }
         
-        "AIQuantity" and "userQuantity" should always match, and should be based on how many of each item they should pack.
-        The "AIJustification" should be a single sentence explaining why you think they need that many of the item. For example, if you're suggesting
+        "The content of the property "name" needs to be always in \(currentLanguage) language.
+        The content of the property "tipReason" needs to be always in \(currentLanguage) language. 
+        The "category", "userQuantity", "AIQuantity", "imageName", "isPair" always in English.
+        AIQuantity" and "userQuantity" should always match, and should be based on how many of each item they should pack.
+        The "tipReason" should be a single sentence explaining why you think they need that many of the item. For example, if you're suggesting
         7 tops for a 14 day trip, explain that it's possible to do laundry at most hotels and you don't need to bring a top for each day.
 
-        Use the following predefined image names if they match an item: \(itemImages).
+        The content of "imageName" needs to be one of the following predefined image names if they match an item: \(itemImages).
         If an item does not match any, use an appropriate SF Symbol as the imageName.
         For the item category, always use one of the following: \(itemCategories).
+        Don't exceed 15000 characters in your response.
         """
         
         let parameters: [String: Any] = [

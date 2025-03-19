@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct DestinationView: View {
-    @ObservedObject var viewModel: TripPlannerViewModel
+    @StateObject var viewModel: TripPlannerViewModel
     var animationNamespace: Namespace.ID
     
     var body: some View {

@@ -11,7 +11,7 @@ import SwiftData
 struct TripPlannerView: View {
     
     @Environment(\.presentationMode) var presentation
-    @ObservedObject var viewModel: TripPlannerViewModel
+    @StateObject var viewModel: TripPlannerViewModel
     let columns = [
         GridItem(.flexible()),
         GridItem(.flexible())
@@ -21,7 +21,7 @@ struct TripPlannerView: View {
     @FocusState private var isDestinationFocused: Bool
     
     init(modelContext: ModelContext, selectedTrip: Binding<Trip?>) {
-        viewModel = TripPlannerViewModel(modelContext: modelContext, selectedTrip: selectedTrip)
+        _viewModel = StateObject(wrappedValue: TripPlannerViewModel(modelContext: modelContext, selectedTrip: selectedTrip)) 
     }
     
     var body: some View {
@@ -74,7 +74,7 @@ struct TripPlannerView: View {
                             .padding()
                             .presentationCompactAdaptation(.popover)
                         }
-                        .padding(.bottom, 16)
+                        .padding(.bottom, 26)
                     
                     Text("When are you going?")
                         .font(.title)
@@ -131,13 +131,13 @@ struct TripPlannerView: View {
                         .presentationCompactAdaptation(.popover)
                         .tint(.accent)
                     }
-                    .padding(.bottom, 16)
+                    .padding(.bottom, 26)
                     
                     Text("What are you doing?")
                         .font(.title)
                     
 //                    LazyVGrid(columns: columns, alignment: .center, spacing: 16) {
-                    VStack(spacing: 10) {
+                    VStack(spacing: 24) {
                         HStack(spacing: 20) {
                             ForEach(TripType.allCases.prefix(2), id: \.self) { item in
                                 tripTypeButton(for: item)
@@ -203,19 +203,17 @@ struct TripPlannerView: View {
             viewModel.selectedTripType = item
         } label: {
             Label {
-//                Text(item.title)
                 Text(item.rawValue)
                     .font(.subheadline)
             } icon: {
                 Image(item.image)
                     .resizable()
                     .scaledToFit()
-
                     .frame(width: 35, height: 24)
             }
             .fixedSize()
-            .padding()
-            .frame(width: 140)
+            .padding(12)
+            .frame(minWidth: 140)
             .background {
                 RoundedRectangle(cornerRadius: 32)
                     .strokeBorder(viewModel.selectedTripType == item ? Color.accentColor : Color.gray, lineWidth: viewModel.selectedTripType == item ? 2 : 1)
