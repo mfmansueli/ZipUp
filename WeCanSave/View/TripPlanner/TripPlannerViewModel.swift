@@ -66,32 +66,32 @@ class TripPlannerViewModel: BaseViewModel {
                 print("Error: \(error?.localizedDescription ?? "Unknown error")")
                 return
             }
-            
+
             var filteredSearchResults: [MKMapItem] {
                 response.mapItems.filter { result in
                     if result.name?.range(of: "\\d", options: .regularExpression) != nil {
                         return false
                     }
-                    
+
                     if result.placemark.thoroughfare != nil  {
                         return false
                     }
-                    
+
                     // other filters if necessary
 //                    print(result)
                     return true
                 }
-                
+
             }
             self?.searchResults = filteredSearchResults
             self?.showAddressPopover = !(self?.searchResults.isEmpty ?? true)
             self?.printSearchResults()
         }
-        
+
     }
 
     func printSearchResults() {
-        
+
         for item in searchResults {
             print("Name: \(item.name ?? "No name")")
             print("Phone: \(item.phoneNumber ?? "No phone number")")
@@ -162,13 +162,15 @@ class TripPlannerViewModel: BaseViewModel {
     @MainActor
     func loadBag(aiEnabled: Bool = true) {
         guard let selectedPlacemark = selectedPlacemark else {
-            showAlert(title: "Destination Required", message: "Please select a destination before proceeding.")
+            let title = String(localized: "Destination Required")
+            let message = String(localized: "Please select a destination before proceeding.")
+            showAlert(title: title, message: message)
             return
         }
 
         guard let startDate = dates.sorted(by: { $0.date ?? Date.distantPast < $1.date ?? Date.distantPast }).first?.date,
               let endDate = dates.sorted(by: { $0.date ?? Date.distantPast < $1.date ?? Date.distantPast }).last?.date else {
-            showAlert(title: "Dates Required", message: "Please select the dates for your trip before proceeding.")
+            showAlert(title: String(localized: "Dates Required"), message: String(localized: "Please select the dates for your trip before proceeding."))
             return
         }
         
@@ -178,7 +180,7 @@ class TripPlannerViewModel: BaseViewModel {
                 let openAIKey = try await fetchAPIKey()
                 weatherInfo = await fetchWeather(startDate: startDate, endDate: endDate)
                 print("Weather Info: \(weatherInfo ?? "No weather info")")
-                
+
                 let destination = cleanDestinationName(name: selectedPlacemark.title ?? "Unknown Destination")
                 let trip = Trip(
                     destinationName: destination,
@@ -186,12 +188,12 @@ class TripPlannerViewModel: BaseViewModel {
                     destinationLong: "\(selectedPlacemark.coordinate.longitude)",
                     startDate: startDate,
                     endDate: endDate,
-                    category: selectedTripType?.rawValue ?? "General",
+                    category: selectedTripType?.rawValue.key ?? "General",
                     itemList: []
                 )
-                
+
                 let items = try await fetchPackingList(openAIKey: openAIKey, selectedPlacemark: selectedPlacemark, dates: dates, weatherInfo: weatherInfo)
-                
+
                 let sortedItems = items.sorted { (item1, item2) -> Bool in
                     guard let index1 = ItemCategory.allCases.firstIndex(of: item1.category),
                           let index2 = ItemCategory.allCases.firstIndex(of: item2.category) else {
@@ -203,7 +205,7 @@ class TripPlannerViewModel: BaseViewModel {
                     item.trip = trip
                 }
                 trip.itemList = sortedItems
-                
+
                 let database = CKContainer.default().publicCloudDatabase
                 try await database.save(trip.toCKRecord())
                 
@@ -213,27 +215,29 @@ class TripPlannerViewModel: BaseViewModel {
                 tripCreatedSuccessfully = true
             } catch {
                 print("Error while generating the bag: \(error)")
+//                String(localized: "Error while generating the bag: \(error)")
+
                 isLoading = false
                 showAlert(title: "Error while generating the bag", message: "Unable to proceed, please contact support. \nError: \(error)")
             }
         }
     }
-    
+
     func cleanDestinationName(name: String) -> String {
         let pattern = #"^(.+?)\s*[,—–:;-]\s*(.*)$"#
-        
+
         if let regex = try? NSRegularExpression(pattern: pattern),
            let match = regex.firstMatch(in: name, range: NSRange(name.startIndex..., in: name)) {
-            
+
             let prefixRange = Range(match.range(at: 1), in: name)
             let restRange = Range(match.range(at: 2), in: name)
-            
+
             let prefix = prefixRange.map { String(name[$0]) } ?? name
             let rest = restRange.map { String(name[$0]) } ?? ""
-            
+
             return prefix
         }
-        
+
         return name // No match, return the whole string as the prefix
     }
 
@@ -261,7 +265,7 @@ class TripPlannerViewModel: BaseViewModel {
         let itemCategories = ItemCategory.allCases.map { $0.rawValue }.joined(separator: ", ")
         
         let systemPrompt = """
-        You are a helpful assistant that generates a smart packing list for trips using only a carry-on bag. 
+        You are a helpful assistant that generates a smart packing list for trips using only a carry-on bag.
         Always respond in JSON format. Return at least 32 or more items from this list \(itemImages) in the format inside a list:
         
         {
@@ -274,10 +278,10 @@ class TripPlannerViewModel: BaseViewModel {
           "tipReason": "reason"
         }
         
-        "AIQuantity" and "userQuantity" should always match, and should be based on how many of each item they should pack. 
+        "AIQuantity" and "userQuantity" should always match, and should be based on how many of each item they should pack.
         The "AIJustification" should be a single sentence explaining why you think they need that many of the item. For example, if you're suggesting
         7 tops for a 14 day trip, explain that it's possible to do laundry at most hotels and you don't need to bring a top for each day.
-        
+
         Use the following predefined image names if they match an item: \(itemImages).
         If an item does not match any, use an appropriate SF Symbol as the imageName.
         For the item category, always use one of the following: \(itemCategories).
