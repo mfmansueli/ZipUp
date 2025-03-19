@@ -9,7 +9,7 @@ import SwiftUI
 
 struct TripsListEmptyView: View {
     var body: some View {
-        VStack {
+        VStack(spacing: 16) {
             Spacer()
             Group {
                 Text("Where")
@@ -17,9 +17,10 @@ struct TripsListEmptyView: View {
                 Text(" are you going next?")
             }
             .font(.system(size: 45, weight: .bold))
-            .multilineTextAlignment(.center)
+            .multilineTextAlignment(.leading)
             
             Text("\nCreate your first trip to get started.")
+                .font(.title3)
             
             Image("PlanePath")
                 .scaledToFit()

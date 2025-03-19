@@ -165,6 +165,7 @@
       }
     },
     "%lld Days" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -341,7 +342,11 @@
         }
       }
     },
+    "Bag builder progress: Suggestions remaining; %lld" : {
+
+    },
     "Bag builder progress: Suggestions remaining; 4" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -603,7 +608,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dobrando as coupas…"
+            "value" : "Dobrando as roupas…"
           }
         }
       }
@@ -631,6 +636,7 @@
       }
     },
     "Here is maybe where we could put our AI-based reasoning for why we picked this number for this item" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -997,6 +1003,7 @@
       }
     },
     "Swipe to add or remove our suggestions\nfrom your bag" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -1110,7 +1117,14 @@
       }
     },
     "When are you going?" : {
-
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quando é a sua viagem?"
+          }
+        }
+      }
     },
     "When?" : {
       "extractionState" : "stale",
@@ -1152,7 +1166,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Onde será"
+            "value" : "Qual "
           }
         }
       }
