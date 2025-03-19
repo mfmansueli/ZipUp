@@ -9,13 +9,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Commence à créer ton premier voyage"
+            "value" : "Organise ton premier voyage"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comincia a creare il tuo primo viaggio."
+            "value" : "Crea il tuo primo viaggio."
           }
         },
         "pt-BR" : {
@@ -37,7 +37,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "andrai la prossima volta?"
+            "value" : "sarà la tua prossima meta?"
           }
         },
         "pt-BR" : {
@@ -1156,7 +1156,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dove"
+            "value" : "Quale"
           }
         },
         "pt-BR" : {
@@ -1179,7 +1179,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dove andrai la prossima volta?"
+            "value" : "Quale sarà la tua prossima meta?"
           }
         },
         "pt-BR" : {
