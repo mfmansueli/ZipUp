@@ -143,13 +143,15 @@ class TripPlannerViewModel: BaseViewModel {
     @MainActor
     func loadBag(aiEnabled: Bool = true) {
         guard let selectedPlacemark = selectedPlacemark else {
-            showAlert(title: "Destination Required", message: "Please select a destination before proceeding.")
+            let title = String(localized: "Destination Required")
+            let message = String(localized: "Please select a destination before proceeding.")
+            showAlert(title: title, message: message)
             return
         }
 
         guard let startDate = dates.sorted(by: { $0.date ?? Date.distantPast < $1.date ?? Date.distantPast }).first?.date,
               let endDate = dates.sorted(by: { $0.date ?? Date.distantPast < $1.date ?? Date.distantPast }).last?.date else {
-            showAlert(title: "Dates Required", message: "Please select the dates for your trip before proceeding.")
+            showAlert(title: String(localized: "Dates Required"), message: String(localized: "Please select the dates for your trip before proceeding."))
             return
         }
         
@@ -166,7 +168,7 @@ class TripPlannerViewModel: BaseViewModel {
                     destinationLong: "\(selectedPlacemark.coordinate.longitude)",
                     startDate: startDate,
                     endDate: endDate,
-                    category: selectedTripType?.rawValue ?? "General",
+                    category: selectedTripType?.rawValue.key ?? "General",
                     itemList: items
                 )
 
@@ -178,6 +180,8 @@ class TripPlannerViewModel: BaseViewModel {
                 tripCreatedSuccessfully = true
             } catch {
                 print("Error while generating the bag: \(error)")
+//                String(localized: "Error while generating the bag: \(error)")
+
                 isLoading = false
                 showAlert(title: "Error while generating the bag", message: "Unable to proceed, please contact support. \nError: \(error)")
             }

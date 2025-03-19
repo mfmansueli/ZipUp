@@ -201,6 +201,7 @@ struct TripPlannerView: View {
             viewModel.selectedTripType = item
         } label: {
             Label {
+//                Text(item.title)
                 Text(item.rawValue)
                     .font(.subheadline)
             } icon: {
