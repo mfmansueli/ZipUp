@@ -489,6 +489,12 @@
             "state" : "translated",
             "value" : "Date richieste"
           }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Necessario informar as datas"
+          }
         }
       }
     },
@@ -817,7 +823,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Par favor selecione o destino para proceguir."
+            "value" : "Par favor selecione o destino para prosseguir."
           }
         }
       }
@@ -856,6 +862,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Selezionare le date del viaggio prima di procedere."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por favor selecione uma data para a sua viagem para prosseguir."
           }
         }
       }
