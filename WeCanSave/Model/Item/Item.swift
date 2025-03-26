@@ -14,7 +14,7 @@ import SwiftData
 class Item: Identifiable, Codable, Equatable, Hashable {
     var id = UUID()
     var name: String = ""
-    var category: ItemCategory
+    var category: ItemCategory = ItemCategory.clothing
     var userQuantity: Int = 0
     var AIQuantity: Int = 0
     var imageName: String = "default"
@@ -41,6 +41,11 @@ class Item: Identifiable, Codable, Equatable, Hashable {
         self.isPacked = isPacked
         self.isPair = isPair
         self.tipReason = tipReason
+    }
+    
+    init(category: ItemCategory, trip: Trip) {
+        self.category = category
+        self.trip = trip
     }
 
     required init(from decoder: Decoder) throws {

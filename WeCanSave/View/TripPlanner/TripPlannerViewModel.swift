@@ -14,35 +14,17 @@ import SwiftData
 
 class TripPlannerViewModel: BaseViewModel {
     var modelContext: ModelContext!
-    var searchTimer: Timer?
     var weatherInfo: String?
     @Binding var selectedTrip: Trip?
     @Published var dates: Set<DateComponents> = []
-    @Published var searchResults: [MKMapItem] = []
     @Published var selectedItem: MKMapItem?
     @Published var isBagGenerated: Bool = false
     @Published var showAddressPopover = false
     @Published var selectedTripType: TripType?
     @Published var tripCreatedSuccessfully: Bool = false
-    @Published var searchText = "" {
-        didSet {
-            searchTimer?.invalidate()
-            if !searchText.isEmpty && searchText != selectedPlacemark?.title {
-                searchTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { [weak self] _ in
-                    self?.searchDestinations()
-                }
-            }
-        }
-    }
+    @Published var searchText = ""
 
-    @Published var selectedPlacemark: MKPlacemark? {
-        didSet {
-            if let title = selectedPlacemark?.title, !title.isEmpty {
-                searchText = title
-            }
-            showAddressPopover = false
-        }
-    }
+    @Published var selectedPlacemark: MKPlacemark?
 
     init(modelContext: ModelContext, selectedTrip: Binding<Trip?>) {
         self.modelContext = modelContext
@@ -50,60 +32,6 @@ class TripPlannerViewModel: BaseViewModel {
         super.init()
     }
     
-    func searchDestinations() {
-        searchTimer?.invalidate()
-        let request = MKLocalSearch.Request()
-        request.naturalLanguageQuery = searchText
-        request.resultTypes = [.address, .pointOfInterest]
-        request.region = MKCoordinateRegion(
-            center: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194),
-            span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
-        )
-
-        let search = MKLocalSearch(request: request)
-        search.start { [weak self] response, error in
-            guard let response = response else {
-                print("Error: \(error?.localizedDescription ?? "Unknown error")")
-                return
-            }
-
-            var filteredSearchResults: [MKMapItem] {
-                response.mapItems.filter { result in
-                    if result.name?.range(of: "\\d", options: .regularExpression) != nil {
-                        return false
-                    }
-
-                    if result.placemark.thoroughfare != nil  {
-                        return false
-                    }
-
-                    // other filters if necessary
-//                    print(result)
-                    return true
-                }
-
-            }
-            self?.searchResults = filteredSearchResults
-            self?.showAddressPopover = !(self?.searchResults.isEmpty ?? true)
-            self?.printSearchResults()
-        }
-
-    }
-
-    func printSearchResults() {
-
-        for item in searchResults {
-            print("Name: \(item.name ?? "No name")")
-            print("Phone: \(item.phoneNumber ?? "No phone number")")
-            print("URL: \(item.url?.absoluteString ?? "No URL")")
-
-            print("Address: \(item.placemark.thoroughfare ?? "No address"), \(item.placemark.locality ?? "No city"), \(item.placemark.administrativeArea ?? "No state"), \(item.placemark.postalCode ?? "No postal code"), \(item.placemark.country ?? "No country")")
-            print("Latitude: \(item.placemark.coordinate.latitude)")
-            print("Longitude: \(item.placemark.coordinate.longitude)")
-            print("-----")
-        }
-    }
-
     func fetchWeather(startDate: Date, endDate: Date) async -> String? {
         guard let coordinate = selectedPlacemark?.coordinate else { return "" }
         let weatherService = WeatherService()
@@ -181,9 +109,8 @@ class TripPlannerViewModel: BaseViewModel {
                 weatherInfo = await fetchWeather(startDate: startDate, endDate: endDate)
                 print("Weather Info: \(weatherInfo ?? "No weather info")")
 
-                let destination = cleanDestinationName(name: selectedPlacemark.title ?? "Unknown Destination")
                 let trip = Trip(
-                    destinationName: destination,
+                    destinationName: selectedPlacemark.itemName(),
                     destinationLat: "\(selectedPlacemark.coordinate.latitude)",
                     destinationLong: "\(selectedPlacemark.coordinate.longitude)",
                     startDate: startDate,
@@ -212,7 +139,6 @@ class TripPlannerViewModel: BaseViewModel {
                 modelContext.insert(trip)
                 isLoading = false
                 selectedTrip = trip
-                tripCreatedSuccessfully = true
             } catch {
                 print("Error while generating the bag: \(error)")
 //                String(localized: "Error while generating the bag: \(error)")
@@ -222,23 +148,33 @@ class TripPlannerViewModel: BaseViewModel {
             }
         }
     }
-
-    func cleanDestinationName(name: String) -> String {
-        let pattern = #"^(.+?)\s*[,—–:;-]\s*(.*)$"#
-
-        if let regex = try? NSRegularExpression(pattern: pattern),
-           let match = regex.firstMatch(in: name, range: NSRange(name.startIndex..., in: name)) {
-
-            let prefixRange = Range(match.range(at: 1), in: name)
-            let restRange = Range(match.range(at: 2), in: name)
-
-            let prefix = prefixRange.map { String(name[$0]) } ?? name
-            let rest = restRange.map { String(name[$0]) } ?? ""
-
-            return prefix
+    
+    func createTrip(selectedPlacemark: MKPlacemark?) {
+        guard let selectedPlacemark = selectedPlacemark else {
+            let title = String(localized: "Destination Required")
+            let message = String(localized: "Please select a destination before proceeding.")
+            showAlert(title: title, message: message)
+            return
         }
 
-        return name // No match, return the whole string as the prefix
+        guard let startDate = dates.sorted(by: { $0.date ?? Date.distantPast < $1.date ?? Date.distantPast }).first?.date,
+              let endDate = dates.sorted(by: { $0.date ?? Date.distantPast < $1.date ?? Date.distantPast }).last?.date else {
+            showAlert(title: String(localized: "Dates Required"), message: String(localized: "Please select the dates for your trip before proceeding."))
+            return
+        }
+        
+        let trip = Trip(
+            destinationName: selectedPlacemark.itemName(),
+            destinationLat: "\(selectedPlacemark.coordinate.latitude)",
+            destinationLong: "\(selectedPlacemark.coordinate.longitude)",
+            startDate: startDate,
+            endDate: endDate,
+            category: selectedTripType?.rawValue.key ?? "General",
+            itemList: []
+        )
+        
+        modelContext.insert(trip)
+        selectedTrip = trip
     }
 
     func fetchPackingList(openAIKey: String, selectedPlacemark: MKPlacemark, dates: Set<DateComponents>, weatherInfo: String?) async throws -> [Item] {
@@ -267,7 +203,7 @@ class TripPlannerViewModel: BaseViewModel {
         You are a helpful assistant that generates a smart packing list for trips using only a carry-on bag. Return a maximum of 32 items from \(itemImages).
 
         Formatting rules:
-        - "name" must always be in \(currentLanguage) and start with an uppercase letter.
+        - "name" property must always be translated into \(currentLanguage) and start with an uppercase letter.
         - "tipReason" must always be in \(currentLanguage).
         - "category", "userQuantity", "AIQuantity", "imageName", and "isPair" must always be in English.
         - "AIQuantity" must match "userQuantity" and reflect the appropriate number of each item to pack.
@@ -278,7 +214,7 @@ class TripPlannerViewModel: BaseViewModel {
         - If no match is found, use an appropriate SF Symbol.
 
         Categorization:
-        - "category" must be one of the predefined categories: \(itemCategories).
+        - "category" must be one of the predefined values in \(itemCategories). DO NOT modify or translate these values. Always return them exactly as they appear in \(itemCategories).
 
         Response constraints:
         - Do not exceed 15,000 characters.
@@ -286,7 +222,7 @@ class TripPlannerViewModel: BaseViewModel {
 
         [
           {
-            "name": "", // Ensure this is in \(currentLanguage) and capitalized.
+            "name": "", // Ensure this is translated into \(currentLanguage) and capitalized.
             "category": "",
             "userQuantity": 1,
             "AIQuantity": 1,

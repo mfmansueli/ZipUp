@@ -10,14 +10,14 @@ import SwiftUI
 struct BagBuilderView: View {
     
     @Environment(\.presentationMode) var presentation
-    @Binding var trip: Trip
+    @ObservedObject var trip: Trip
     @State var totalCards: Int = 0
 
     var itemCount: Int {
         return trip.getItemCount()
     }
     
-    init(trip: Binding<Trip>) {
+    init(trip: ObservedObject<Trip>) {
         _trip = trip
     }
     
@@ -46,10 +46,12 @@ struct BagBuilderView: View {
                             Divider()
                                 .frame(width: 1, height: 100)
                             
+                            Spacer()
+                            
                             Button {
                                 presentation.wrappedValue.dismiss()
                             } label: {
-                                BagProgressView(trip: $trip, isOpen: false)
+                                BagProgressView(trip: trip, isOpen: false)
                                     .frame(maxWidth: 100)
                             }
                             .foregroundStyle(.primary)
@@ -61,7 +63,7 @@ struct BagBuilderView: View {
                             .foregroundStyle(.foreground.opacity(0.4))
                             .multilineTextAlignment(.center)
                         
-                        SwipeView(itemList: $trip.itemList)
+//                        SwipeView(itemList: $trip.itemList)
                         
                         Button("All good, take me to the bag!") {
                             presentation.wrappedValue.dismiss()
@@ -71,7 +73,7 @@ struct BagBuilderView: View {
                         .clipShape(Capsule())
                     }
                     .onAppear {
-                        totalCards = trip.itemList.count
+                        totalCards = trip.itemList?.count ?? 0
                     }
                     .padding()
                 }
@@ -94,7 +96,7 @@ struct BagBuilderView: View {
     }
 }
 
-#Preview {
-    BagBuilderView(trip: .constant(Trip.exampleTrip))
-}
+//#Preview {
+//    BagBuilderView(trip: .constant(Trip.exampleTrip))
+//}
 

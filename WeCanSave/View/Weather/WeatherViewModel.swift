@@ -81,7 +81,11 @@ class WeatherViewModel: ObservableObject {
         }
         let max = totalTemperature / Double(allForecasts.count)
         
-        return String(format: "%.1f", max) + "°C"
+        var metricSystem = "°C"
+        if Locale.current.measurementSystem == .us {
+            metricSystem = "°F"
+        }
+        return String(format: "%.1f", max) + metricSystem
     }
     
     func calculateAverageLowTemperature() -> String {
@@ -90,7 +94,11 @@ class WeatherViewModel: ObservableObject {
         }
         let min = totalTemperature / Double (allForecasts.count)
         
-        return String(format: "%.1f", min) + "°C"
+        var metricSystem = "°C"
+        if Locale.current.measurementSystem == .us {
+            metricSystem = "°F"
+        }
+        return String(format: "%.1f", min) + metricSystem
     }
     
     func calculateMostCommonCondition() -> (condition: WeatherCondition?, imageName: String?) {

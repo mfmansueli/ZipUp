@@ -6,20 +6,55 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct ItemView: View {
-    
     @Binding var item: Item
     @State private var offset = CGSize.zero
+    @State private var isEditMode = false
+    @State private var showImagePicker = false
     var removal: (() -> Void)? = nil
     var added: (() -> Void)? = nil
+    @State var isAnimationRunning = false
+    @State var increaseFeedback = false
+    @State var decreaseFeedback = false
+    @State var deniedFeedback = false
+    @State var selectionFeedback = false
     
     var body: some View {
         VStack(spacing: 30) {
             ZStack {
-                Image(uiImage: item.image)
-                    .resizable()
-                    .scaledToFit()
+                Button {
+                    showImagePicker = true
+                } label: {
+                    Image(uiImage: item.image)
+                        .resizable()
+                        .scaledToFit()
+                        .overlay {
+                            if isEditMode {
+                                HStack {
+                                    Spacer()
+                                    VStack {
+                                        Image(systemName: "photo.badge.plus")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 30, height: 30)
+                                            .padding(10)
+                                            .background {
+                                                RoundedRectangle(cornerRadius: 30)
+                                                    .fill(.white)
+                                            }
+                                        Spacer()
+                                    }
+                                }
+                            }
+                        }
+                }
+                .disabled(!isEditMode)
+                .popover(isPresented: $showImagePicker) {
+                    ItemImagePickerView(selectedImage: $item.imageName)
+                        .presentationCompactAdaptation(.popover)
+                }
                 
                 Image(systemName: offset.width < 0 ? "xmark.circle" : "checkmark.circle")
                     .resizable()
@@ -46,11 +81,16 @@ struct ItemView: View {
                 .font(.title)
                 .bold()
                 .foregroundStyle(.black)
+                .disabled(!isEditMode)
             
             HStack(spacing: 30) {
-                
                 Button {
+                    if item.userQuantity == 1 {
+                        deniedFeedback.toggle()
+                        return
+                    }
                     item.decrementUserQuantity()
+                    decreaseFeedback.toggle()
                 } label: {
                     ZStack {
                         Circle()
@@ -64,15 +104,14 @@ struct ItemView: View {
                     }
                 }
                 
-                
                 Text("\(item.userQuantity)")
                     .font(.system(size: 50, weight: .bold))
                     .minimumScaleFactor(0.01)
                     .foregroundStyle(.black)
                 
-                
                 Button {
                     item.incrementUserQuantity()
+                    increaseFeedback.toggle()
                 } label: {
                     ZStack {
                         Circle()
@@ -105,29 +144,15 @@ struct ItemView: View {
         .offset(x: offset.width * 5)
         .opacity(2 - Double(abs(offset.width / 30)))
         .gesture(
-            DragGesture()
-                .onChanged { gesture in
-                    withAnimation {
-                        offset = CGSize(width: gesture.translation.width / 2,
-                                        height: gesture.translation.height / 2)
-                    }
-                }
-                .onEnded { _ in
-                    if abs(offset.width) > 60 {
-                        item.isDecided = true
-                        if offset.width > 0 {
-                            added?()
-                            return
-                        }
-                        item.userQuantity = 0
-                        removal?()
-                        return
-                    }
-                    withAnimation {
-                        offset = .zero
-                    }
-                }
+            swipeGesture()
         )
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(isEditMode ? "Done" : "Edit") {
+                    isEditMode.toggle()
+                }
+            }
+        }
         .accessibilityRepresentation {
             Text("Suggestion: \(item.name). Number to bring: \(item.userQuantity)")
         }
@@ -150,6 +175,67 @@ struct ItemView: View {
             let editedAnnouncement = AttributedString("\(item.userQuantity) \(item.name)s")
             AccessibilityNotification.Announcement(editedAnnouncement).post()
         }
+        .sensoryFeedback(.increase, trigger: increaseFeedback)
+        .sensoryFeedback(.decrease, trigger: decreaseFeedback)
+        .sensoryFeedback(.warning, trigger: deniedFeedback)
+        .sensoryFeedback(.selection, trigger: selectionFeedback)
+    }
+    
+    func swipeGesture() -> some Gesture {
+        return DragGesture()
+            .onChanged { gesture in
+                if isEditMode {
+                    if !isAnimationRunning {
+                        withAnimation {
+                            isAnimationRunning = true
+                            offset = CGSize(width: 10, height: 0)
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                withAnimation {
+                                    offset = CGSize(width: -10, height: 0)
+                                }
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                    withAnimation {
+                                        offset = CGSize(width: 10, height: 0)
+                                    }
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                        withAnimation {
+                                            offset = CGSize(width: -10, height: 0)
+                                        }
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                            withAnimation {
+                                                offset = .zero
+                                                isAnimationRunning = false
+                                                deniedFeedback.toggle()
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    withAnimation {
+                        offset = CGSize(width: gesture.translation.width / 2,
+                                        height: gesture.translation.height / 2)
+                    }
+                }
+            }
+            .onEnded { _ in
+                if abs(offset.width) > 60 {
+                    item.isDecided = true
+                    selectionFeedback.toggle()
+                    if offset.width > 0 {
+                        added?()
+                        return
+                    }
+                    item.userQuantity = 0
+                    removal?()
+                    return
+                }
+                withAnimation {
+                    offset = .zero
+                }
+            }
     }
 }
 

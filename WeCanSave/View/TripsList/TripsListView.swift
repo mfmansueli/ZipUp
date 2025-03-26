@@ -28,47 +28,10 @@ struct TripsListView: View {
                 } else {
                     List {
                         if tripsCurrent.count > 0 {
-                            Section(header: Text("Upcoming").font(.title)) {
-                                ForEach(tripsCurrent) { trip in
-                                    Button {
-                                        viewModel.selectedTrip = trip
-                                    } label: {
-                                        TripListCardView(trip: trip)
-                                    }
-                                    .padding(.horizontal, 2)
-                                    .foregroundStyle(Color.primary)
-                                    .swipeActions {
-                                        Button(role: .destructive) {
-                                            deleteTrip(trip)
-                                        } label: {
-                                            Label("Delete", systemImage: "trash")
-                                        }
-                                    }
-                                }
-                            }
-                            .listRowSeparator(.hidden)
-                            .listSectionSeparator(.hidden)
+                            createSection(header: "Upcoming", trips: tripsCurrent)
                         }
                         if tripsPast.count > 0 {
-                            Section(header: Text("Past").font(.title)) {
-                                ForEach(tripsPast) { trip in
-                                    Button {
-                                        viewModel.selectedTrip = trip
-                                    } label: {
-                                        TripListCardView(trip: trip, isPast: true)
-                                    }
-                                    .padding(.horizontal, 2)
-                                    .swipeActions {
-                                        Button(role: .destructive) {
-                                            deleteTrip(trip)
-                                        } label: {
-                                            Label("Delete", systemImage: "trash")
-                                        }
-                                    }
-                                }
-                            }
-                            .listRowSeparator(.hidden)
-                            .listSectionSeparator(.hidden)
+                            createSection(header: "Past", trips: tripsPast, isPast: true)
                         }
                     }
                     .listStyle(.plain)
@@ -80,6 +43,10 @@ struct TripsListView: View {
                 PackingListView(trip: item)
             })
             .toolbar {
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    EditButton()
+                }
                 ToolbarItem(placement: .bottomBar) {
                     Button {
                         viewModel.showTripPlanner.toggle()
@@ -97,24 +64,47 @@ struct TripsListView: View {
         } detail: {
             if let trip = viewModel.selectedTrip {
                 PackingListView(trip: trip)
-        } else {
-            ContentUnavailableView {
-                Label("No Trip Selected", systemImage: "exclamationmark.triangle.fill")
-            } description: {
-                Text("Please select a trip to view the packing list.")
+            } else {
+                ContentUnavailableView {
+                    Label("No Trip Selected", systemImage: "exclamationmark.triangle.fill")
+                } description: {
+                    Text("Please select a trip to view the packing list.")
+                }
             }
         }
-        }
         .sheet(isPresented: $viewModel.showTripPlanner) {
-            TripPlannerView(modelContext: modelContext, selectedTrip: $viewModel.selectedTrip)
-                .presentationBackground(.thickMaterial)
+            TripPlannerView(modelContext: modelContext,
+                            selectedTrip: $viewModel.selectedTrip)
+            .presentationBackground(.thickMaterial)
         }
         .navigationSplitViewStyle(.balanced)
     }
     
-    private func deleteTrip(_ trip: Trip) {
+    private func createSection(header: LocalizedStringKey, trips: [Trip], isPast: Bool = false) -> some View {
+        Section(header:
+                    Text(header)
+            .font(.title)
+        ) {
+            ForEach(trips) { trip in
+                Button {
+                    viewModel.selectedTrip = trip
+                } label: {
+                    TripListCardView(trip: trip, isPast: isPast)
+                }
+                .padding(.vertical, 8)
+                .foregroundStyle(Color.primary)
+            }
+            .onDelete(perform: deleteTrip)
+        }
+        .listRowSeparator(.hidden)
+        .listSectionSeparator(.hidden)
+    }
+    
+    private func deleteTrip(offsets: IndexSet) {
         withAnimation {
-            modelContext.delete(trip)
+            for index in offsets {
+                modelContext.delete(tripsCurrent[index])
+            }
         }
     }
 }

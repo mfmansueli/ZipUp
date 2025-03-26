@@ -12,7 +12,7 @@ import MapKit
 import CloudKit
 
 @Model
-class Trip {
+class Trip: ObservableObject {
     var id = UUID()
     var destinationName: String = ""
     var destinationLat: String = ""
@@ -28,7 +28,7 @@ class Trip {
     }
     
     @Relationship(deleteRule: .cascade)
-    var itemList: [Item] = []
+    var itemList: [Item]? = []
     var category: String = ""
     var isFinished = false
 
@@ -84,13 +84,13 @@ class Trip {
         tripRecord["endDate"] = endDate as CKRecordValue
         tripRecord["category"] = category as CKRecordValue
 
-        let itemRecords = itemList.map { item -> CKRecord in
+        let itemRecords = itemList?.compactMap { item -> CKRecord in
             let itemRecord = item.toCKRecord()
             return itemRecord
         }
-        let itemReferences = itemRecords.map { CKRecord.Reference(record: $0, action: .deleteSelf) }
-        tripRecord["itemList"] = itemReferences as CKRecordValue
-
+        if let itemReferences = itemRecords?.compactMap({ CKRecord.Reference(record: $0, action: .deleteSelf) }) {
+            tripRecord["itemList"] = itemReferences as CKRecordValue
+        }
         return tripRecord
     }
 
@@ -102,6 +102,7 @@ class Trip {
     ]
 
     func getItemCount() -> Int {
+        guard let itemList = itemList else { return 0 }
         var count: Int = 0
 
         for item in itemList {
@@ -115,6 +116,7 @@ class Trip {
     }
     
     func isBagDecided() -> Bool {
+        guard let itemList = itemList else { return false }
         for item in itemList {
             if !item.isDecided {
                 return false
@@ -124,20 +126,22 @@ class Trip {
     }
     
     func undecidedItems() -> [Item] {
+        guard let itemList = itemList else { return [] }
         return itemList.filter { !$0.isDecided }
     }
         
     func addItem(_ item: Item) {
-        itemList.append(item)
+        itemList?.append(item)
     }
     
     func remove(item: Item) {
-        if let index = itemList.firstIndex(of: item) {
-            itemList.remove(at: index)
+        if let index = itemList?.firstIndex(of: item) {
+            itemList?.remove(at: index)
         }
     }
     
     func totalDecidedAndUndecidedItems() -> (decided: Int, undecided: Int) {
+        guard let itemList = itemList else { return (decided: 0, undecided: 0) }
         var decidedCount = 0
         var undecidedCount = 0
         for item in itemList {
@@ -152,6 +156,7 @@ class Trip {
     }
     
     var progress: Double {
+        guard let itemList = itemList else { return 0 }
         var decidedCount = 0
         for item in itemList {
             
@@ -162,5 +167,21 @@ class Trip {
         
         print("bagProgress \(Double(decidedCount) / Double(itemList.count))")
         return Double(decidedCount) / Double(itemList.count)
+    }
+    
+}
+
+extension Trip: Equatable {
+    static func == (lhs: Trip, rhs: Trip) -> Bool {
+        return lhs.id == rhs.id
+    }
+}
+extension Trip {
+    func getItem(byId id: UUID) -> Item? {
+        return itemList?.first { $0.id == id }
+    }
+    
+    func getItems(byCategory category: ItemCategory) -> [Item] {
+        return itemList?.filter { $0.category == category } ?? []
     }
 }

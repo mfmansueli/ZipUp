@@ -10,7 +10,7 @@ import SwiftUI
 struct BagProgressView: View {
     
     @Environment(\.presentationMode) var presentation
-    @Binding var trip: Trip
+    @ObservedObject var trip: Trip
     @State var isOpen: Bool
     
 //    init(trip: Trip, isOpen: Bool) {
@@ -54,9 +54,9 @@ struct BagProgressView: View {
     }
 }
 
-#Preview {
-    BagProgressView(trip: .constant(Trip.exampleTrip), isOpen: true)
-}
+//#Preview {
+//    BagProgressView(trip: .constant(Trip.exampleTrip), isOpen: true)
+//}
 
 #Preview {
     PackingListView(trip: Trip.exampleTripDecided)

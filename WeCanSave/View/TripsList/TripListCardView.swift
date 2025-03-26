@@ -12,8 +12,6 @@ struct TripListCardView: View {
     @State var trip: Trip
     @State var isPast: Bool = false
     
-    
-    
     var body: some View {
         HStack {
             VStack {
@@ -40,7 +38,6 @@ struct TripListCardView: View {
                 Spacer()
 
             }
-//            .padding(.top, 10)
             Spacer()
             
             Image(systemName: "chevron.compact.right")
@@ -48,14 +45,12 @@ struct TripListCardView: View {
                 .padding()
 
         }
-        .frame(height: 110)
         .background(
             RoundedRectangle(cornerRadius: 20)
-                .fill(.clear)
-                .stroke(isPast ? Color.primary.opacity(0.5) : Color.accent, lineWidth: isPast ? 1 : 3)
+                .fill(Color(UIColor.secondarySystemGroupedBackground))
+                .stroke(isPast ? Color.primary.opacity(0.5) : Color.accent, lineWidth: isPast ? 1 : 2)
         )
         .opacity(isPast ? 0.5 : 1)
-//        .padding(.vertical, 10)
     }
     
     func shortDateString(_ date: Date) -> String {

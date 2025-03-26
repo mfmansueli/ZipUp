@@ -11,6 +11,7 @@ struct SwipeView: View {
     
     @Environment(\.presentationMode) var presentation
     @Binding var itemList: [Item]
+    var addNewItem: ((_ itemList: [Item]) -> Void)? = nil
     
     var body: some View {
         ZStack {
@@ -22,6 +23,7 @@ struct SwipeView: View {
                     }
                 } added: {
                     checkBag()
+                    addNewItem?(itemList)
                 }
                 .stacked(at: index, in: itemList.count)
                 .accessibilityHidden(index == itemList.count - 1 ? false : true)
@@ -54,5 +56,5 @@ extension View {
 }
 
 #Preview {
-    SwipeView(itemList: .constant(Trip.exampleTrip.itemList))
+    SwipeView(itemList: .constant(Trip.exampleTrip.itemList ?? []))
 }

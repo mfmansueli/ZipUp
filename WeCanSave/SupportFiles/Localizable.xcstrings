@@ -526,6 +526,7 @@
       }
     },
     "Delete" : {
+      "extractionState" : "stale",
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -590,6 +591,12 @@
           }
         }
       }
+    },
+    "Done" : {
+
+    },
+    "Edit" : {
+
     },
     "Folding the clothes..." : {
       "localizations" : {
@@ -681,6 +688,9 @@
       }
     },
     "Item name" : {
+
+    },
+    "Loading..." : {
 
     },
     "n.items" : {
@@ -880,9 +890,6 @@
           }
         }
       }
-    },
-    "Qty" : {
-
     },
     "Relaxation" : {
       "extractionState" : "manual",
