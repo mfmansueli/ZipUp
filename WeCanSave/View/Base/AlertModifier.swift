@@ -19,5 +19,6 @@ struct AlertModifier: ViewModifier {
             }, message: {
                 Text(viewModel.alertMessage)
             })
+            .dialogIcon(Image(systemName: "exclamationmark.triangle"))
     }
 }

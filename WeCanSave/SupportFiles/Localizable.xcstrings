@@ -458,6 +458,9 @@
         }
       }
     },
+    "Confirm" : {
+
+    },
     "Culture" : {
       "extractionState" : "manual",
       "localizations" : {

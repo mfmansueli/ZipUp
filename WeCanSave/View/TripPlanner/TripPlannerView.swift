@@ -55,6 +55,7 @@ struct TripPlannerView: View {
                         .focused($isDestinationFocused)
                         .background {
                             RoundedRectangle(cornerRadius: 32)
+                                .fill(Color(UIColor.secondarySystemGroupedBackground))
                                 .strokeBorder(Color.accentColor, lineWidth: 1)
                         }
                         .zIndex(1)
@@ -95,7 +96,6 @@ struct TripPlannerView: View {
                                         
                                         Spacer()
                                         
-                                        
                                         Text(viewModel.dates.isEmpty ? "" : "\(viewModel.dates.count) days")
                                             .font(.headline)
                                             .tint(.primary)
@@ -107,17 +107,20 @@ struct TripPlannerView: View {
                                 .accessibilityAddTraits(.isSearchField)
                                 .background {
                                     RoundedRectangle(cornerRadius: 32)
+                                        .fill(Color(UIColor.secondarySystemGroupedBackground))
                                         .strokeBorder(Color.accentColor, lineWidth: 1)
                                 }
                             }
                             .popover(isPresented: $isDateActivated) {
-                                MultiDatePickerView(dates: Binding(get: {
-                                    viewModel.dates
-                                }, set: { newDates in
-                                    viewModel.dates = newDates
-                                }))
-                                .presentationCompactAdaptation(.popover)
-                                .tint(.accent)
+                                ScrollView {
+                                    MultiDatePickerView(dates: Binding(get: {
+                                        viewModel.dates
+                                    }, set: { newDates in
+                                        viewModel.dates = newDates
+                                    }))
+                                    .presentationCompactAdaptation(.popover)
+                                    .tint(.accent)
+                                }
                             }
                             .padding(.bottom, 26)
                             
@@ -209,6 +212,7 @@ struct TripPlannerView: View {
             .frame(minWidth: 140)
             .background {
                 RoundedRectangle(cornerRadius: 32)
+                    .fill(Color(UIColor.secondarySystemGroupedBackground))
                     .strokeBorder(viewModel.selectedTripType == item ? Color.accentColor : Color.gray, lineWidth: viewModel.selectedTripType == item ? 2 : 1)
             }
         }

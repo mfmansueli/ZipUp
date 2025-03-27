@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MultiDatePickerView: View {
     
+    @Environment(\.presentationMode) var presentation
     @Environment(\.calendar) var calendar
     @Environment(\.timeZone) var timeZone
     @Binding var dates: Set<DateComponents>
@@ -50,9 +51,36 @@ struct MultiDatePickerView: View {
     }
     
     var body: some View {
-        MultiDatePicker("Select dates",
-                        selection: datesBinding,
-                        in: bounds)
+        VStack {
+            MultiDatePicker("Select dates",
+                            selection: datesBinding,
+                            in: bounds)
+            
+            HStack {
+                Button(action: {
+                    dates.removeAll()
+                    presentation.wrappedValue.dismiss()
+                }) {
+                    Text("Cancel")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                }
+                .foregroundStyle(.primary)
+                
+                Button(action: {
+                    presentation.wrappedValue.dismiss()
+                }) {
+                    Text("Confirm")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.accentColor)
+                        .foregroundStyle(.white)
+                        .clipShape(.rect(cornerSize: CGSize(width: 32, height: 32)))
+                }
+            }
+            .padding(.bottom)
+            .padding(.horizontal)
+        }
     }
     
     private func filledRange(selectedDates: Set<DateComponents>) -> Set<DateComponents> {
