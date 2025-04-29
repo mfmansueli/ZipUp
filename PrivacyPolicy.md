@@ -4,7 +4,7 @@ Effective Date: 2025-03-04
 
 \*\*1. Introduction\*\*
 
-Thank you for using WeCanSave ("we," "our," or "us"). Your privacy is important to us. This Privacy Policy explains how we collect, use, disclose, and protect your information when you use our app.
+Thank you for using ZipUp ("we," "our," or "us"). Your privacy is important to us. This Privacy Policy explains how we collect, use, disclose, and protect your information when you use our app.
 
 \*\*2. Information We Collect\*\*
 
