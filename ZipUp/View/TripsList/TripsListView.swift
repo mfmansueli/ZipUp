@@ -97,16 +97,19 @@ struct TripsListView: View {
                 .padding(.vertical, 8)
                 .foregroundStyle(Color.primary)
             }
-            .onDelete(perform: deleteTrip)
+            .onDelete { offsets in
+                deleteTrip(offsets: offsets, from: trips)
+            }
         }
         .listRowSeparator(.hidden)
         .listSectionSeparator(.hidden)
     }
-    
-    private func deleteTrip(offsets: IndexSet) {
+
+    private func deleteTrip(offsets: IndexSet, from trips: [Trip]) {
         withAnimation {
             for index in offsets {
-                modelContext.delete(tripsCurrent[index])
+                let tripToDelete = trips[index]
+                modelContext.delete(tripToDelete)
             }
         }
     }
