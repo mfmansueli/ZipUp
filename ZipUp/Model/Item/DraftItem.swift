@@ -54,8 +54,9 @@ struct DraftItem {
         item?.tipReason = tipReason
     }
     
-    func toItem() -> Item {
+    func toItem(with trip: Trip) -> Item {
         let item = Item()
+        item.trip = trip
         item.id = id
         item.name = name
         item.category = category

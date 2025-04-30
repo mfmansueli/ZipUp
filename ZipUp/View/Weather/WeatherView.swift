@@ -111,6 +111,11 @@ struct WeatherView: View {
     var forecastList: some View {
         ScrollView {
             VStack(spacing: 8) {
+                
+                Text(viewmodel.noteMessage)
+                    .font(.footnote)
+                    
+                    
                 ForEach(viewmodel.allForecasts, id: \.date) { (forecast: DayWeather) in
                     VStack {
                         HStack {

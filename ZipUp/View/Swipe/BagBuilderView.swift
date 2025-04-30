@@ -25,19 +25,6 @@ struct BagBuilderView: View {
         NavigationStack {
             ScrollView {
                 ZStack {
-                    HStack {
-                        Image(systemName: "xmark")
-                            .foregroundStyle(.red.opacity(0.4))
-                            .padding(.leading, 6)
-                        
-                        Spacer()
-                        
-                        Image(systemName: "checkmark")
-                            .foregroundStyle(.green.opacity(0.4))
-                            .padding(.trailing, 6)
-                    }
-                    .font(.title2)
-                    .offset(y: 50)
                     
                     VStack(spacing: 35) {
                         HStack {

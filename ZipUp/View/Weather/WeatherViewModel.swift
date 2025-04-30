@@ -17,24 +17,34 @@ class WeatherViewModel: ObservableObject {
     @Published var averageHighTemperature: String = ""
     @Published var averageLowTemperature: String = ""
     @Published var mostCommonCondition: (condition: WeatherCondition?, imageName: String?) = (nil, nil)
+    @Published var noteMessage: String = ""
     var isSuccessfulLoaded = false
     private var cancellables = Set<AnyCancellable>()
     
     func fetchWeather(lat: Double, long: Double, startDate: Date, endDate: Date) -> AnyPublisher<[DayWeather], Error> {
-        Future { promise in
+        Future { [weak self] promise in
             Task {
                 do {
                     let location = CLLocation(latitude: lat, longitude: long)
                     var allForecasts: [DayWeather] = []
                     let calendar = Calendar.current
                     let today = Date()
-                    var currentStartDate = calendar.dateComponents([.day], from: today, to: endDate).day ?? 0 > 10
-                        ? calendar.date(byAdding: .year, value: -1, to: startDate) ?? startDate
-                        : startDate
-                    let adjustedEndDate = calendar.dateComponents([.day], from: today, to: endDate).day ?? 0 > 10
-                        ? calendar.date(byAdding: .year, value: -1, to: endDate) ?? endDate
-                        : endDate
+                    let startOfDay = calendar.startOfDay(for: startDate)
+                    let endOfDay = calendar.date(byAdding: DateComponents(hour: 23, minute: 59), to: endDate) ?? endDate
 
+                    var currentStartDate = calendar.dateComponents([.day], from: today, to: endDate).day ?? 0 > 10
+                        ? calendar.date(byAdding: .year, value: -1, to: startOfDay) ?? startOfDay
+                        : startOfDay
+                    let adjustedEndDate = calendar.dateComponents([.day], from: today, to: endDate).day ?? 0 > 10
+                        ? calendar.date(byAdding: .year, value: -1, to: endOfDay) ?? endOfDay
+                        : endOfDay
+                    
+                    if calendar.dateComponents([.day], from: today, to: endDate).day ?? 0 > 10 {
+                        self?.noteMessage = "Based on historical weather data from the same dates one year ago."
+                    } else {
+                        self?.noteMessage = "Based on forecast weather data."
+                    }
+                    
                     while currentStartDate <= adjustedEndDate {
                         let currentEndDate = min(calendar.date(byAdding: .day, value: 9, to: currentStartDate) ?? adjustedEndDate, adjustedEndDate)
                         let weather = try await WeatherService().weather(for: location, including: .daily(startDate: currentStartDate, endDate: currentEndDate))

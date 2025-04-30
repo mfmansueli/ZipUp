@@ -39,161 +39,177 @@ struct ItemView: View {
     }
 
     var body: some View {
-        VStack(spacing: 30) {
-            ZStack {
-                Button {
-                    showImagePicker = true
-                } label: {
-                    Image(uiImage: draftItem.image)
-                        .resizable()
-                        .scaledToFit()
-                        .overlay {
-                            if isEditMode {
-                                HStack {
-                                    Spacer()
-                                    VStack {
-                                        Image(systemName: "photo.badge.plus")
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(width: 30, height: 30)
-                                            .padding(10)
-                                            .background {
-                                                RoundedRectangle(cornerRadius: 30)
-                                                    .fill(.white)
-                                            }
+        
+        ZStack {
+            HStack {
+                Image(systemName: "xmark")
+                    .foregroundStyle(.red.opacity(0.4))
+                    .padding(.leading, 6)
+                
+                Spacer()
+                
+                Image(systemName: "checkmark")
+                    .foregroundStyle(.green.opacity(0.4))
+                    .padding(.trailing, 6)
+            }
+            .font(.title2)
+            .offset(y: 50)
+            VStack(spacing: 30) {
+                ZStack {
+                    Button {
+                        showImagePicker = true
+                    } label: {
+                        Image(uiImage: draftItem.image)
+                            .resizable()
+                            .scaledToFit()
+                            .overlay {
+                                if isEditMode {
+                                    HStack {
                                         Spacer()
+                                        VStack {
+                                            Image(systemName: "photo.badge.plus")
+                                                .resizable()
+                                                .scaledToFit()
+                                                .frame(width: 30, height: 30)
+                                                .padding(10)
+                                                .background {
+                                                    RoundedRectangle(cornerRadius: 30)
+                                                        .fill(.white)
+                                                }
+                                            Spacer()
+                                        }
                                     }
                                 }
                             }
-                        }
-                }
-                .disabled(!isEditMode)
-                .popover(isPresented: $showImagePicker) {
-                    ItemImagePickerView(selectedImage: $draftItem.imageName)
-                        .presentationCompactAdaptation(.popover)
-                }
-
-                Image(systemName: offset.width < 0 ? "xmark.circle" : "checkmark.circle")
-                    .resizable()
-                    .foregroundStyle(offset.width < 0 ? .red : .green)
-                    .opacity(abs(offset.width) > 10 ? 0.7 : 0)
-                    .frame(width: 140, height: 140)
-
-                Text(offset.width < 0 ? "Remove from bag" : "Add to bag")
-                    .foregroundStyle(offset.width < 0 ? .red : .green)
-                    .opacity(abs(offset.width) > 10 ? 1 : 0)
-                    .padding()
-                    .background(
-                        RoundedRectangle(cornerRadius: 30)
-                            .fill(.white)
-                            .shadow(color: .black, radius: 10)
-                            .opacity(abs(offset.width) > 10 ? 1 : 0)
-                    )
-                    .rotationEffect(.degrees(-(offset.width / 5.0)))
-                    .offset(x: -(offset.width * 5 + 20), y: -160 + abs(offset.width / 2))
-            }
-            TextField("", text: $draftItem.name)
-                .multilineTextAlignment(.center)
-                .font(.title)
-                .bold()
-                .foregroundStyle(.black)
-                .disabled(!isEditMode)
-                .submitLabel(.done)
-                .placeholder(when: draftItem.name.isEmpty, alignment: .center) {
-                    Text("Item name")
-                        .multilineTextAlignment(.center)
-                        .font(.title)
-                        .foregroundColor(Color.black.opacity(0.2))
-                }
-
-            HStack(spacing: 30) {
-                Button {
-                    if draftItem.userQuantity == 1 {
-                        deniedFeedback.toggle()
-                        return
                     }
-                    draftItem.userQuantity -= 1
-                    decreaseFeedback.toggle()
-                } label: {
-                    ZStack {
-                        Circle()
-                            .fill(.clear)
-                            .stroke(.brandOrange, lineWidth: 4)
-                            .frame(maxWidth: 60)
-
-                        Image(systemName: "minus")
-                            .font(.system(size: 30, weight: .bold))
-                            .foregroundStyle(.brandOrange)
+                    .disabled(!isEditMode)
+                    .popover(isPresented: $showImagePicker) {
+                        ItemImagePickerView(selectedImage: $draftItem.imageName)
+                            .presentationCompactAdaptation(.popover)
                     }
+                    
+                    Image(systemName: offset.width < 0 ? "xmark.circle" : "checkmark.circle")
+                        .resizable()
+                        .foregroundStyle(offset.width < 0 ? .red : .green)
+                        .opacity(abs(offset.width) > 10 ? 0.7 : 0)
+                        .frame(width: 140, height: 140)
+                    
+                    Text(offset.width < 0 ? "Remove from bag" : "Add to bag")
+                        .foregroundStyle(offset.width < 0 ? .red : .green)
+                        .opacity(abs(offset.width) > 10 ? 1 : 0)
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 30)
+                                .fill(.white)
+                                .shadow(color: .black, radius: 10)
+                                .opacity(abs(offset.width) > 10 ? 1 : 0)
+                        )
+                        .rotationEffect(.degrees(-(offset.width / 5.0)))
+                        .offset(x: -(offset.width * 5 + 20), y: -160 + abs(offset.width / 2))
                 }
-
-                Text("\(draftItem.userQuantity)")
-                    .font(.system(size: 50, weight: .bold))
-                    .minimumScaleFactor(0.01)
+                TextField("", text: $draftItem.name)
+                    .multilineTextAlignment(.center)
+                    .font(.title)
+                    .bold()
                     .foregroundStyle(.black)
-
-                Button {
-                    draftItem.userQuantity += 1
-                    increaseFeedback.toggle()
-                } label: {
-                    ZStack {
-                        Circle()
-                            .fill(.clear)
-                            .stroke(.brandOrange, lineWidth: 4)
-                            .frame(maxWidth: 60)
-
-                        Image(systemName: "plus")
-                            .font(.system(size: 30, weight: .bold))
-                            .foregroundStyle(.brandOrange)
+                    .disabled(!isEditMode)
+                    .submitLabel(.done)
+                    .placeholder(when: draftItem.name.isEmpty, alignment: .center) {
+                        Text("Item name")
+                            .multilineTextAlignment(.center)
+                            .font(.title)
+                            .foregroundColor(Color.black.opacity(0.2))
+                    }
+                
+                HStack(spacing: 30) {
+                    Button {
+                        if draftItem.userQuantity == 1 {
+                            deniedFeedback.toggle()
+                            return
+                        }
+                        draftItem.userQuantity -= 1
+                        decreaseFeedback.toggle()
+                    } label: {
+                        ZStack {
+                            Circle()
+                                .fill(.clear)
+                                .stroke(.brandOrange, lineWidth: 4)
+                                .frame(maxWidth: 60)
+                            
+                            Image(systemName: "minus")
+                                .font(.system(size: 30, weight: .bold))
+                                .foregroundStyle(.brandOrange)
+                        }
+                    }
+                    
+                    Text("\(draftItem.userQuantity)")
+                        .font(.system(size: 50, weight: .bold))
+                        .minimumScaleFactor(0.01)
+                        .foregroundStyle(.black)
+                    
+                    Button {
+                        draftItem.userQuantity += 1
+                        increaseFeedback.toggle()
+                    } label: {
+                        ZStack {
+                            Circle()
+                                .fill(.clear)
+                                .stroke(.brandOrange, lineWidth: 4)
+                                .frame(maxWidth: 60)
+                            
+                            Image(systemName: "plus")
+                                .font(.system(size: 30, weight: .bold))
+                                .foregroundStyle(.brandOrange)
+                        }
                     }
                 }
+                
+                Text(draftItem.tipReason)
+                    .foregroundStyle(.black)
+                    .fontWeight(.thin).italic()
+                    .multilineTextAlignment(.center)
             }
-
-            Text(draftItem.tipReason)
-                .foregroundStyle(.black)
-                .fontWeight(.thin).italic()
-                .multilineTextAlignment(.center)
+            .scrollDismissesKeyboard(.immediately)
+            .padding(20)
+            .background(
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(.brandOrange, lineWidth: 15)
+                    .fill(.brandTan)
+                    .shadow(color: .primary.opacity(0.1), radius: 5)
+            )
+            .frame(width: 300, height: 450)
+            .rotationEffect(.degrees(offset.width / 5.0))
+            .offset(x: offset.width * 5)
+            .opacity(2 - Double(abs(offset.width / 30)))
+            .gesture(swipeGesture())
+            //        TODO: Add accessibility
+            //        .accessibilityRepresentation {
+            //            Text("Suggestion: \(draftItem.name). Number to bring: \(draftItem.userQuantity)")
+            //        }
+            //        .accessibilityAction(named: "Add to bag", {
+            //            draftItem.isDecided = true
+            //            added(draftItem)
+            //        })
+            //        .accessibilityAction(named: "Discard from bag", {
+            //            draftItem.userQuantity = 0
+            //            draftItem.isDecided = true
+            //            removal(draftItem)
+            //        })
+            //        .accessibilityAction(named: "Increase number of \(draftItem.name)") {
+            //            draftItem.incrementUserQuantity()
+            //            let editedAnnouncement = AttributedString("\(draftItem.userQuantity) \(draftItem.name)s")
+            //            AccessibilityNotification.Announcement(editedAnnouncement).post()
+            //        }
+            //        .accessibilityAction(named: "Decrease number of \(draftItem.name)") {
+            //            draftItem.decrementUserQuantity()
+            //            let editedAnnouncement = AttributedString("\(draftItem.userQuantity) \(draftItem.name)s")
+            //            AccessibilityNotification.Announcement(editedAnnouncement).post()
+            //        }
+            .sensoryFeedback(.increase, trigger: increaseFeedback)
+            .sensoryFeedback(.decrease, trigger: decreaseFeedback)
+            .sensoryFeedback(.warning, trigger: deniedFeedback)
+            .sensoryFeedback(.selection, trigger: selectionFeedback)
         }
-        .scrollDismissesKeyboard(.immediately)
-        .padding(20)
-        .background(
-            RoundedRectangle(cornerRadius: 20)
-                .stroke(.brandOrange, lineWidth: 15)
-                .fill(.brandTan)
-                .shadow(color: .primary.opacity(0.1), radius: 5)
-        )
-        .frame(width: 300, height: 450)
-        .rotationEffect(.degrees(offset.width / 5.0))
-        .offset(x: offset.width * 5)
-        .opacity(2 - Double(abs(offset.width / 30)))
-        .gesture(swipeGesture())
-//        TODO: Add accessibility
-//        .accessibilityRepresentation {
-//            Text("Suggestion: \(draftItem.name). Number to bring: \(draftItem.userQuantity)")
-//        }
-//        .accessibilityAction(named: "Add to bag", {
-//            draftItem.isDecided = true
-//            added(draftItem)
-//        })
-//        .accessibilityAction(named: "Discard from bag", {
-//            draftItem.userQuantity = 0
-//            draftItem.isDecided = true
-//            removal(draftItem)
-//        })
-//        .accessibilityAction(named: "Increase number of \(draftItem.name)") {
-//            draftItem.incrementUserQuantity()
-//            let editedAnnouncement = AttributedString("\(draftItem.userQuantity) \(draftItem.name)s")
-//            AccessibilityNotification.Announcement(editedAnnouncement).post()
-//        }
-//        .accessibilityAction(named: "Decrease number of \(draftItem.name)") {
-//            draftItem.decrementUserQuantity()
-//            let editedAnnouncement = AttributedString("\(draftItem.userQuantity) \(draftItem.name)s")
-//            AccessibilityNotification.Announcement(editedAnnouncement).post()
-//        }
-        .sensoryFeedback(.increase, trigger: increaseFeedback)
-        .sensoryFeedback(.decrease, trigger: decreaseFeedback)
-        .sensoryFeedback(.warning, trigger: deniedFeedback)
-        .sensoryFeedback(.selection, trigger: selectionFeedback)
     }
 
     func swipeGesture() -> some Gesture {

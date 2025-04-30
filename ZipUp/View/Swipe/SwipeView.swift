@@ -48,15 +48,19 @@ struct SwipeView: View {
                 ItemView(item: item, isEditMode: $isEditMode, category: category) { draftItem in
                     withAnimation {
                         print("Item removed")
-                        trip.remove(item: draftItem.toItem())
+                        trip.remove(item: draftItem.toItem(with: trip))
                         checkBag()
+                        if singleItemDisplay {
+                            presentation.wrappedValue.dismiss()
+                        }
                     }
                 } added: { draftItem in
                     print("Item added")
-                    let item = draftItem.toItem()
-                    item.trip = trip
-                    trip.addItem(item)
+                    trip.addItem(draftItem.toItem(with: trip))
                     checkBag()
+                    if singleItemDisplay {
+                        presentation.wrappedValue.dismiss()
+                    }
                 }
                     .stacked(at: index, in: item == nil ? 0 : trip.itemList?.count ?? 0)
                     .accessibilityHidden(index == trip.itemList?.count ?? 0 - 1 ? false : true)
