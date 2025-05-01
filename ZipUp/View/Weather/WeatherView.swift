@@ -114,28 +114,34 @@ struct WeatherView: View {
                 
                 Text(viewmodel.noteMessage)
                     .font(.footnote)
-                    
-                    
+                
+                // MARK: - Apple Weather Attribution
+                HStack(spacing: 4) {
+                    Text("Weather data provided by")
+                        .font(.footnote)
+                        .foregroundColor(.secondary)
+
+                    Link(" Weather", destination: URL(string: "https://developer.apple.com/weatherkit/data-source-attribution/")!)
+                        .font(.footnote)
+                        .foregroundColor(.accentColor)
+                }
+                
                 ForEach(viewmodel.allForecasts, id: \.date) { (forecast: DayWeather) in
                     VStack {
                         HStack {
-                            // Date
                             Text(dateFormatter.string(from: forecast.date))
                                 .frame(width: 160, alignment: .leading)
                                 .font(.system(.body, weight: .medium))
                             
-                            // Weather icon
                             Image(systemName: forecast.symbolName)
                                 .symbolRenderingMode(.multicolor)
                                 .font(.title2)
                                 .frame(width: 40)
                             
-                            // Max temperature
                             Text(formattedTemperature(temperature: forecast.highTemperature))
                                 .frame(width: 40)
                                 .fontWeight(.medium)
                             
-                            // Min temperature
                             Text(formattedTemperature(temperature: forecast.lowTemperature))
                                 .frame(width: 40)
                                 .foregroundColor(.secondary)
@@ -147,12 +153,14 @@ struct WeatherView: View {
                     }
                     .padding(.horizontal)
                 }
+                
             }
         }
         .foregroundColor(.primary)
         .presentationCompactAdaptation(.popover)
         .padding(.vertical)
     }
+
     
     func formattedTemperature(temperature: Measurement<UnitTemperature>) -> String {
         let formatter = MeasurementFormatter()

@@ -1114,6 +1114,9 @@
         }
       }
     },
+    "Weather data provided by" : {
+
+    },
     "What are you doing?" : {
       "localizations" : {
         "fr" : {
@@ -1305,6 +1308,9 @@
           }
         }
       }
+    },
+    " Weather" : {
+
     }
   },
   "version" : "1.0"

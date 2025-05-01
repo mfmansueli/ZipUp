@@ -26,7 +26,18 @@ struct PackingListView: View {
         NavigationStack {
             VStack(alignment: .leading) {
                 HStack {
-                    WeatherView(trip: trip)
+                    VStack {
+                        WeatherView(trip: trip)
+                        
+                        HStack(spacing: 4) {
+                            Text("Weather data provided by")
+                                .font(.footnote)
+                                .foregroundColor(.secondary)
+                            
+                            Link(" Weather", destination: URL(string: "https://developer.apple.com/weatherkit/data-source-attribution/")!)
+                                .font(.footnote)
+                        }
+                    }
                     
                     Divider()
                         .frame(width: 1, height: 100)
